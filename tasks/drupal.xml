@@ -1,0 +1,14 @@
+<project name="Drupal">
+    <!--
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+      -->
+
+    <property name="drupal.root" value="web" />
+    <property name="drupal.uri" value="http://drupal8-skeleton.local" />
+
+    <!-- Target: drupal-prepare-filesystem -->
+    <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
+        <echo message="Hello World!" />
+    </target>
+</project>
