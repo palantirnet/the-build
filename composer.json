@@ -10,7 +10,6 @@
         }
     ],
     "require": {
-        "continuousphp/phing-drush-task": "dev-master",
         "phing/phing": "^2.14"
     }
 }
