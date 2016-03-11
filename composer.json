@@ -1,7 +1,6 @@
 {
     "name": "palantirnet/the-build",
     "description": "Drupal build tasks for our projects.",
-    "type": "project",
     "license": "proprietary",
     "authors": [
         {
