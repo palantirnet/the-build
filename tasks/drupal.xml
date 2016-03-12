@@ -14,6 +14,13 @@
     <property name="build.project" value="drupal-skeleton" />
     <property name="drupal.root" value="web" />
     <property name="drupal.uri" value="http://${build.project}.local" />
+    <property name="drupal.private_files_dir" value="${build.dir}/artifacts/private" />
+    <property name="build.drupal.files" value="${build.dir}/artifacts/files" />
+
+    <!-- These properties will generally not change. -->
+    <property name="drupal.sites_dir" value="sites/default" />
+    <property name="drupal.files_dir" value="sites/default/files" />
+    <property name="build.drupal.settings" value="${build.dir}/conf/drupal/settings.php" />
 
     <!-- Configure Drush -->
     <taskdef name="drush" classname="Drush\Task" />
@@ -26,6 +33,15 @@
     <target name="test">
         <echo message="Hello World!" />
         <drush command="status" />
+    </target>
+
+    <!-- Target: drupal-prepare-filesystem -->
+    <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
+        <mkdir dir="${build.dir}/${drupal.root}/${drupal.sites_dir}" />
+        <chmod file="${build.dir}/${drupal.root}/${drupal.sites_dir}" mode="777" />
+
+        <delete file="${build.dir}/${drupal.root}/${drupal.sites_dir}/files" />
+        <symlink target="${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
     </target>
 
 </project>
