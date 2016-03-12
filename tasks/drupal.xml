@@ -1,14 +1,31 @@
-<project name="Drupal">
+<project name="Drupal" default="test">
     <!--
       Include this file in your build.xml with:
         <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
       -->
 
-    <property name="drupal.root" value="web" />
-    <property name="drupal.uri" value="http://drupal8-skeleton.local" />
+    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true"/>
+    <property name="build.dir" value="${application.startdir}" />
 
-    <!-- Target: drupal-prepare-filesystem -->
-    <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
+    <property file="${build.dir}/conf/build.${build.env}.properties" />
+    <property file="${build.dir}/conf/build.properties" />
+
+    <!-- These properties will generally be set by a build properties file. -->
+    <property name="build.project" value="drupal-skeleton" />
+    <property name="drupal.root" value="web" />
+    <property name="drupal.uri" value="http://${build.project}.local" />
+
+    <!-- Configure Drush -->
+    <taskdef name="drush" classname="Drush\Task" />
+    <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
+    <property name="drush.uri" refid="drupal.uri" />
+    <property name="drush.root" refid="drupal.root" />
+    <property name="drush.config" value="${application.startdir}/conf/drushrc.php" />
+
+    <!-- Target: test -->
+    <target name="test">
         <echo message="Hello World!" />
+        <drush command="status" />
     </target>
+
 </project>
