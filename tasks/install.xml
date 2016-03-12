@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project name="install" default="install">
+    <!--
+        This can be used to install the build template into a project.
+      -->
+
+    <target name="install" description="Install the phing build tempalte into your project.">
+        <!-- Uses the project directory name as the projectname -->
+        <basename property="projectname" file="${application.startdir}" suffix="local" />
+
+        <copy file="${phing.dir.install}/../build.dist.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+</project>

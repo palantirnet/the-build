@@ -7,9 +7,10 @@ Drupal build tools that we can use, reuse, and iterate on in our projects.
 This repository contains reusable phing build tasks for our Drupal projects, and in the future may contain custom phing build tasks.
 
 To use these build tasks:
+
 * Add `the-build` to your project using composer: `composer require palantirnet/the-build`
-* Copy `build.dist.xml` to the root of your project: `cp vendor/palantirnet/the-build/build.dist.xml build.xml`
-* Edit your new build.xml to suit the project
+* Install the default `build.xml` to your project: `vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml`
+* Edit your new build.xml to suit
 
 ## Our packages.json
 

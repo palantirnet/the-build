@@ -1,15 +1,13 @@
-<project name="Skeleton" default="build">
-    <!-- Copy this file to your project and rename it to "build.xml" -->
-    <!-- Run with: vendor/bin/phing -propertyfile cnf/build.dev.properties -->
-
-    <property name="build.env"   value="vagrant" />
+<project name="@projectname@" default="build">
+    <!-- Run with: vendor/bin/phing -Dbuild.env=vagrant -->
+    <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
     <!-- Boilerplate -->
-    <autoloader autoloaderpath="vendor/autoload.php" />
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
         <echo message="Hello World!" />
     </target>
+
 </project>
