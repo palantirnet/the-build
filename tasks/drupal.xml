@@ -8,19 +8,27 @@
     <property name="build.dir" value="${application.startdir}" />
 
     <property file="${build.dir}/conf/build.${build.env}.properties" />
-    <property file="${build.dir}/conf/build.properties" />
+    <property file="${build.dir}/conf/build.default.properties" />
 
     <!-- These properties will generally be set by a build properties file. -->
-    <property name="build.project" value="drupal-skeleton" />
+    <!-- all drupal.* path properties should be relative to drupal.root (except for drupal.root, which should be relative to the build.dir) -->
+    <!-- all build.* path properties should be relative to the build.dir -->
     <property name="drupal.root" value="web" />
-    <property name="drupal.uri" value="http://${build.project}.local" />
-    <property name="drupal.private_files_dir" value="${build.dir}/artifacts/private" />
-    <property name="build.drupal.files" value="${build.dir}/artifacts/files" />
+    <property name="drupal.uri" value="http://${phing.project.name}.local" />
+
+    <property name="drupal.private_files_dir" value="../artifacts/private" />
+    <property name="build.drupal.files" value="artifacts/files" />
+
+    <property name="drupal.database.database" value="default" />
+    <property name="drupal.database.username" value="drupal" />
+    <property name="drupal.database.password" value="drupal" />
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_dir" value="sites/default" />
     <property name="drupal.files_dir" value="sites/default/files" />
-    <property name="build.drupal.settings" value="${build.dir}/conf/drupal/settings.php" />
+    <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
+    <property name="build.drupal.settings" value="conf/drupal/settings.php" />
+    <property name="build.drupal.services" value="conf/drupal/services.yml" />
 
     <!-- Configure Drush -->
     <taskdef name="drush" classname="Drush\Task" />
@@ -33,6 +41,7 @@
     <target name="test">
         <echo message="Hello World!" />
         <drush command="status" />
+        <echoproperties />
     </target>
 
     <!-- Target: drupal-prepare-filesystem -->
@@ -41,7 +50,22 @@
         <chmod file="${build.dir}/${drupal.root}/${drupal.sites_dir}" mode="777" />
 
         <delete file="${build.dir}/${drupal.root}/${drupal.sites_dir}/files" />
-        <symlink target="${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
+        <symlink target="${build.dir}/${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
+    </target>
+
+    <!-- Target: drupal-prepare-settings -->
+    <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/settings.php" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="database.database" value="${drupal.database.database}"/>
+                    <token key="database.username" value="${drupal.database.username}"/>
+                    <token key="database.password" value="${drupal.database.password}"/>
+                    <token key="config_sync_directory" value="${config_sync_directory}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/services.yml" overwrite="true" />
     </target>
 
 </project>
