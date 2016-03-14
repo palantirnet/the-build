@@ -15,6 +15,9 @@
     <!-- all build.* path properties should be relative to the build.dir -->
     <property name="drupal.root" value="web" />
     <property name="drupal.uri" value="http://${phing.project.name}.local" />
+    <property name="drupal.site_name" value="${phing.project.name}" />
+    <property name="drupal.profile" value="standard" />
+    <property name="drupal.modules_enable" value="" />
 
     <property name="drupal.private_files_dir" value="../artifacts/private" />
     <property name="build.drupal.files" value="artifacts/files" />
@@ -53,6 +56,7 @@
         <symlink target="${build.dir}/${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
     </target>
 
+
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
         <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/settings.php" overwrite="true">
@@ -61,11 +65,33 @@
                     <token key="database.database" value="${drupal.database.database}"/>
                     <token key="database.username" value="${drupal.database.username}"/>
                     <token key="database.password" value="${drupal.database.password}"/>
-                    <token key="config_sync_directory" value="${config_sync_directory}"/>
+                    <token key="config_sync_directory" value="${drupal.config_sync_directory}"/>
                 </replacetokens>
             </filterchain>
         </copy>
         <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/services.yml" overwrite="true" />
+    </target>
+
+
+    <!-- Target: drupal-install -->
+    <target name="drupal-install" description="Install Drupal.">
+        <drush command="site-install">
+            <option name="site-name">${drupal.site_name}</option>
+            <option name="sites-subdir">${drupal.sites_dir}</option>
+            <option name="account-name">admin</option>
+            <option name="account-pass">admin</option>
+        </drush>
+
+        <foreach list="drupal.modules_enable" param="module" target="drupal-enable-module" />
+    </target>
+
+
+    <!-- Target: drupal-enable-module -->
+    <target name="drupal-enable-module">
+        <fail unless="module" />
+        <drush command="pm-enable">
+            <param>${module}</param>
+        </drush>
     </target>
 
 </project>
