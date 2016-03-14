@@ -69,9 +69,9 @@
                 <propertyprompt propertyName="drupal.site_name" defaultValue="${projectname}" promptText="Site name" promptCharacter=":" useExistingValue="true" />
                 <propertyprompt propertyName="drupal.private_files_dir" defaultValue="../artifacts/private" promptText="Drupal private files, relative to the Drupal root" promptCharacter=":" useExistingValue="true" />
                 <propertyprompt propertyName="build.drupal.files" defaultValue="artifacts/files" promptText="Source directory for Drupal files, relative to the project root" promptCharacter=":" useExistingValue="true" />
-                <propertyprompt propertyName="drupal.database.database" defaultValue="default" promptText="Drupal database name" promptCharacter=":" useExistingValue="true" />
-                <propertyprompt propertyName="drupal.database.username" defaultValue="drupal" promptText="Drupal database username" promptCharacter=":" useExistingValue="true" />
-                <propertyprompt propertyName="drupal.database.password" defaultValue="drupal" promptText="Drupal database password" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.database" defaultValue="drupal" promptText="Drupal database name" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.username" defaultValue="root" promptText="Drupal database username" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.password" defaultValue="root" promptText="Drupal database password" promptCharacter=":" useExistingValue="true" />
                 <propertyprompt propertyName="drupal.modules_enable" defaultValue="" promptText="Modules to enable upon install, separated by commas" promptCharacter=":" useExistingValue="true" />
 
                 <phingcall target="configure-write" />
@@ -89,9 +89,9 @@
         <property name="drupal.site_name" value="${projectname}" />
         <property name="drupal.private_files_dir" value="../artifacts/private" />
         <property name="build.drupal.files" value="artifacts/files" />
-        <property name="drupal.database.database" value="default" />
-        <property name="drupal.database.username" value="drupal" />
-        <property name="drupal.database.password" value="drupal" />
+        <property name="drupal.database.database" value="drupal" />
+        <property name="drupal.database.username" value="root" />
+        <property name="drupal.database.password" value="root" />
         <property name="drupal.modules_enable" value="" />
 
         <phingcall target="configure-write" />
