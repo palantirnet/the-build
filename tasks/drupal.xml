@@ -34,7 +34,7 @@
     <taskdef name="drush" classname="Drush\Task" />
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
     <property name="drush.uri" refid="drupal.uri" />
-    <property name="drush.root" refid="drupal.root" />
+    <property name="drush.root" value="${build.dir}/${drupal.root}" />
     <property name="drush.config" value="${application.startdir}/conf/drushrc.php" />
 
     <!-- Target: test -->
