@@ -27,7 +27,7 @@
     <property name="drupal.database.password" value="drupal" />
 
     <!-- These properties will generally not change. -->
-    <property name="drupal.sites_dir" value="sites/default" />
+    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
     <property name="drupal.files_dir" value="sites/default/files" />
     <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
@@ -48,17 +48,17 @@
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
-        <mkdir dir="${build.dir}/${drupal.root}/${drupal.sites_dir}" />
-        <chmod file="${build.dir}/${drupal.root}/${drupal.sites_dir}" mode="777" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" />
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
 
-        <delete file="${build.dir}/${drupal.root}/${drupal.sites_dir}/files" />
+        <delete file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/files" />
         <symlink target="${build.dir}/${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
     </target>
 
 
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
-        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/settings.php" overwrite="true">
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="755">
             <filterchain>
                 <replacetokens>
                     <token key="database.database" value="${drupal.database.database}"/>
@@ -73,14 +73,14 @@
 
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
-        <drush command="site-install">
+        <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
-            <option name="sites-subdir">${drupal.sites_dir}</option>
+            <option name="sites-subdir">${drupal.sites_subdir}</option>
             <option name="account-name">admin</option>
             <option name="account-pass">admin</option>
         </drush>
 
-        <foreach list="drupal.modules_enable" param="module" target="drupal-enable-module" />
+        <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
     </target>
 
 

@@ -75,6 +75,22 @@
                 <propertyprompt propertyName="drupal.modules_enable" defaultValue="" promptText="Modules to enable upon install, separated by commas" promptCharacter=":" useExistingValue="true" />
 
                 <phingcall target="configure-write" />
+
+                <if>
+                    <equals arg1="${build.env}" arg2="default" />
+                    <then>
+                        <copy file="${phing.dir.install}/../conf/drushrc.php" tofile="${application.startdir}/conf/drushrc.php" overwrite="true">
+                            <filterchain>
+                                <replacetokens>
+                                    <token key="drupal.root" value="${drupal.root}"/>
+                                    <token key="drupal.uri" value="${drupal.uri}"/>
+                                    <token key="drupal.sites_subdir" value="default"/>
+                                    <token key="drupal.site_name" value="${drupal.site_name}"/>
+                                </replacetokens>
+                            </filterchain>
+                        </copy>
+                    </then>
+                </if>
             </else>
         </if>
     </target>
