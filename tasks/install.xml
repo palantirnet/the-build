@@ -4,10 +4,13 @@
         This can be used to install the build template into a project.
       -->
 
-    <target name="install" description="Install the phing build tempalte into your project.">
-        <!-- Uses the project directory name as the projectname -->
-        <basename property="projectname" file="${application.startdir}" suffix="local" />
+    <!-- Uses the project directory name as the projectname -->
+    <basename property="projectname" file="${application.startdir}" suffix="local" />
 
+
+    <!-- Target: install -->
+    <target name="install" description="Install the Phing build template into your project.">
+        <!-- Copy the Vagrantfile template. -->
         <copy file="${phing.dir.install}/../build.dist.xml" tofile="${application.startdir}/build.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
@@ -15,6 +18,90 @@
                 </replacetokens>
             </filterchain>
         </copy>
+
+        <!-- Copy the build configuration. -->
+        <mkdir dir="${application.startdir}/conf" />
+        <copy todir="${application.startdir}/conf/drupal">
+            <fileset dir="${phing.dir.install}/../conf/drupal"/>
+        </copy>
+
+        <echo message="Configure the default environment..." />
+        <phingcall target="configure">
+            <property name="build.env" value="default" />
+        </phingcall>
+
+        <echo message="To configure defaults for more environments, run: vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml configure" />
+    </target>
+
+
+    <!-- Target: configure -->
+    <target name="configure" description="Interactive build properties configuration.">
+        <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
+        <property name="propertiesfile" value="${application.startdir}/conf/build.${build.env}.properties" />
+
+        <if>
+          <available file="${propertiesfile}" />
+          <then>
+              <input propertyName="overwrite" message="Overrwrite existing properties file '${propertiesfile}'" promptChar="?" validArgs="Y,n" />
+          </then>
+        </if>
+
+        <if>
+            <and>
+                <isset property="overwrite" />
+                <not><equals arg1="${overwrite}" arg2="Y" /></not>
+            </and>
+            <then>
+                <echo message="Ok, try again with a different environment." />
+            </then>
+            <else>
+                <propertyprompt propertyName="drupal.root" defaultValue="web" promptText="Drupal root" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.uri" defaultValue="http://${projectname}.local" promptText="Drupal URI" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.private_files_dir" defaultValue="../artifacts/private" promptText="Drupal private files, relative to the Drupal root" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="build.drupal.files" defaultValue="artifacts/files" promptText="Source directory for Drupal files, relative to the project root" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.database" defaultValue="default" promptText="Drupal database name" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.username" defaultValue="drupal" promptText="Drupal database username" promptCharacter=":" useExistingValue="true" />
+                <propertyprompt propertyName="drupal.database.password" defaultValue="drupal" promptText="Drupal database password" promptCharacter=":" useExistingValue="true" />
+
+                <phingcall target="configure-write" />
+            </else>
+        </if>
+    </target>
+
+
+    <!-- Target: configure-defaults -->
+    <target name="configure-defaults" description="Create a properties file containing the default build configuration." >
+        <fail unless="build.env" message="The 'build.env' property is required. Try running with: -Dbuild.env=vagrant" />
+
+        <property name="drupal.root" value="web" />
+        <property name="drupal.uri" value="http://${projectname}.local" />
+        <property name="drupal.private_files_dir" value="../artifacts/private" />
+        <property name="build.drupal.files" value="artifacts/files" />
+        <property name="drupal.database.database" value="default" />
+        <property name="drupal.database.username" value="drupal" />
+        <property name="drupal.database.password" value="drupal" />
+
+        <phingcall target="configure-write" />
+    </target>
+
+
+    <!-- Target: configure-write -->
+    <target name="configure-write">
+        <property name="propertiesfile" value="${application.startdir}/conf/build.${build.env}.properties" />
+
+        <echo file="${propertiesfile}"># Build properties for the ${build.env} environment
+
+drupal.root=${drupal.root}
+drupal.uri=${drupal.uri}
+
+drupal.private_files_dir=${drupal.private_files_dir}
+build.drupal.files=${build.drupal.files}
+
+drupal.database.database=${drupal.database.database}
+drupal.database.username=${drupal.database.username}
+drupal.database.password=${drupal.database.password}
+</echo>
+        <echo message="Updated ${propertiesfile}" />
     </target>
 
 </project>
