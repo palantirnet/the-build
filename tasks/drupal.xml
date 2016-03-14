@@ -31,7 +31,6 @@
     <property name="drupal.files_dir" value="sites/default/files" />
     <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
-    <property name="build.drupal.services" value="conf/drupal/services.yml" />
 
     <!-- Configure Drush -->
     <taskdef name="drush" classname="Drush\Task" />
@@ -69,7 +68,6 @@
                 </replacetokens>
             </filterchain>
         </copy>
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/${drupal.sites_dir}/services.yml" overwrite="true" />
     </target>
 
 
