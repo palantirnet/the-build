@@ -4,7 +4,7 @@
         <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
       -->
 
-    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true"/>
+    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
     <property name="build.dir" value="${application.startdir}" />
 
     <property file="${build.dir}/conf/build.${build.env}.properties" />
@@ -48,7 +48,16 @@
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
-        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" />
+        <!-- Make sure the file source directory exists. -->
+        <foreach target="create-placeholder" param="dir">
+            <filelist dir="${build.dir}" files="${build.drupal.files}" />
+        </foreach>
+
+        <!-- Create Drupal modules, themes, profiles, and sites directories. -->
+        <foreach target="create-placeholder" param="dir">
+            <filelist dir="${build.dir}/${drupal.root}" files="modules/custom,modules/custom,themes/custom,profiles/custom,sites/${drupal.sites_subdir}" />
+        </foreach>
+
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
 
         <delete file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/files" />
@@ -68,6 +77,15 @@
                 </replacetokens>
             </filterchain>
         </copy>
+    </target>
+
+
+    <!-- Target: create-placeholder -->
+    <target name="create-placeholder">
+        <fail unless="dir" message="The 'dir' property is required." />
+
+        <mkdir dir="${dir}" />
+        <touch file="${dir}/.gitkeep" />
     </target>
 
 
