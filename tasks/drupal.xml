@@ -55,7 +55,7 @@
 
         <!-- Create Drupal modules, themes, profiles, and sites directories. -->
         <foreach target="create-placeholder" param="dir">
-            <filelist dir="${build.dir}/${drupal.root}" files="modules/custom,modules/custom,themes/custom,profiles/custom,sites/${drupal.sites_subdir}" />
+            <filelist dir="${build.dir}/${drupal.root}" files="modules/custom,modules/custom,themes/custom,profiles/custom,web/sites/${drupal.sites_subdir}" />
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
