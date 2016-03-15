@@ -16,7 +16,7 @@ if (!empty($output)) {
 }
 
 $command_specific['site-install'] = array(
-  'sites-subdir' => '@drupal.sites_dir@',
+  'sites-subdir' => '@drupal.sites_subdir@',
   'site-name' => '@drupal.site_name@',
   'account-name' => 'admin',
   'account-pass' => 'admin',
