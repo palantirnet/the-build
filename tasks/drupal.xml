@@ -48,14 +48,10 @@
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
-        <!-- Make sure the file source directory exists. -->
+        <!-- Make sure the file source directory exists, and create the Drupal
+             modules, themes, profiles, and sites directories. -->
         <foreach target="create-placeholder" param="dir">
-            <filelist dir="${build.dir}" files="${build.drupal.files}" />
-        </foreach>
-
-        <!-- Create Drupal modules, themes, profiles, and sites directories. -->
-        <foreach target="create-placeholder" param="dir">
-            <filelist dir="${build.dir}/${drupal.root}" files="modules/custom,modules/custom,themes/custom,profiles/custom,web/sites/${drupal.sites_subdir}" />
+            <filelist files="${build.drupal.files},${drupal.root}/modules/custom,${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
