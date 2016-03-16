@@ -102,7 +102,7 @@
     <!-- Target: drupal-enable-module -->
     <target name="drupal-enable-module">
         <fail unless="module" />
-        <drush command="pm-enable">
+        <drush command="pm-enable" assume="yes">
             <param>${module}</param>
         </drush>
     </target>
