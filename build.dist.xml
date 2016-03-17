@@ -3,13 +3,18 @@
     <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
     <!-- Boilerplate -->
-    <import file="vendor/palantirnet/the-build/tasks/configure.xml" />
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
         <phingcall target="drupal-prepare-filesystem" />
         <phingcall target="drupal-prepare-settings" />
+    </target>
+
+    <target name="configure">
+        <phing phingfile="vendor/palantirnet/the-build/tasks/configure.xml" inheritAll="false" dir=".">
+            <property name="build.env" value="${build.env}" />
+        </phing>
     </target>
 
 </project>
