@@ -27,7 +27,9 @@
 
         <echo message="Configure the default environment..." />
         <phingcall target="configure-defaults" />
-        <phingcall target="configure-drush" />
+        <phingcall target="configure-drush">
+            <property name="build.env" value="default" />
+        </phingcall>
 
         <echo message="To configure properties for more environments, run: vendor/bin/phing configure" />
     </target>
