@@ -3,6 +3,7 @@
     <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
     <!-- Boilerplate -->
+    <import file="vendor/palantirnet/the-build/tasks/configure.xml" />
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
 
     <!-- Default target: build -->
