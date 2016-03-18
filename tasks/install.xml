@@ -18,9 +18,6 @@
                 </replacetokens>
             </filterchain>
         </copy>
-        
-        <!-- Copy the drush alias script -->
-        <copy file="${vagrant.bin.source}/drush" tofile="${vagrant.bin.dest}/drush"/>
 
         <!-- Copy the build configuration. -->
         <mkdir dir="${application.startdir}/conf" />
