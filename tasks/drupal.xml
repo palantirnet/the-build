@@ -106,6 +106,7 @@
             <option name="sites-subdir">${drupal.sites_subdir}</option>
             <option name="account-name">admin</option>
             <option name="account-pass">admin</option>
+            <param>${drupal.profile}</param>
         </drush>
 
         <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
