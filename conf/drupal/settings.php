@@ -6,7 +6,7 @@ $databases['default']['default'] = array(
   'database' => '@database.database@',
   'username' => '@database.username@',
   'password' => '@database.password@',
-  'host' => 'localhost',
+  'host' => '@database.host@',
   'prefix' => '',
   'collation' => 'utf8mb4_general_ci',
 );

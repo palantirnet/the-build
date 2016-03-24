@@ -30,6 +30,7 @@
     <property name="drupal.database.database" value="default" />
     <property name="drupal.database.username" value="drupal" />
     <property name="drupal.database.password" value="drupal" />
+    <property name="drupal.database.host" value="127.0.0.1" />
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
@@ -82,6 +83,7 @@
                     <token key="database.database" value="${drupal.database.database}" />
                     <token key="database.username" value="${drupal.database.username}" />
                     <token key="database.password" value="${drupal.database.password}" />
+                    <token key="database.host" value="${drupal.database.host}" />
                     <token key="drupal.config_sync_directory" value="${drupal.config_sync_directory}" />
                     <token key="hash_salt" value="temporary" />
                 </replacetokens>

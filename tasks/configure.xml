@@ -51,6 +51,9 @@
         <property name="prompt.drupal.database.password" value="Drupal database password" />
         <property name="default.drupal.database.password" value="root" />
 
+        <property name="prompt.drupal.database.host" value="Drupal database host" />
+        <property name="default.drupal.database.host" value="127.0.0.1" />
+
         <property name="prompt.drupal.profile" value="Install profile" />
         <property name="default.drupal.profile" value="standard" />
 
