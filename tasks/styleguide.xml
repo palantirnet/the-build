@@ -10,7 +10,7 @@
 
     <!--
         Target: configure
-        
+
         Interactive configuration to set the styleguide build properties.
         -->
     <target name="styleguide-configure" description="Interactive configuration for styleguide build properties.">
@@ -39,7 +39,7 @@
 
     <!--
         Target: styleguide-build
-        
+
         Generate and deploy the prod styleguide CSS and HTML.
         -->
     <target name="styleguide-build" description="Generate, commit, and optionally deploy the latest changes to the styleguide.">
@@ -55,7 +55,7 @@
 
     <!--
         Target: styleguide-generate
-        
+
         Can be run any time, for any environment. Defaults to generating "dev"
         CSS and HTML.
         -->
@@ -222,6 +222,102 @@
             <not><equals arg1="${scss_lint.return}" arg2="0" /></not>
             <then>
                 <fail msg="${scss_lint.output}" status="${scss_lint.return}" />
+            </then>
+        </if>
+    </target>
+
+
+    <!--
+        Target: fed-init
+
+        Install styleguide development dependencies. This is the same thing as
+        Butler's fed-init.sh, but not a shell script.
+        -->
+    <target name="fed-init" description="Install the Butler toolset in the styleguide.">
+        <fail unless="styleguide.dir" />
+        <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
+
+        <!-- Let's just put these default npm packages right here. -->
+        <property name="styleguide.npm_dependencies" value="browser-sync compass-options gulp gulp-autoprefixer gulp-changed gulp-compass gulp-cssmin gulp-imagemin gulp-inject gulp-jscs gulp-jscs-stylish gulp-jshint gulp-rename gulp-scss-lint gulp-sitespeedio gulp-uglify jshint-checkstyle-file-reporter" />
+
+        <!-- If there are bundler dependencies, install them. -->
+        <if>
+            <available file="${styleguide.dir.absolute_path}/Gemfile" type="file" />
+            <then>
+                <echo>Installing bundler dependencies.</echo>
+
+                <phingcall target="styleguide-check-commandline-dependency">
+                    <property name="dependency" value="bundle" />
+                </phingcall>
+
+                <exec command="bundle install" dir="${styleguide.dir.absolute_path}" checkreturn="true" outputProperty="bundle_install_output" />
+                <echo level="verbose">${bundle_install_output}</echo>
+            </then>
+        </if>
+
+        <!-- If there is a Gulpfile, install the npm dependencies. -->
+        <if>
+            <available file="${styleguide.dir.absolute_path}/Gulpfile.js" type="file" />
+            <then>
+                <echo>Installing npm dependencies.</echo>
+
+                <phingcall target="styleguide-check-commandline-dependency">
+                    <property name="dependency" value="npm" />
+                </phingcall>
+
+                <if>
+                    <available file="${styleguide.dir.absolute_path}/package.json" type="file" />
+                    <then>
+                        <exec command="npm install" dir="${styleguide.dir.absolute_path}" checkreturn="true" outputProperty="npm_install_output" />
+                        <echo level="verbose">${npm_install_output}</echo>
+                    </then>
+                    <else>
+                        <exec command="npm install --save-dev ${styleguide.npm_dependencies}" dir="${styleguide.dir.absolute_path}" checkreturn="true" outputProperty="npm_install_output" />
+                        <echo level="verbose">${npm_install_output}</echo>
+                        <echo level="warning">A `package.json` file for npm has been created. You should commit this to your repository, like, now.</echo>
+                    </else>
+                </if>
+
+                <!-- Poke npm package file. Why, I don't know. -->
+                <chmod file="${styleguide.dir.absolute_path}/package.json" mode="774" />
+
+                <!-- Again, not sure why, but fed-init.sh was doing it. -->
+                <echo>Removing *.info files from node_modules.</echo>
+                <delete>
+                    <fileset dir="${styleguide.dir.absolute_path}/node_modules">
+                        <include name="**/*.info" />
+                    </fileset>
+                </delete>
+
+                <!-- Interactive gulp configuration. This should be checked in really so only the first FED on the project should ever see this. -->
+                <if>
+                    <and>
+                        <not><available file="${styleguide.dir.absolute_path}/gulp_config.js" /></not>
+                        <available file="${styleguide.dir.absolute_path}/gulp_config.sh" />
+                    </and>
+                    <then>
+                        <exec command="${styleguide.dir.absolute_path}/gulp_config.sh" passthru="true" />
+                    </then>
+                </if>
+            </then>
+        </if>
+    </target>
+
+
+    <!--
+        Target: styleguide-check-commandline-dependency
+
+        Verify that a CLI program (e.g. bundle, npm) is available.
+        -->
+    <target name="styleguide-check-commandline-dependency">
+        <fail unless="dependency" />
+
+        <exec command="command -v ${dependency}" returnProperty="has_dependency" />
+
+        <if>
+            <not><equals arg1="${has_dependency}" arg2="0" /></not>
+            <then>
+                <fail message="Missing command line dependency `${dependency}`." />
             </then>
         </if>
     </target>
