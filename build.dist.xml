@@ -4,6 +4,7 @@
 
     <!-- Boilerplate -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
@@ -14,6 +15,12 @@
     <target name="configure">
         <phing phingfile="vendor/palantirnet/the-build/tasks/configure.xml" inheritAll="false" dir=".">
             <property name="build.env" value="${build.env}" />
+        </phing>
+
+        <phing phingfile="${phing.file.styleguide}" inheritAll="false" target="styleguide-configure">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="build.env" value="${build.env}" />
+            <property name="projectname" value="${projectname}" />
         </phing>
     </target>
 
