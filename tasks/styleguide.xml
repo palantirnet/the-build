@@ -14,8 +14,6 @@
         Interactive configuration to set the styleguide build properties.
         -->
     <target name="styleguide-configure" description="Interactive configuration for styleguide build properties.">
-        <echoproperties />
-
         <phing phingfile="${phing.dir.styleguide}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
