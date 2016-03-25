@@ -1,0 +1,242 @@
+<project name="Styleguide" default="styleguide-generate">
+    <!--
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+      -->
+
+    <!-- Uses the project directory name as the projectname -->
+    <property name="build.dir" value="${application.startdir}" />
+    <basename property="projectname" file="${build.dir}" suffix="local" />
+
+
+    <!-- If the command wasn't called with an environment, prompt for one. -->
+    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
+
+
+    <!-- Load properties for this environment, then for the default environment. -->
+    <property file="${build.dir}/conf/build.${build.env}.properties" />
+    <property file="${build.dir}/conf/build.default.properties" />
+
+
+    <!--
+        Target: configure
+        
+        Interactive configuration to set the styleguide build properties.
+        -->
+    <target name="styleguide-configure" description="Interactive configuration for styleguide build properties.">
+        <echoproperties />
+
+        <phing phingfile="${phing.dir}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <property name="prompt.styleguide.dir" value="Styleguide directory, relative to the project root." />
+            <property name="default.styleguide.dir" value="styleguide" />
+
+            <property name="prompt.styleguide.repo" value="Git repository for the rendered styleguide" />
+            <property name="default.styleguide.repo" value="git@github.com:palantirnet/${projectname}.git" />
+
+            <property name="prompt.styleguide.branch" value="Branch of the git repository to use" />
+            <property name="default.styleguide.branch" value="gh-pages" />
+
+            <property name="prompt.styleguide.env" value="Environment to use when rendering sass and sculpin (dev, prod)" />
+            <property name="default.styleguide.env" value="dev" />
+
+            <property name="update" value="styleguide.dir,styleguide.repo,styleguide.branch,styleguide.env" />
+        </phing>
+    </target>
+
+
+    <!--
+        Target: styleguide-build
+        
+        Generate and deploy the prod styleguide CSS and HTML.
+        -->
+    <target name="styleguide-build" description="Generate, commit, and optionally deploy the latest changes to the styleguide.">
+        <resolvepath propertyName="styleguide.dir" file="${styleguide.dir}" />
+
+        <property name="styleguide.repo" value="git@github.com:palantirnet/${projectname}.git" />
+        <property name="styleguide.branch" value="gh-pages" />
+
+        <!-- Always render for prod when doing a build. -->
+        <property name="styleguide.env" value="prod" override="true" />
+        <property name="styleguide.output_dir" value="${build.dir}/styleguide/output_${styleguide.env}" override="true" />
+
+        <phingcall target="styleguide-init" />
+        <phingcall target="styleguide-generate" />
+        <phingcall target="styleguide-deploy" />
+    </target>
+
+
+    <!--
+        Target: styleguide-generate
+        
+        Can be run any time, for any environment. Defaults to generating "dev"
+        CSS and HTML.
+        -->
+    <target name="styleguide-generate" description="Generate the Sass and HTML for the styleguide." >
+        <fail unless="styleguide.dir" />
+        <property name="styleguide.env" value="dev" />
+
+        <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir}" checkreturn="true" />
+        <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir}" checkreturn="true" />
+        <echo>Regenerated CSS.</echo>
+
+        <exec command="vendor/bin/sculpin generate --project-dir=${styleguide.dir} --env=${styleguide.env}" checkreturn="true" />
+        <echo>Regenerated HTML.</echo>
+    </target>
+
+
+    <!--
+        Target: styleguide-init
+
+        Should only be run when building the styleguide for deployment. Note
+        that in this case, ${styleguide.env} == "prod", but ${build.env} might
+        be anything.
+        -->
+    <target name="styleguide-init">
+        <fail unless="styleguide.output_dir" />
+        <fail unless="styleguide.repo" />
+        <fail unless="styleguide.branch" />
+
+        <if>
+            <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
+            <then>
+                <fail msg="styleguide-init should only be run when building a prod styleguide artifact." />
+            </then>
+        </if>
+
+        <!-- If there's styleguide output that is NOT a git directory, remove it. -->
+        <if>
+            <and>
+                <available file="${styleguide.output_dir}" type="dir" />
+                <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
+            </and>
+            <then>
+                <echo>Removing old styleguide output...</echo>
+                <delete dir="${styleguide.output_dir}" />
+            </then>
+        </if>
+
+        <!-- If there is no styleguide output directory, clone the repo. -->
+        <if>
+            <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
+            <then>
+                <echo>Cloning the repository...</echo>
+                <gitclone repository="${styleguide.repo}" targetPath="${styleguide.output_dir}" />
+            </then>
+        </if>
+
+        <!-- Check out the output branch. -->
+        <gitcheckout repository="${styleguide.output_dir}" branchname="${styleguide.branch}" force="true" />
+        <!-- Pull upstream changes. -->
+        <gitpull repository="${styleguide.output_dir}" source="origin" refspec="${styleguide.branch}" force="true" />
+    </target>
+
+
+    <!--
+        Target: styleguide-deploy
+
+        Commit and push current changes to the rendered styleguide. Should only
+        be run when building the styleguide for deployment.
+        -->
+    <target name="styleguide-deploy">
+        <fail unless="styleguide.output_dir" />
+        <fail unless="styleguide.branch" />
+
+        <if>
+            <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
+            <then>
+                <fail msg="styleguide-deploy should only be run when building a prod styleguide artifact." />
+            </then>
+        </if>
+
+        <!-- If there are changes in the dest directory, commit them. -->
+        <exec command="git status --porcelain" dir="${styleguide.output_dir}" outputProperty="changes_to_deploy" />
+        <if>
+            <not><equals arg1="${changes_to_deploy}" arg2="" /></not>
+            <then>
+                <!-- Get a descriptor of the current ref of the main repository. -->
+                <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="build_commit_ref" />
+
+                <!-- Generate a commit message. -->
+                <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
+                <if>
+                    <not><equals arg1="${modified_files}" arg2="" /></not>
+                    <then>
+                        <!-- Whitespace within this property value is intentional. -->
+                        <property name="build_message">(dirty) Styleguide as of ${build_commit_ref}
+
+        Files with un-committed changes:
+        ${modified_files}
+        </property>
+                    </then>
+                    <else>
+                        <property name="build_message" value="Styleguide as of ${build_commit_ref}" />
+                    </else>
+                </if>
+
+                <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+                <exec command="git add --all" dir="${styleguide.output_dir}" />
+
+                <!-- Commit it all. -->
+                <gitcommit repository="${styleguide.output_dir}" message="${build_message}" allFiles="true" />
+            </then>
+            <else>
+                <echo>No changes to ${styleguide.output_dir}.</echo>
+            </else>
+        </if>
+
+        <!-- If the local repository has forward commits, push them. -->
+        <exec command="git diff origin/${styleguide.branch}" dir="${styleguide.output_dir}" outputProperty="has_forward_commits" />
+
+        <if>
+            <and>
+                <istrue value="${has_forward_commits}" />
+                <not><isset property="push" /></not>
+            </and>
+            <then>
+                <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
+            </then>
+        </if>
+
+        <if>
+            <and>
+                <istrue value="${has_forward_commits}" />
+                <equals arg1="${push}" arg2="y" />
+            </and>
+            <then>
+                <gitpush repository="${styleguide.output_dir}" refspec="${styleguide.branch}" tags="true" />
+            </then>
+        </if>
+    </target>
+
+
+    <!--
+        Target: styleguide-test
+        -->
+    <target name="styleguide-test" description="Run linters on the styleguide.">
+        <fail unless="styleguide.dir" />
+        <property name="test.output_dir" value="/dev/null" />
+
+        <exec command="bundle exec scss-lint" dir="${styleguide.dir}" outputProperty="scss_lint.output" returnProperty="scss_lint.return" />
+
+        <!-- If an output dir was provided, dump the linter output there. -->
+        <if>
+            <available file="${test.output_dir}" type="dir" />
+            <then>
+                <mkdir dir="${test.output_dir}/scss-lint" />
+                <echo msg="${scss_lint.output}" file="${test.output_dir}/scss-lint/output.txt" />
+            </then>
+        </if>
+
+        <!-- Show the linter output and throw an error if linting didn't pass. -->
+        <if>
+            <not><equals arg1="${scss_lint.return}" arg2="0" /></not>
+            <then>
+                <fail msg="${scss_lint.output}" status="${scss_lint.return}" />
+            </then>
+        </if>
+    </target>
+
+</project>
