@@ -4,19 +4,9 @@
         <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
       -->
 
-    <!-- Uses the project directory name as the projectname -->
-    <property name="build.dir" value="${application.startdir}" />
-    <basename property="projectname" file="${build.dir}" suffix="local" />
-
-
-    <!-- If the command wasn't called with an environment, prompt for one. -->
-    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
-
-
-    <!-- Load properties for this environment, then for the default environment. -->
-    <property file="${build.dir}/conf/build.${build.env}.properties" />
-    <property file="${build.dir}/conf/build.default.properties" />
-
+    <fail unless="projectname" />
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
 
     <!--
         Target: configure
@@ -26,7 +16,7 @@
     <target name="styleguide-configure" description="Interactive configuration for styleguide build properties.">
         <echoproperties />
 
-        <phing phingfile="${phing.dir}/configure.xml" inheritAll="false" dir="${build.dir}">
+        <phing phingfile="${phing.dir.styleguide}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
@@ -53,18 +43,13 @@
         Generate and deploy the prod styleguide CSS and HTML.
         -->
     <target name="styleguide-build" description="Generate, commit, and optionally deploy the latest changes to the styleguide.">
-        <resolvepath propertyName="styleguide.dir" file="${styleguide.dir}" />
-
-        <property name="styleguide.repo" value="git@github.com:palantirnet/${projectname}.git" />
-        <property name="styleguide.branch" value="gh-pages" />
-
         <!-- Always render for prod when doing a build. -->
         <property name="styleguide.env" value="prod" override="true" />
         <property name="styleguide.output_dir" value="${build.dir}/styleguide/output_${styleguide.env}" override="true" />
 
-        <phingcall target="styleguide-init" />
+        <phingcall target="styleguide-build-init" />
         <phingcall target="styleguide-generate" />
-        <phingcall target="styleguide-deploy" />
+        <phingcall target="styleguide-build-deploy" />
     </target>
 
 
@@ -76,25 +61,26 @@
         -->
     <target name="styleguide-generate" description="Generate the Sass and HTML for the styleguide." >
         <fail unless="styleguide.dir" />
+        <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
         <property name="styleguide.env" value="dev" />
 
-        <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir}" checkreturn="true" />
-        <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir}" checkreturn="true" />
+        <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
+        <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
         <echo>Regenerated CSS.</echo>
 
-        <exec command="vendor/bin/sculpin generate --project-dir=${styleguide.dir} --env=${styleguide.env}" checkreturn="true" />
+        <exec command="vendor/bin/sculpin generate --project-dir=${styleguide.dir.absolute_path} --env=${styleguide.env}" checkreturn="true" />
         <echo>Regenerated HTML.</echo>
     </target>
 
 
     <!--
-        Target: styleguide-init
+        Target: styleguide-build-init
 
         Should only be run when building the styleguide for deployment. Note
         that in this case, ${styleguide.env} == "prod", but ${build.env} might
         be anything.
         -->
-    <target name="styleguide-init">
+    <target name="styleguide-build-init">
         <fail unless="styleguide.output_dir" />
         <fail unless="styleguide.repo" />
         <fail unless="styleguide.branch" />
@@ -102,7 +88,7 @@
         <if>
             <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
             <then>
-                <fail msg="styleguide-init should only be run when building a prod styleguide artifact." />
+                <fail msg="styleguide-build-init should only be run when building a prod styleguide artifact." />
             </then>
         </if>
 
@@ -135,19 +121,19 @@
 
 
     <!--
-        Target: styleguide-deploy
+        Target: styleguide-build-deploy
 
         Commit and push current changes to the rendered styleguide. Should only
         be run when building the styleguide for deployment.
         -->
-    <target name="styleguide-deploy">
+    <target name="styleguide-build-deploy">
         <fail unless="styleguide.output_dir" />
         <fail unless="styleguide.branch" />
 
         <if>
             <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
             <then>
-                <fail msg="styleguide-deploy should only be run when building a prod styleguide artifact." />
+                <fail msg="styleguide-build-deploy should only be run when building a prod styleguide artifact." />
             </then>
         </if>
 
@@ -217,9 +203,10 @@
         -->
     <target name="styleguide-test" description="Run linters on the styleguide.">
         <fail unless="styleguide.dir" />
+        <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
         <property name="test.output_dir" value="/dev/null" />
 
-        <exec command="bundle exec scss-lint" dir="${styleguide.dir}" outputProperty="scss_lint.output" returnProperty="scss_lint.return" />
+        <exec command="bundle exec scss-lint" dir="${styleguide.dir.absolute_path}" outputProperty="scss_lint.output" returnProperty="scss_lint.return" />
 
         <!-- If an output dir was provided, dump the linter output there. -->
         <if>
