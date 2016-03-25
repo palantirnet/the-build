@@ -277,28 +277,6 @@
                         <echo level="warning">A `package.json` file for npm has been created. You should commit this to your repository, like, now.</echo>
                     </else>
                 </if>
-
-                <!-- Poke npm package file. Why, I don't know. -->
-                <chmod file="${styleguide.dir.absolute_path}/package.json" mode="774" />
-
-                <!-- Again, not sure why, but fed-init.sh was doing it. -->
-                <echo>Removing *.info files from node_modules.</echo>
-                <delete>
-                    <fileset dir="${styleguide.dir.absolute_path}/node_modules">
-                        <include name="**/*.info" />
-                    </fileset>
-                </delete>
-
-                <!-- Interactive gulp configuration. This should be checked in really so only the first FED on the project should ever see this. -->
-                <if>
-                    <and>
-                        <not><available file="${styleguide.dir.absolute_path}/gulp_config.js" /></not>
-                        <available file="${styleguide.dir.absolute_path}/gulp_config.sh" />
-                    </and>
-                    <then>
-                        <exec command="${styleguide.dir.absolute_path}/gulp_config.sh" passthru="true" />
-                    </then>
-                </if>
             </then>
         </if>
     </target>
