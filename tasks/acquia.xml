@@ -1,0 +1,81 @@
+<project name="acquia" default="acquia-status">
+    <!--
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+      -->
+
+    <fail unless="projectname" />
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
+
+    <target name="acquia-status">
+        <fail unless="acquia.repo" />
+        <fail unless="acquia.branch" />
+        <fail unless="acquia.dir" />
+        
+        <if>
+            <or>
+                <not><available file="${acquia.dir}" type="dir" /></not>
+                <not><available file="${acquia.dir}/.git" type="dir" /></not>
+            </or>
+            <then>
+                <fail message="Acquia repository not present at ${acquia.dir}." />
+            </then>
+        </if>
+    </target>
+
+    <!--
+        Target: configure
+
+        Interactive configuration to set the Acquia build properties.
+        -->
+    <target name="acquia-configure" description="Interactive configuration for Acquia build properties.">
+        <phing phingfile="${phing.dir.acquia}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <property name="prompt.acquia.repo" value="Acquia git repository" />
+            <property name="default.acquia.repo" value="" />
+
+            <property name="prompt.acquia.branch" value="Git branch for build artifacts" />
+            <property name="default.acquia.branch" value="build" />
+
+            <property name="prompt.acquia.dir" value="Location to checkout artifact repository, relative to the project root" />
+            <property name="default.acquia.dir" value="artifacts/acquia" />
+
+            <property name="update" value="acquia.repo,acquia.deploy_branch,acquia.checkout_dir" />
+        </phing>
+    </target>
+    
+    <target name="acquia-init">
+        <fail unless="acquia.repo" />
+        <fail unless="acquia.branch" />
+        <fail unless="acquia.dir" />
+        
+        <!-- If there's an acquia directory that is NOT a git directory, remove it. -->
+        <if>
+            <and>
+                <available file="${acquia.dir}" type="dir" />
+                <not><available file="${acquia.dir}/.git" type="dir" /></not>
+            </and>
+            <then>
+                <fail message="Directory ${acquia.dir} exists but is not a git repository. Please remove it before continuing." />
+            </then>
+        </if>
+
+        <!-- If there is no acquia directory, clone the repo. -->
+        <if>
+            <not><available file="${acquia.dir}/.git" type="dir" /></not>
+            <then>
+                <echo>Cloning the repository...</echo>
+                <gitclone repository="${acquia.repo}" targetPath="${acquia.dir}" />
+            </then>
+        </if>
+
+        <!-- Check out the output branch. -->
+        <gitcheckout repository="${acquia.dir}" branchname="${acquia.branch}" force="true" />
+        <!-- Pull upstream changes. -->
+        <gitpull repository="${acquia.dir}" source="origin" refspec="${acquia.branch}" force="true" forcecreate="true" />
+    </target>
+
+</project>
