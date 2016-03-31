@@ -72,6 +72,8 @@
             </then>
         </if>
 
+        <gitbranch branchname="${acquia.branch}" startpoint="origin/${acquia.branch}" />
+
         <!-- Check out the output branch. -->
         <gitcheckout repository="${acquia.dir}" branchname="${acquia.branch}" force="true" />
         <!-- Pull upstream changes. -->
