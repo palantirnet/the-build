@@ -69,6 +69,7 @@
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+        <chmod file="${build.dir}/${build.drupal.files}" mode="777" />
 
         <delete file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/files" />
         <symlink target="${build.dir}/${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
