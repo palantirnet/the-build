@@ -23,6 +23,7 @@
     <property name="drupal.site_name" value="${phing.project.name}" />
     <property name="drupal.profile" value="standard" />
     <property name="drupal.modules_enable" value="" />
+    <property name="drupal.twig.debug" value="false" />
 
     <property name="drupal.private_files_dir" value="../artifacts/private" />
     <property name="build.drupal.files" value="artifacts/files" />
@@ -37,6 +38,7 @@
     <property name="drupal.files_dir" value="sites/default/files" />
     <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
+    <property name="build.drupal.services" value="conf/drupal/services.yml" />
 
     <!-- Configure Drush -->
     <taskdef name="drush" classname="Drush\Task" />
@@ -87,6 +89,20 @@
                     <token key="database.host" value="${drupal.database.host}" />
                     <token key="drupal.config_sync_directory" value="${drupal.config_sync_directory}" />
                     <token key="hash_salt" value="temporary" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+
+    <!-- Target: drupal-prepare-services -->
+    <target name="drupal-prepare-services" description="Write the services.yml file for Drupal.">
+        <fail unless="drupal.twig.debug" />
+
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="755">
+            <filterchain>
+                <replacetokens>
+                    <token key="twig.debug" value="${drupal.twig.debug}" />
                 </replacetokens>
             </filterchain>
         </copy>

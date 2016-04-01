@@ -10,6 +10,7 @@
     <target name="build" description="Build the application.">
         <phingcall target="drupal-prepare-filesystem" />
         <phingcall target="drupal-prepare-settings" />
+        <phingcall target="drupal-prepare-services" />
     </target>
 
     <target name="configure">
