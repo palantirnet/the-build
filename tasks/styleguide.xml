@@ -298,4 +298,19 @@
         </if>
     </target>
 
+
+    <!--
+        Target: styleguide-link-css
+
+        Link the styleguide css into the theme.
+        -->
+    <target name="styleguide-link-css">
+        <fail unless="css_source" />
+        <fail unless="css_dest" />
+
+        <delete file="${css_dest}" />
+        <symlink target="${css_source}" link="${css_dest}" />
+    </target>
+
+
 </project>
