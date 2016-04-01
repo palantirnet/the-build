@@ -12,7 +12,7 @@
         <fail unless="acquia.repo" />
         <fail unless="acquia.branch" />
         <fail unless="acquia.dir" />
-        
+
         <if>
             <or>
                 <not><available file="${acquia.dir}" type="dir" /></not>
@@ -46,12 +46,18 @@
             <property name="update" value="acquia.repo,acquia.deploy_branch,acquia.checkout_dir" />
         </phing>
     </target>
-    
-    <target name="acquia-init">
-        <fail unless="acquia.repo" />
-        <fail unless="acquia.branch" />
+
+    <target name="acquia-build">
+        <phingcall target="acquia-init-repository" />
+        <phingcall target="acquia-init-branch" />
+        <phingcall target="acquia-run-composer" />
+    </target>
+
+
+    <target name="acquia-init-repository">
         <fail unless="acquia.dir" />
-        
+        <fail unless="acquia.repo" />
+
         <!-- If there's an acquia directory that is NOT a git directory, remove it. -->
         <if>
             <and>
@@ -67,17 +73,104 @@
         <if>
             <not><available file="${acquia.dir}/.git" type="dir" /></not>
             <then>
-                <echo>Cloning the repository...</echo>
+                <echo>Cloning the repository from ${acquia.repo}</echo>
                 <gitclone repository="${acquia.repo}" targetPath="${acquia.dir}" />
             </then>
         </if>
-
-        <gitbranch branchname="${acquia.branch}" startpoint="origin/${acquia.branch}" />
-
-        <!-- Check out the output branch. -->
-        <gitcheckout repository="${acquia.dir}" branchname="${acquia.branch}" force="true" />
-        <!-- Pull upstream changes. -->
-        <gitpull repository="${acquia.dir}" source="origin" refspec="${acquia.branch}" force="true" forcecreate="true" />
     </target>
+
+
+    <target name="acquia-init-branch">
+        <fail unless="acquia.dir" />
+        <fail unless="acquia.repo" />
+        <fail unless="acquia.branch" />
+
+        <resolvepath propertyName="acquia.dir.absolute_path" file="${acquia.dir}" />
+
+        <!-- Make sure we have this branch if it exists upstream. -->
+        <trycatch>
+            <try>
+                <gitfetch repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}" />
+            </try>
+            <catch></catch>
+        </trycatch>
+
+        <exec command="git branch --list -r origin/${acquia.branch}" dir="${acquia.dir.absolute_path}" outputproperty="branch_remote" />
+        <exec command="git branch --list ${acquia.branch}" dir="${acquia.dir.absolute_path}" outputproperty="branch_local" />
+        <exec command="git rev-parse --abbrev-ref ${acquia.branch}@{upstream}" dir="${acquia.dir.absolute_path}" outputproperty="branch_tracking" />
+
+        <if>
+            <!-- Branch does not exist on local or remote. -->
+            <and>
+                <equals arg1="${branch_local}" arg2="" />
+                <equals arg1="${branch_remote}" arg2="" />
+            </and>
+            <then>
+                <!-- Create an "orphan" branch. -->
+                <exec command="git checkout --orphan ${acquia.branch}" dir="${acquia.dir}" checkreturn="true" logoutput="true" />
+
+                <!-- Remove all the existing files, because this is an orphan branch. -->
+                <exec command="git rm -rf" dir="${acquia.dir.absolute_path}" />
+
+                <!-- Add a single placeholder file. -->
+                <touch file="${acquia.dir.absolute_path}/.gitkeep" />
+
+                <gitcommit repository="${acquia.dir.absolute_path}" message="Initial commit." allFiles="true">
+                    <fileset dir="${acquia.dir.absolute_path}">
+                        <include name="**/*" />
+                    </fileset>
+                </gitcommit>
+            </then>
+            <else>
+                <!-- Otherwise just make sure the branch is checked out. -->
+                <gitcheckout repository="${acquia.dir.absolute_path}" branchname="${acquia.branch}" force="true" />
+                <gitpull repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" force="true" />
+            </else>
+        </if>
+    </target>
+
+
+
+
+
+
+
+
+    <!--
+
+            Push the new branch up to the remote.
+            <gitpush repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" />
+
+    -->
+
+
+
+
+    <target name="acquia-run-composer">
+        <fail unless="acquia.dir" />
+
+        <resolvepath propertyName="acquia.dir.absolute_path" file="${acquia.dir}" />
+
+        <copy todir="${acquia.dir.absolute_path}" overwrite="true">
+            <fileset dir="${build.dir}">
+                <include name="composer.json" />
+                <include name="composer.lock" />
+            </fileset>
+        </copy>
+
+        <exec command="composer install --no-dev" dir="${acquia.dir.absolute_path}" passthru="true" />
+        <exec command="composer drupal-scaffold" dir="${acquia.dir.absolute_path}" passthru="true" />
+
+        <delete>
+            <fileset dir="${acquia.dir.absolute_path}/vendor" defaultexcludes="false">
+                <include name="**/.git" />
+            </fileset>
+        <delete>
+    </target>
+
+    <target name="acquia-deploy-changes">
+        
+    </target>
+
 
 </project>
