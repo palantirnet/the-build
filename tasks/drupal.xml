@@ -99,6 +99,7 @@
     <target name="drupal-prepare-services" description="Write the services.yml file for Drupal.">
         <fail unless="drupal.twig.debug" />
 
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
         <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="755">
             <filterchain>
                 <replacetokens>
