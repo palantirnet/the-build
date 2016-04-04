@@ -163,6 +163,7 @@ ${modified_files}
             </then>
             <else>
                 <if>
+                    <!-- @todo ${push} is never unset because of the way this target is called -->
                     <not><isset property="push" /></not>
                     <then>
                         <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
