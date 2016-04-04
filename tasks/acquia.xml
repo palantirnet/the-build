@@ -129,7 +129,13 @@
         </copy>
 
         <exec command="composer install --no-dev" dir="${acquia.dir.absolute_path}" passthru="true" />
-        <exec command="composer drupal-scaffold" dir="${acquia.dir.absolute_path}" passthru="true" />
+
+        <if>
+            <not><available file="${drupal.root}/index.php" /></not>
+            <then>
+                <exec command="composer drupal-scaffold" dir="${acquia.dir.absolute_path}" passthru="true" />
+            </then>
+        </if>
 
         <delete>
             <fileset dir="${acquia.dir.absolute_path}/vendor" defaultexcludes="false">
