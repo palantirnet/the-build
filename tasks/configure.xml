@@ -63,7 +63,10 @@
         <property name="prompt.drupal.twig.debug" value="Enable twig debugging?" />
         <property name="default.drupal.twig.debug" value="false" />
 
-        <property name="update" value="drupal.root,drupal.uri,drupal.site_name,drupal.private_files_dir,build.drupal.files,drupal.database.database,drupal.database.username,drupal.database.password,drupal.profile,drupal.modules_enable" />
+        <property name="prompt.build.artifact_mode" value="Whether to symlink or copy resources; should be 'symlink' or 'copy'." />
+        <property name="default.build.artifact_mode" value="symlink" />
+
+        <property name="update" value="drupal.root,drupal.uri,drupal.site_name,drupal.private_files_dir,build.drupal.files,drupal.database.database,drupal.database.username,drupal.database.password,drupal.profile,drupal.modules_enable,drupal.twig.debug,build.artifact_mode" />
 
         <!-- Update properties interactively. -->
         <foreach list="${update}" target="configure-update-property" param="propertyname" />
