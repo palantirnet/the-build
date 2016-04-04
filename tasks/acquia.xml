@@ -50,35 +50,16 @@
     </target>
 
     <target name="acquia-build">
-        <phingcall target="acquia-init-repository" />
+        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
+
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.source" value="${acquia.repo}" />
+        </phing>
+
         <phingcall target="acquia-init-branch" />
         <phingcall target="acquia-run-composer" />
-    </target>
-
-
-    <target name="acquia-init-repository">
-        <fail unless="acquia.dir" />
-        <fail unless="acquia.repo" />
-
-        <!-- If there's an acquia directory that is NOT a git directory, remove it. -->
-        <if>
-            <and>
-                <available file="${acquia.dir}" type="dir" />
-                <not><available file="${acquia.dir}/.git" type="dir" /></not>
-            </and>
-            <then>
-                <fail message="Directory ${acquia.dir} exists but is not a git repository. Please remove it before continuing." />
-            </then>
-        </if>
-
-        <!-- If there is no acquia directory, clone the repo. -->
-        <if>
-            <not><available file="${acquia.dir}/.git" type="dir" /></not>
-            <then>
-                <echo>Cloning the repository from ${acquia.repo}</echo>
-                <gitclone repository="${acquia.repo}" targetPath="${acquia.dir}" />
-            </then>
-        </if>
     </target>
 
 
