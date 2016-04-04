@@ -52,37 +52,57 @@
         <fail unless="resource_source" />
         <fail unless="resource_dest" />
 
-        <!-- Remove any existing artifact first. -->
         <if>
-            <available file="${resource_dest}" type="file" />
+            <not><available file="${resource_source}" /></not>
             <then>
-                <delete file="${resource_dest}" />
+                <fail message="${resource_source} is not available." />
             </then>
-            <elseif>
-                <available file="${resource_dest}" type="dir" />
-                <then>
-                    <delete dir="${resource_dest}" />
-                </then>
-            </elseif>
         </if>
+
+        <!-- Remove any existing artifact first. -->
+        <phingcall target="remove-resource">
+            <property name="resource" value="${resource_dest}" />
+        </phingcall>
 
         <!-- Then link or copy the current artifact. -->
         <if>
-            <available file="${resource_source}" />
+            <and>
+                <equals arg1="${artifact_mode}" arg2="copy" />
+                <available file="${resource_source}" type="dir" />
+            </and>
             <then>
-                <if>
-                    <equals arg1="${artifact_mode}" arg2="copy" />
-                    <then>
-                        <copy file="${resource_source}" tofile="${resource_dest}" />
-                    </then>
-                    <else>
-                        <symlink target="${resource_source}" link="${resource_dest}" />
-                    </else>
-                </if>
+                <mkdir dir="${resource_dest}" />
+                <copy todir="${resource_dest}">
+                    <fileset dir="${resource_source}" />
+                </copy>
             </then>
+            <elseif>
+                <equals arg1="${artifact_mode}" arg2="copy" />
+                <then>
+                    <copy file="${resource_source}" tofile="${resource_dest}" />
+                </then>
+            </elseif>
             <else>
-                <echo message="${resource_source} is not available." level="warning" />
+                <symlink target="${resource_source}" link="${resource_dest}" />
             </else>
+        </if>
+    </target>
+
+
+    <target name="remove-resource">
+        <fail unless="resource" />
+
+        <if>
+            <available file="${resource}" type="file" />
+            <then>
+                <delete file="${resource}" />
+            </then>
+            <elseif>
+                <available file="${resource}" type="dir" />
+                <then>
+                    <delete dir="${resource}" />
+                </then>
+            </elseif>
         </if>
     </target>
 
