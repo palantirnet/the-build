@@ -1,12 +1,14 @@
 <project name="acquia" default="acquia-status">
     <!--
-      Include this file in your build.xml with:
+        Include this file in your build.xml with:
         <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
       -->
+
 
     <fail unless="projectname" />
     <fail unless="build.dir" />
     <fail unless="build.env" />
+
 
     <target name="acquia-status">
         <fail unless="acquia.repo" />
@@ -80,6 +82,10 @@
     </target>
 
 
+    <!--
+        Target: acquia-init-branch
+        @todo: consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch.
+        -->
     <target name="acquia-init-branch">
         <fail unless="acquia.dir" />
         <fail unless="acquia.repo" />
@@ -130,22 +136,6 @@
     </target>
 
 
-
-
-
-
-
-
-    <!--
-
-            Push the new branch up to the remote.
-            <gitpush repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" />
-
-    -->
-
-
-
-
     <target name="acquia-run-composer">
         <fail unless="acquia.dir" />
 
@@ -165,11 +155,30 @@
             <fileset dir="${acquia.dir.absolute_path}/vendor" defaultexcludes="false">
                 <include name="**/.git" />
             </fileset>
-        <delete>
+        </delete>
     </target>
 
+
+    <!--
+
+            Push the new branch up to the remote.
+            <gitpush repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" />
+
+        <phing phingfile="vendor/palantirnet/the-build/tasks/configure.xml" inheritAll="false" dir=".">
+            <property name="build.env" value="${build.env}" />
+        </phing>
+
+    -->
+
     <target name="acquia-deploy-changes">
-        
+        <fail unless="acquia.dir" />
+
+        <resolvepath propertyName="acquia.dir.absolute_path" file="${acquia.dir}" />
+
+        <!-- @todo figure out the current tag or refspec -->
+        <!-- @todo figure out whether the repo is dirty -->
+        <!-- @todo commit everything -->
+        <!-- @todo optionally push -->
     </target>
 
 
