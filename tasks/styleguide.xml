@@ -324,5 +324,4 @@
         <symlink target="${js_source}" link="${js_dest}" />
     </target>
 
-
 </project>
