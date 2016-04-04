@@ -92,15 +92,15 @@
             </then>
         </if>
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" inheritAll="false" dir=".">
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-repository" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.source" value="${styleguide.repo}" />
         </phing>
 
-        <!-- Check out the output branch. -->
-        <gitcheckout repository="${styleguide.output_dir}" branchname="${styleguide.branch}" force="true" />
-        <!-- Pull upstream changes. -->
-        <gitpull repository="${styleguide.output_dir}" source="origin" refspec="${styleguide.branch}" force="true" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-branch" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${styleguide.branch}" />
+        </phing>
     </target>
 
 

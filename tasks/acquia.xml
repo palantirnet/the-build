@@ -52,67 +52,18 @@
     <target name="acquia-build">
         <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" inheritAll="false" dir=".">
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-repository" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.source" value="${acquia.repo}" />
         </phing>
 
-        <phingcall target="acquia-init-branch" />
+        <!-- @todo consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch. -->
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-branch" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${acquia.branch}" />
+        </phing>
+
         <phingcall target="acquia-run-composer" />
-    </target>
-
-
-    <!--
-        Target: acquia-init-branch
-        @todo: consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch.
-        -->
-    <target name="acquia-init-branch">
-        <fail unless="acquia.dir" />
-        <fail unless="acquia.repo" />
-        <fail unless="acquia.branch" />
-
-        <resolvepath propertyName="acquia.dir.absolute_path" file="${acquia.dir}" />
-
-        <!-- Make sure we have this branch if it exists upstream. -->
-        <trycatch>
-            <try>
-                <gitfetch repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}" />
-            </try>
-            <catch></catch>
-        </trycatch>
-
-        <exec command="git branch --list -r origin/${acquia.branch}" dir="${acquia.dir.absolute_path}" outputproperty="branch_remote" />
-        <exec command="git branch --list ${acquia.branch}" dir="${acquia.dir.absolute_path}" outputproperty="branch_local" />
-        <exec command="git rev-parse --abbrev-ref ${acquia.branch}@{upstream}" dir="${acquia.dir.absolute_path}" outputproperty="branch_tracking" />
-
-        <if>
-            <!-- Branch does not exist on local or remote. -->
-            <and>
-                <equals arg1="${branch_local}" arg2="" />
-                <equals arg1="${branch_remote}" arg2="" />
-            </and>
-            <then>
-                <!-- Create an "orphan" branch. -->
-                <exec command="git checkout --orphan ${acquia.branch}" dir="${acquia.dir}" checkreturn="true" logoutput="true" />
-
-                <!-- Remove all the existing files, because this is an orphan branch. -->
-                <exec command="git rm -rf" dir="${acquia.dir.absolute_path}" />
-
-                <!-- Add a single placeholder file. -->
-                <touch file="${acquia.dir.absolute_path}/.gitkeep" />
-
-                <gitcommit repository="${acquia.dir.absolute_path}" message="Initial commit." allFiles="true">
-                    <fileset dir="${acquia.dir.absolute_path}">
-                        <include name="**/*" />
-                    </fileset>
-                </gitcommit>
-            </then>
-            <else>
-                <!-- Otherwise just make sure the branch is checked out. -->
-                <gitcheckout repository="${acquia.dir.absolute_path}" branchname="${acquia.branch}" force="true" />
-                <gitpull repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" force="true" />
-            </else>
-        </if>
     </target>
 
 

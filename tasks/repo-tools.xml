@@ -36,4 +36,54 @@
     </target>
 
 
+    <!--
+        Target: repotools-init-branch
+        -->
+    <target name="repotools-init-branch">
+        <fail unless="repo.dir" />
+        <fail unless="repo.branch" />
+
+        <!-- Make sure we have this branch if it exists upstream. -->
+        <trycatch>
+            <try>
+                <gitfetch repository="${repo.dir}" refspec="${repo.branch}" />
+            </try>
+            <catch></catch>
+        </trycatch>
+
+        <exec command="git branch --list -r origin/${repo.branch}" dir="${repo.dir}" outputproperty="branch_remote" />
+        <exec command="git branch --list ${repo.branch}" dir="${repo.dir}" outputproperty="branch_local" />
+        <exec command="git rev-parse --abbrev-ref ${repo.branch}@{upstream}" dir="${repo.dir}" outputproperty="branch_tracking" />
+
+        <if>
+            <!-- Branch does not exist on local or remote. -->
+            <and>
+                <equals arg1="${branch_local}" arg2="" />
+                <equals arg1="${branch_remote}" arg2="" />
+            </and>
+            <then>
+                <!-- Create an "orphan" branch. -->
+                <exec command="git checkout --orphan ${repo.branch}" dir="${repo.dir}" checkreturn="true" logoutput="true" />
+
+                <!-- Remove all the existing files, because this is an orphan branch. -->
+                <exec command="git rm -rf" dir="${repo.dir}" />
+
+                <!-- Add a single placeholder file. -->
+                <touch file="${repo.dir}/.gitkeep" />
+
+                <gitcommit repository="${repo.dir}" message="Initial commit." allFiles="true">
+                    <fileset dir="${repo.dir}">
+                        <include name="**/*" />
+                    </fileset>
+                </gitcommit>
+            </then>
+            <else>
+                <!-- Otherwise just make sure the branch is checked out. -->
+                <gitcheckout repository="${repo.dir}" branchname="${repo.branch}" force="true" />
+                <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
+            </else>
+        </if>
+    </target>
+
+
 </project>
