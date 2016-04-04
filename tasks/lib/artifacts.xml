@@ -22,8 +22,18 @@
                 <include name="composer.json" />
                 <include name="composer.lock" />
             </fileset>
+            <!-- @todo the composer file has the drupal root hard coded into it, which causes problems with this approach.
+            @todo also, the custom code doesn't get copied into the artifact when we do this, so it either has to be copied
+                  manually... or something. maybe this is the counter-argument for this approach.
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="web(/.+type:drupal-)" replace="docroot\1" />
+                </replaceregexp>
+            </filterchain>
+            -->
         </copy>
 
+<fail />
         <exec command="composer install --no-dev" dir="${install_dir}" passthru="true" />
 
         <if>
