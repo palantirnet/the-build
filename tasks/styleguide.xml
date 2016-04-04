@@ -57,17 +57,37 @@
         Can be run any time, for any environment. Defaults to generating "dev"
         CSS and HTML.
         -->
-    <target name="styleguide-generate" description="Generate the Sass and HTML for the styleguide." >
+    <target name="styleguide-generate" description="Generate the CSS and HTML for the styleguide." >
         <fail unless="styleguide.dir" />
         <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
         <property name="styleguide.env" value="dev" />
 
-        <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
-        <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
-        <echo>Regenerated CSS.</echo>
+        <phingcall target="styleguide-generate-css" />
 
         <exec command="vendor/bin/sculpin generate --project-dir=${styleguide.dir.absolute_path} --env=${styleguide.env}" checkreturn="true" />
         <echo>Regenerated HTML.</echo>
+    </target>
+
+    <!--
+        Target: styleguide-generate-css
+
+        Can be run any time, for any environment, as long as the fed tools are
+        available. Defaults to generating "dev" CSS.
+        -->
+    <target name="styleguide-generate-css" description="Generate the CSS for the styleguide." >
+        <fail unless="styleguide.dir.absolute_path" />
+        <property name="styleguide.env" value="dev" />
+
+        <trycatch property="error_message">
+            <try>
+                <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
+                <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
+                <echo>Regenerated CSS.</echo>
+            </try>
+            <catch>
+                <echo level="error">Failed to regenerate CSS: ${error_message}</echo>
+            </catch>
+        </trycatch>
     </target>
 
 
