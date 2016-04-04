@@ -304,12 +304,18 @@
 
         Link the styleguide css into the theme.
         -->
-    <target name="styleguide-link-css">
+    <target name="styleguide-link">
         <fail unless="css_source" />
         <fail unless="css_dest" />
+        
+        <fail unless="svg_source" />
+        <fail unless="svg_dest" />
 
         <delete file="${css_dest}" />
         <symlink target="${css_source}" link="${css_dest}" />
+        
+        <delete file="${svg_dest}" />
+        <symlink target="${svg_source}" link="${svg_dest}" />
     </target>
 
 
