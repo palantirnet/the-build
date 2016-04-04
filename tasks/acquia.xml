@@ -50,6 +50,7 @@
     </target>
 
     <target name="acquia-build">
+        <fail unless="acquia.dir" />
         <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 
         <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-repository" inheritAll="false" dir=".">
@@ -71,26 +72,21 @@
     </target>
 
 
-    <!--
-
-            Push the new branch up to the remote.
-            <gitpush repository="${acquia.dir.absolute_path}" refspec="${acquia.branch}:${acquia.branch}" />
-
-        <phing phingfile="vendor/palantirnet/the-build/tasks/configure.xml" inheritAll="false" dir=".">
-            <property name="build.env" value="${build.env}" />
-        </phing>
-
-    -->
-
     <target name="acquia-deploy-changes">
         <fail unless="acquia.dir" />
+        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 
-        <resolvepath propertyName="acquia.dir.absolute_path" file="${acquia.dir}" />
+        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="message" value="Drupal artifact." />
+        </phing>
 
-        <!-- @todo figure out the current tag or refspec -->
-        <!-- @todo figure out whether the repo is dirty -->
-        <!-- @todo commit everything -->
-        <!-- @todo optionally push -->
+        <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${acquia.branch}" />
+            <property name="push" value="${push}" />
+        </phing>
     </target>
 
 

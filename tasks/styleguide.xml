@@ -111,6 +111,7 @@
         be run when building the styleguide for deployment.
         -->
     <target name="styleguide-build-deploy">
+        <fail unless="styleguide.env" />
         <fail unless="styleguide.output_dir" />
         <fail unless="styleguide.branch" />
 
@@ -121,64 +122,17 @@
             </then>
         </if>
 
-        <!-- If there are changes in the dest directory, commit them. -->
-        <exec command="git status --porcelain" dir="${styleguide.output_dir}" outputProperty="changes_to_deploy" />
-        <if>
-            <not><equals arg1="${changes_to_deploy}" arg2="" /></not>
-            <then>
-                <!-- Get a descriptor of the current ref of the main repository. -->
-                <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="build_commit_ref" />
+        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${styleguide.output_dir}" />
+            <property name="message" value="Styleguide artifact." />
+        </phing>
 
-                <!-- Generate a commit message. -->
-                <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
-                <if>
-                    <not><equals arg1="${modified_files}" arg2="" /></not>
-                    <then>
-                        <!-- Whitespace within this property value is intentional. -->
-                        <property name="build_message">(dirty) Styleguide as of ${build_commit_ref}
-
-        Files with un-committed changes:
-        ${modified_files}
-        </property>
-                    </then>
-                    <else>
-                        <property name="build_message" value="Styleguide as of ${build_commit_ref}" />
-                    </else>
-                </if>
-
-                <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
-                <exec command="git add --all" dir="${styleguide.output_dir}" />
-
-                <!-- Commit it all. -->
-                <gitcommit repository="${styleguide.output_dir}" message="${build_message}" allFiles="true" />
-            </then>
-            <else>
-                <echo>No changes to ${styleguide.output_dir}.</echo>
-            </else>
-        </if>
-
-        <!-- If the local repository has forward commits, push them. -->
-        <exec command="git diff origin/${styleguide.branch}" dir="${styleguide.output_dir}" outputProperty="has_forward_commits" />
-
-        <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <not><isset property="push" /></not>
-            </and>
-            <then>
-                <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
-            </then>
-        </if>
-
-        <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <equals arg1="${push}" arg2="y" />
-            </and>
-            <then>
-                <gitpush repository="${styleguide.output_dir}" refspec="${styleguide.branch}" tags="true" />
-            </then>
-        </if>
+        <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${styleguide.output_dir}" />
+            <property name="repo.branch" value="${styleguide.branch}" />
+            <property name="push" value="${push}" />
+        </phing>
     </target>
 
 

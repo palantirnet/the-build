@@ -68,14 +68,23 @@
 
         <!-- Then link or copy the current artifact. -->
         <if>
-            <equals arg1="${artifact_mode}" arg2="copy" />
+            <available file="${resource_source}" />
             <then>
-                <copy file="${resource_source}" tofile="${resource_dest}" />
+                <if>
+                    <equals arg1="${artifact_mode}" arg2="copy" />
+                    <then>
+                        <copy file="${resource_source}" tofile="${resource_dest}" />
+                    </then>
+                    <else>
+                        <symlink target="${resource_source}" link="${resource_dest}" />
+                    </else>
+                </if>
             </then>
             <else>
-                <symlink target="${resource_source}" link="${resource_dest}" />
+                <echo message="${resource_source} is not available." level="warning" />
             </else>
         </if>
     </target>
+
 
 </project>

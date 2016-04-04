@@ -85,4 +85,80 @@
     </target>
 
 
+    <target name="commit">
+        <fail unless="build.dir" />
+        <fail unless="repo.dir" />
+        <fail unless="message" />
+
+        <!-- Get a descriptor of the current ref of the main repository. -->
+        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="build_commit_ref" />
+
+        <!-- Check for changes to the artifact repository. -->
+        <exec command="git status --porcelain" dir="${repo.dir}" outputProperty="changes_to_deploy" />
+
+        <if>
+            <equals arg1="${changes_to_deploy}" arg2="" />
+            <then>
+                <echo>No changes to ${repo.dir}.</echo>
+            </then>
+            <else>
+                <!-- Check for un-committed changes to the main repository, so
+                     that we can include information about these changes in the
+                     commit message for this build. -->
+                <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
+
+                <if>
+                    <not><equals arg1="${modified_files}" arg2="" /></not>
+                    <then>
+                        <!-- Whitespace within this property value is intentional. -->
+                        <property name="build_message">[dirty: ${build_commit_ref}] ${message}
+
+Files with un-committed changes:
+${modified_files}
+</property>
+                    </then>
+                    <else>
+                        <property name="build_message">[${build_commit_ref}] ${message}</property>
+                    </else>
+                </if>
+
+                <!-- Commit it all. -->
+                <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true">
+                    <fileset dir="${repo.dir}">
+                        <include name="**/*" />
+                    </fileset>
+                </gitcommit>
+            </else>
+        </if>
+    </target>
+
+
+    <target name="push">
+        <fail unless="repo.dir" />
+        <fail unless="repo.branch" />
+
+        <!-- If the local repository has forward commits, push them. -->
+        <exec command="git diff origin/${repo.branch}" dir="${repo.dir}" outputProperty="has_forward_commits" />
+
+        <if>
+            <and>
+                <istrue value="${has_forward_commits}" />
+                <not><isset property="push" /></not>
+            </and>
+            <then>
+                <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
+            </then>
+        </if>
+
+        <if>
+            <and>
+                <istrue value="${has_forward_commits}" />
+                <equals arg1="${push}" arg2="y" />
+            </and>
+            <then>
+                <gitpush repository="${repo.dir}" refspec="${repo.branch}" tags="true" />
+            </then>
+        </if>
+    </target>
+
 </project>
