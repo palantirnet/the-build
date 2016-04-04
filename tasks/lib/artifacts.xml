@@ -1,0 +1,44 @@
+<project name="artifacts" default="status">
+
+
+    <target name="status">
+        <echo>Hello world.</echo>
+    </target>
+
+
+    <!--
+        Target: run-composer-elsewhere
+
+        This is a bad idea but also since it doesn't use the developer's local
+        code/files maybe it is a good idea.
+        -->
+    <target name="run-composer-elsewhere">
+        <fail unless="install_dir" />
+        <fail unless="build.dir" />
+        <fail unless="drupal.root" />
+
+        <copy todir="${install_dir}" overwrite="true">
+            <fileset dir="${build.dir}">
+                <include name="composer.json" />
+                <include name="composer.lock" />
+            </fileset>
+        </copy>
+
+        <exec command="composer install --no-dev" dir="${install_dir}" passthru="true" />
+
+        <if>
+            <not><available file="${drupal.root}/index.php" /></not>
+            <then>
+                <exec command="composer drupal-scaffold" dir="${install_dir}" passthru="true" />
+            </then>
+        </if>
+
+        <delete>
+            <fileset dir="${install_dir}/vendor" defaultexcludes="false">
+                <include name="**/.git" />
+            </fileset>
+        </delete>
+    </target>
+
+
+</project>

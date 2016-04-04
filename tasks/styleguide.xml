@@ -92,12 +92,12 @@
             </then>
         </if>
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-repository" inheritAll="false" dir=".">
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-repository" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.source" value="${styleguide.repo}" />
         </phing>
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" target="repotools-init-branch" inheritAll="false" dir=".">
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-branch" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.branch" value="${styleguide.branch}" />
         </phing>

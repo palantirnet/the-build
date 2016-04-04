@@ -1,8 +1,4 @@
-<project name="repotools" default="status">
-    <!--
-      Include this file in your build.xml with:
-        <import file="vendor/palantirnet/the-build/tasks/repo-tools.xml" />
-      -->
+<project name="repositories" default="status">
 
 
     <target name="status">
@@ -10,7 +6,10 @@
     </target>
 
 
-    <target name="repotools-init-repository">
+    <!--
+        Target: init-repository
+        -->
+    <target name="init-repository">
         <fail unless="repo.dir" />
         <fail unless="repo.source" />
 
@@ -37,9 +36,9 @@
 
 
     <!--
-        Target: repotools-init-branch
+        Target: init-branch
         -->
-    <target name="repotools-init-branch">
+    <target name="init-branch">
         <fail unless="repo.dir" />
         <fail unless="repo.branch" />
 
