@@ -65,21 +65,33 @@
                 <exec command="git checkout --orphan ${repo.branch}" dir="${repo.dir}" checkreturn="true" logoutput="true" />
 
                 <!-- Remove all the existing files, because this is an orphan branch. -->
-                <exec command="git rm -rf" dir="${repo.dir}" />
+                <exec command="git rm -rf ." dir="${repo.dir}" />
+                <delete includeemptydirs="true">
+                    <fileset dir="${repo.dir}" defaultexcludes="false">
+                        <include name="**/*" />
+                        <exclude name=".git" />
+                        <exclude name=".git/**" />
+                    </fileset>
+                </delete>
 
                 <!-- Add a single placeholder file. -->
                 <touch file="${repo.dir}/.gitkeep" />
 
-                <gitcommit repository="${repo.dir}" message="Initial commit." allFiles="true">
-                    <fileset dir="${repo.dir}">
-                        <include name="**/*" />
-                    </fileset>
-                </gitcommit>
+                <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+                <exec command="git add --all" dir="${repo.dir}" />
+
+                <!-- Commit it all. -->
+                <gitcommit repository="${repo.dir}" message="Initial commit." allFiles="true" />
             </then>
             <else>
                 <!-- Otherwise just make sure the branch is checked out. -->
                 <gitcheckout repository="${repo.dir}" branchname="${repo.branch}" force="true" />
-                <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
+                <trycatch>
+                    <try>
+                        <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
+                    </try>
+                    <catch></catch>
+                </trycatch>
             </else>
         </if>
     </target>
@@ -91,7 +103,12 @@
         <fail unless="message" />
 
         <!-- Get a descriptor of the current ref of the main repository. -->
-        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="build_commit_ref" />
+        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
+        <property name="build_commit_ref" value="${git_describe_output}">
+            <filterchain>
+                <striplinebreaks />
+            </filterchain>
+        </property>
 
         <!-- Check for changes to the artifact repository. -->
         <exec command="git status --porcelain" dir="${repo.dir}" outputProperty="changes_to_deploy" />
@@ -111,7 +128,7 @@
                     <not><equals arg1="${modified_files}" arg2="" /></not>
                     <then>
                         <!-- Whitespace within this property value is intentional. -->
-                        <property name="build_message">[dirty: ${build_commit_ref}] ${message}
+                        <property name="build_message">(${build_commit_ref} / dirty) ${message}
 
 Files with un-committed changes:
 ${modified_files}
@@ -122,12 +139,11 @@ ${modified_files}
                     </else>
                 </if>
 
+                <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+                <exec command="git add --all" dir="${repo.dir}" />
+
                 <!-- Commit it all. -->
-                <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true">
-                    <fileset dir="${repo.dir}">
-                        <include name="**/*" />
-                    </fileset>
-                </gitcommit>
+                <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true" />
             </else>
         </if>
     </target>
@@ -141,23 +157,25 @@ ${modified_files}
         <exec command="git diff origin/${repo.branch}" dir="${repo.dir}" outputProperty="has_forward_commits" />
 
         <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <not><isset property="push" /></not>
-            </and>
+            <not><istrue value="${has_forward_commits}" /></not>
             <then>
-                <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
+                <echo>Nothing to push.</echo>
             </then>
-        </if>
+            <else>
+                <if>
+                    <not><isset property="push" /></not>
+                    <then>
+                        <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
+                    </then>
+                </if>
 
-        <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <equals arg1="${push}" arg2="y" />
-            </and>
-            <then>
-                <gitpush repository="${repo.dir}" refspec="${repo.branch}" tags="true" />
-            </then>
+                <if>
+                    <equals arg1="${push}" arg2="y" />
+                    <then>
+                        <gitpush repository="${repo.dir}" refspec="${repo.branch}" tags="true" />
+                    </then>
+                </if>
+            </else>
         </if>
     </target>
 
