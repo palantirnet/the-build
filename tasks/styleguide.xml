@@ -83,6 +83,8 @@
         <fail unless="styleguide.repo" />
         <fail unless="styleguide.branch" />
 
+        <resolvepath propertyName="repo.dir" file="${styleguide.output_dir}" />
+
         <if>
             <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
             <then>
@@ -90,26 +92,10 @@
             </then>
         </if>
 
-        <!-- If there's styleguide output that is NOT a git directory, remove it. -->
-        <if>
-            <and>
-                <available file="${styleguide.output_dir}" type="dir" />
-                <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
-            </and>
-            <then>
-                <echo>Removing old styleguide output...</echo>
-                <delete dir="${styleguide.output_dir}" />
-            </then>
-        </if>
-
-        <!-- If there is no styleguide output directory, clone the repo. -->
-        <if>
-            <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
-            <then>
-                <echo>Cloning the repository...</echo>
-                <gitclone repository="${styleguide.repo}" targetPath="${styleguide.output_dir}" />
-            </then>
-        </if>
+        <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.source" value="${styleguide.repo}" />
+        </phing>
 
         <!-- Check out the output branch. -->
         <gitcheckout repository="${styleguide.output_dir}" branchname="${styleguide.branch}" force="true" />

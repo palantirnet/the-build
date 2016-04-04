@@ -53,7 +53,6 @@
         <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 
         <phing phingfile="vendor/palantirnet/the-build/tasks/repo-tools.xml" inheritAll="false" dir=".">
-            <property name="build.dir" value="${build.dir}" />
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.source" value="${acquia.repo}" />
         </phing>

@@ -4,8 +4,6 @@
         <import file="vendor/palantirnet/the-build/tasks/repo-tools.xml" />
       -->
 
-    <fail unless="build.dir" />
-    
 
     <target name="status">
         <echo>Hello world.</echo>
