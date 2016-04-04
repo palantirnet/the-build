@@ -311,11 +311,17 @@
         <fail unless="svg_source" />
         <fail unless="svg_dest" />
 
+        <fail unless="js_source" />
+        <fail unless="js_dest" />
+
         <delete file="${css_dest}" />
         <symlink target="${css_source}" link="${css_dest}" />
         
         <delete file="${svg_dest}" />
         <symlink target="${svg_source}" link="${svg_dest}" />
+
+        <delete file="${js_dest}" />
+        <symlink target="${js_source}" link="${js_dest}" />
     </target>
 
 
