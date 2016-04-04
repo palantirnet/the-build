@@ -291,23 +291,23 @@
         Link the styleguide css into the theme.
         -->
     <target name="styleguide-link">
-        <fail unless="css_source" />
-        <fail unless="css_dest" />
-        
-        <fail unless="svg_source" />
-        <fail unless="svg_dest" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${css_source}" />
+            <property name="resource_dest" value="${css_dest}" />
+        </phing>
 
-        <fail unless="js_source" />
-        <fail unless="js_dest" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${svg_source}" />
+            <property name="resource_dest" value="${svg_dest}" />
+        </phing>
 
-        <delete file="${css_dest}" />
-        <symlink target="${css_source}" link="${css_dest}" />
-        
-        <delete file="${svg_dest}" />
-        <symlink target="${svg_source}" link="${svg_dest}" />
-
-        <delete file="${js_dest}" />
-        <symlink target="${js_source}" link="${js_dest}" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${js_source}" />
+            <property name="resource_dest" value="${js_dest}" />
+        </phing>
     </target>
 
 </project>

@@ -41,4 +41,41 @@
     </target>
 
 
+    <!--
+        Target: include-resource
+
+        Link or copy a resource. Pass in the ${build.artifact_mode} as
+        ${artifact_mode}.
+        -->
+    <target name="include-resource">
+        <fail unless="artifact_mode" />
+        <fail unless="resource_source" />
+        <fail unless="resource_dest" />
+
+        <!-- Remove any existing artifact first. -->
+        <if>
+            <available file="${resource_dest}" type="file" />
+            <then>
+                <delete file="${resource_dest}" />
+            </then>
+            <elseif>
+                <available file="${resource_dest}" type="dir" />
+                <then>
+                    <delete dir="${resource_dest}" />
+                </then>
+            </elseif>
+        </if>
+
+        <!-- Then link or copy the current artifact. -->
+        <if>
+            <equals arg1="${artifact_mode}" arg2="copy" />
+            <then>
+                <copy file="${resource_source}" tofile="${resource_dest}" />
+            </then>
+            <else>
+                <symlink target="${resource_source}" link="${resource_dest}" />
+            </else>
+        </if>
+    </target>
+
 </project>
