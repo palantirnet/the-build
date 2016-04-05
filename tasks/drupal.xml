@@ -25,8 +25,8 @@
     <property name="drupal.modules_enable" value="" />
     <property name="drupal.twig.debug" value="false" />
 
-    <property name="drupal.private_files_dir" value="../artifacts/private" />
-    <property name="build.drupal.files" value="artifacts/files" />
+    <property name="drupal.settings.file_public_path" value="sites/default/files" />
+    <property name="drupal.settings.file_private_path" value="" />
 
     <property name="drupal.database.database" value="default" />
     <property name="drupal.database.username" value="drupal" />
@@ -66,17 +66,12 @@
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
         <!-- Make sure the file source directory exists, and create the Drupal
              modules, themes, profiles, and sites directories. -->
-        <foreach target="create-placeholder" param="dir">
-            <filelist files="${build.drupal.files},${drupal.root}/modules/custom,${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
+        <foreach target="create-placeholder" param="placeholder_for">
+            <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
-        <chmod file="${build.dir}/${build.drupal.files}" mode="777" />
-
-        <delete file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/files" />
-        <symlink target="${build.dir}/${build.drupal.files}" link="${build.dir}/${drupal.root}/${drupal.files_dir}" />
     </target>
-
 
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
@@ -89,6 +84,8 @@
                     <token key="database.host" value="${drupal.database.host}" />
                     <token key="drupal.config_sync_directory" value="${drupal.config_sync_directory}" />
                     <token key="hash_salt" value="temporary" />
+                    <token key="settings.file_public_path" value="${drupal.settings.file_public_path}" />
+                    <token key="settings.file_private_path" value="${drupal.settings.file_private_path}" />
                 </replacetokens>
             </filterchain>
         </copy>
@@ -112,15 +109,22 @@
 
     <!-- Target: create-placeholder -->
     <target name="create-placeholder">
-        <fail unless="dir" message="The 'dir' property is required." />
+        <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
+        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" />
 
-        <mkdir dir="${dir}" />
-        <touch file="${dir}/.gitkeep" />
+        <mkdir dir="${placeholder_for.resolved}" />
+        <touch file="${placeholder_for.resolved}/.gitkeep" />
     </target>
 
 
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+
+        <!-- Delete and re-create the public files directory -->
+        <delete dir="${drupal.settings.file_public_path.resolved}" />
+        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="770" />
+
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
             <option name="sites-subdir">${drupal.sites_subdir}</option>
@@ -140,5 +144,53 @@
             <param>${module}</param>
         </drush>
     </target>
+
+
+    <!--
+        Target: db-dump-for-prod
+        Dumb wrapper to help consistently dump the database when pushing fresh to prod.
+        -->
+    <target name="db-dump-for-prod">
+        <!-- prompt for a prod admin password -->
+        <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
+        <drush command="user-password">
+           <option name="password" value="${pass}" />
+           <param>admin</param>
+        </drush>
+
+        <!-- put the site in maintenance mode -->
+        <drush command="sset">
+            <param>system.maintenance_mode</param>
+            <param>1</param>
+        </drush>
+
+        <!-- get a commit label to use in the db dump name -->
+        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
+        <property name="build_commit_ref" value="${git_describe_output}">
+            <filterchain>
+                <striplinebreaks />
+            </filterchain>
+        </property>
+
+        <!-- dump the database -->
+        <drush command="sql-dump">
+            <option name="structure-tables-key" value="common" />
+            <option name="gzip" />
+            <option name="result-file" value="${build.dir}/artifacts/db-${build_commit_ref}.sql" />
+        </drush>
+
+        <!-- now we can go back to the worst password ever -->
+        <drush command="user-password">
+           <option name="password" value="admin" />
+           <param>admin</param>
+        </drush>
+
+        <!-- and take the site out of maintenance mode -->
+        <drush command="sset">
+            <param>system.maintenance_mode</param>
+            <param>0</param>
+        </drush>
+    </target>
+
 
 </project>

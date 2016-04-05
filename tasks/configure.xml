@@ -36,11 +36,11 @@
         <property name="prompt.drupal.site_name" value="Site name" />
         <property name="default.drupal.site_name" value="${projectname}" />
 
-        <property name="prompt.drupal.private_files_dir" value="Drupal private files, relative to the Drupal root" />
-        <property name="default.drupal.private_files_dir" value="../artifacts/private" />
+        <property name="prompt.drupal.settings.file_public_path" value="Drupal public files directory setting" />
+        <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
 
-        <property name="prompt.build.drupal.files" value="Source directory for Drupal files, relative to the project root" />
-        <property name="default.build.drupal.files" value="artifacts/files" />
+        <property name="prompt.drupal.settings.file_private_path" value="Drupal private files directory setting" />
+        <property name="default.drupal.settings.file_private_path" value="../artifacts/files_private" />
 
         <property name="prompt.drupal.database.database" value="Drupal database name" />
         <property name="default.drupal.database.database" value="drupal" />
@@ -63,7 +63,10 @@
         <property name="prompt.drupal.twig.debug" value="Enable twig debugging?" />
         <property name="default.drupal.twig.debug" value="false" />
 
-        <property name="update" value="drupal.root,drupal.uri,drupal.site_name,drupal.private_files_dir,build.drupal.files,drupal.database.database,drupal.database.username,drupal.database.password,drupal.profile,drupal.modules_enable" />
+        <property name="prompt.build.artifact_mode" value="Whether to symlink or copy resources; should be 'symlink' or 'copy'." />
+        <property name="default.build.artifact_mode" value="symlink" />
+
+        <property name="update" value="drupal.root,drupal.uri,drupal.site_name,drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.database.database,drupal.database.username,drupal.database.password,drupal.profile,drupal.modules_enable,drupal.twig.debug,build.artifact_mode" />
 
         <!-- Update properties interactively. -->
         <foreach list="${update}" target="configure-update-property" param="propertyname" />

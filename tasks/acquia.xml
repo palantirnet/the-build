@@ -1,0 +1,99 @@
+<project name="acquia" default="acquia-status">
+    <!--
+        Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+      -->
+
+
+    <fail unless="projectname" />
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
+
+
+    <target name="acquia-status">
+        <fail unless="acquia.repo" />
+        <fail unless="acquia.branch" />
+        <fail unless="acquia.dir" />
+
+        <if>
+            <or>
+                <not><available file="${acquia.dir}" type="dir" /></not>
+                <not><available file="${acquia.dir}/.git" type="dir" /></not>
+            </or>
+            <then>
+                <fail message="Acquia repository not present at ${acquia.dir}." />
+            </then>
+        </if>
+    </target>
+
+    <!--
+        Target: configure
+
+        Interactive configuration to set the Acquia build properties.
+        -->
+    <target name="acquia-configure" description="Interactive configuration for Acquia build properties.">
+        <phing phingfile="${phing.dir.acquia}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/${propertiesfile}" prefix="default" override="true" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <property name="prompt.acquia.accountname" value="Acquia account machine name" />
+            <property name="default.acquia.accountname" value="${projectname}" />
+
+            <property name="prompt.acquia.repo" value="Acquia git repository" />
+            <property name="default.acquia.repo" value="" />
+
+            <property name="prompt.acquia.branch" value="Git branch for build artifacts" />
+            <property name="default.acquia.branch" value="build" />
+
+            <property name="prompt.acquia.dir" value="Location to checkout artifact repository, relative to the project root" />
+            <property name="default.acquia.dir" value="artifacts/acquia" />
+
+            <property name="update" value="acquia.accountname,acquia.repo,acquia.branch,acquia.dir" />
+        </phing>
+    </target>
+
+    <target name="acquia-build">
+        <fail unless="acquia.dir" />
+        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
+
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-repository" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.source" value="${acquia.repo}" />
+        </phing>
+
+        <!-- @todo consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch. -->
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-branch" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${acquia.branch}" />
+        </phing>
+
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="run-composer-elsewhere" inheritAll="false" dir=".">
+            <property name="install_dir" value="${repo.dir}" />
+            <property name="build.dir" value="${build.dir}" />
+            <property name="drupal.root" value="${drupal.root}" />
+        </phing>
+    </target>
+
+
+    <target name="acquia-deploy-changes">
+        <fail unless="acquia.dir" />
+        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
+
+        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="message" value="Drupal artifact." />
+        </phing>
+
+        <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${acquia.branch}" />
+        </phing>
+    </target>
+
+
+</project>

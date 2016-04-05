@@ -1,0 +1,142 @@
+<project name="artifacts" default="status">
+
+
+    <target name="status">
+        <echo>Hello world.</echo>
+    </target>
+
+
+    <!--
+        Target: run-composer-elsewhere
+
+        This is a bad idea but also since it doesn't use the developer's local
+        code/files maybe it is a good idea.
+        -->
+    <target name="run-composer-elsewhere">
+        <fail unless="install_dir" />
+        <fail unless="build.dir" />
+        <fail unless="drupal.root" />
+
+        <!--
+            copy the composer files to the build directory so that we can get
+            all of the prod dependencies there.
+            -->
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+            <fileset dir="${build.dir}">
+                <include name="composer.json" />
+                <include name="composer.lock" />
+            </fileset>
+            <!--
+                the composer file has the drupal root hard coded into it, and
+                this is a gross workaround. unfortunately when the drupal root
+                is different on different environments, I think composer needs
+                to know about it in order to generate the autoloader stuff.
+                -->
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="web(/.+type:drupal-)" replace="docroot\1" />
+                </replaceregexp>
+            </filterchain>
+        </copy>
+
+        <!--
+            also, we need to manually copy the custom code into the artifact.
+            doing it based on what is checked in to git prevents us from
+            accidentally adding local files or settings.php in to the
+            build repository.
+            -->
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
+        <exec command="git ls-files" dir="${build.dir}/web" output="${tmpfile}" />
+        <copy todir="${drupal.root}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}/web" listfile="${tmpfile}" />
+        </copy>
+        <delete file="${tmpfile}" />
+
+        <!--
+            AND we need to copy the config.
+            -->
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
+        <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile}" />
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile}" />
+        </copy>
+        <delete file="${tmpfile}" />
+
+        <!--
+            then we composer install in the build dir...
+            -->
+        <exec command="composer install --no-dev" dir="${install_dir}" checkreturn="true" />
+
+        <!--
+            having git repositories in the vendor dir messes up the build
+            artifact, since the entire vendor dir gets checked in to the
+            artifact and git will automatically try to do submodules for git
+            directories like this. so we strip them.
+            -->
+        <delete>
+            <fileset dir="${install_dir}/vendor" defaultexcludes="false">
+                <include name="**/.git" />
+            </fileset>
+        </delete>
+    </target>
+
+
+    <!--
+        Target: include-resource
+
+        Link or copy a resource. Pass in the ${build.artifact_mode} as
+        ${artifact_mode}.
+        -->
+    <target name="include-resource">
+        <fail unless="artifact_mode" />
+        <fail unless="resource_source" />
+        <fail unless="resource_dest" />
+
+        <if>
+            <not><available file="${resource_source}" /></not>
+            <then>
+                <fail message="${resource_source} is not available." />
+            </then>
+        </if>
+
+        <!-- Remove any existing artifact first. -->
+        <if>
+            <available file="${resource_dest}" type="file" />
+            <then>
+                <delete file="${resource_dest}" />
+            </then>
+            <elseif>
+                <available file="${resource_dest}" type="dir" />
+                <then>
+                    <delete dir="${resource_dest}" />
+                </then>
+            </elseif>
+        </if>
+        <delete file="${resource_dest}" />
+
+        <!-- Then link or copy the current artifact. -->
+        <if>
+            <and>
+                <equals arg1="${artifact_mode}" arg2="copy" />
+                <available file="${resource_source}" type="dir" />
+            </and>
+            <then>
+                <mkdir dir="${resource_dest}" />
+                <copy todir="${resource_dest}">
+                    <fileset dir="${resource_source}" />
+                </copy>
+            </then>
+            <elseif>
+                <equals arg1="${artifact_mode}" arg2="copy" />
+                <then>
+                    <copy file="${resource_source}" tofile="${resource_dest}" />
+                </then>
+            </elseif>
+            <else>
+                <symlink target="${resource_source}" link="${resource_dest}" />
+            </else>
+        </if>
+    </target>
+
+
+</project>

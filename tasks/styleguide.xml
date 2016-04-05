@@ -57,17 +57,37 @@
         Can be run any time, for any environment. Defaults to generating "dev"
         CSS and HTML.
         -->
-    <target name="styleguide-generate" description="Generate the Sass and HTML for the styleguide." >
+    <target name="styleguide-generate" description="Generate the CSS and HTML for the styleguide." >
         <fail unless="styleguide.dir" />
         <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
         <property name="styleguide.env" value="dev" />
 
-        <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
-        <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
-        <echo>Regenerated CSS.</echo>
+        <phingcall target="styleguide-generate-css" />
 
         <exec command="vendor/bin/sculpin generate --project-dir=${styleguide.dir.absolute_path} --env=${styleguide.env}" checkreturn="true" />
         <echo>Regenerated HTML.</echo>
+    </target>
+
+    <!--
+        Target: styleguide-generate-css
+
+        Can be run any time, for any environment, as long as the fed tools are
+        available. Defaults to generating "dev" CSS.
+        -->
+    <target name="styleguide-generate-css" description="Generate the CSS for the styleguide." >
+        <fail unless="styleguide.dir.absolute_path" />
+        <property name="styleguide.env" value="dev" />
+
+        <trycatch property="error_message">
+            <try>
+                <exec command="bundle exec compass clean -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
+                <exec command="bundle exec compass compile -e ${styleguide.env}" dir="${styleguide.dir.absolute_path}" checkreturn="true" />
+                <echo>Regenerated CSS.</echo>
+            </try>
+            <catch>
+                <echo level="error">Failed to regenerate CSS: ${error_message}</echo>
+            </catch>
+        </trycatch>
     </target>
 
 
@@ -83,6 +103,8 @@
         <fail unless="styleguide.repo" />
         <fail unless="styleguide.branch" />
 
+        <resolvepath propertyName="repo.dir" file="${styleguide.output_dir}" />
+
         <if>
             <not><equals arg1="${styleguide.env}" arg2="prod" /></not>
             <then>
@@ -90,31 +112,15 @@
             </then>
         </if>
 
-        <!-- If there's styleguide output that is NOT a git directory, remove it. -->
-        <if>
-            <and>
-                <available file="${styleguide.output_dir}" type="dir" />
-                <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
-            </and>
-            <then>
-                <echo>Removing old styleguide output...</echo>
-                <delete dir="${styleguide.output_dir}" />
-            </then>
-        </if>
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-repository" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.source" value="${styleguide.repo}" />
+        </phing>
 
-        <!-- If there is no styleguide output directory, clone the repo. -->
-        <if>
-            <not><available file="${styleguide.output_dir}/.git" type="dir" /></not>
-            <then>
-                <echo>Cloning the repository...</echo>
-                <gitclone repository="${styleguide.repo}" targetPath="${styleguide.output_dir}" />
-            </then>
-        </if>
-
-        <!-- Check out the output branch. -->
-        <gitcheckout repository="${styleguide.output_dir}" branchname="${styleguide.branch}" force="true" />
-        <!-- Pull upstream changes. -->
-        <gitpull repository="${styleguide.output_dir}" source="origin" refspec="${styleguide.branch}" force="true" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-branch" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${repo.dir}" />
+            <property name="repo.branch" value="${styleguide.branch}" />
+        </phing>
     </target>
 
 
@@ -125,6 +131,7 @@
         be run when building the styleguide for deployment.
         -->
     <target name="styleguide-build-deploy">
+        <fail unless="styleguide.env" />
         <fail unless="styleguide.output_dir" />
         <fail unless="styleguide.branch" />
 
@@ -135,64 +142,17 @@
             </then>
         </if>
 
-        <!-- If there are changes in the dest directory, commit them. -->
-        <exec command="git status --porcelain" dir="${styleguide.output_dir}" outputProperty="changes_to_deploy" />
-        <if>
-            <not><equals arg1="${changes_to_deploy}" arg2="" /></not>
-            <then>
-                <!-- Get a descriptor of the current ref of the main repository. -->
-                <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="build_commit_ref" />
+        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${styleguide.output_dir}" />
+            <property name="message" value="Styleguide artifact." />
+        </phing>
 
-                <!-- Generate a commit message. -->
-                <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
-                <if>
-                    <not><equals arg1="${modified_files}" arg2="" /></not>
-                    <then>
-                        <!-- Whitespace within this property value is intentional. -->
-                        <property name="build_message">(dirty) Styleguide as of ${build_commit_ref}
-
-        Files with un-committed changes:
-        ${modified_files}
-        </property>
-                    </then>
-                    <else>
-                        <property name="build_message" value="Styleguide as of ${build_commit_ref}" />
-                    </else>
-                </if>
-
-                <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
-                <exec command="git add --all" dir="${styleguide.output_dir}" />
-
-                <!-- Commit it all. -->
-                <gitcommit repository="${styleguide.output_dir}" message="${build_message}" allFiles="true" />
-            </then>
-            <else>
-                <echo>No changes to ${styleguide.output_dir}.</echo>
-            </else>
-        </if>
-
-        <!-- If the local repository has forward commits, push them. -->
-        <exec command="git diff origin/${styleguide.branch}" dir="${styleguide.output_dir}" outputProperty="has_forward_commits" />
-
-        <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <not><isset property="push" /></not>
-            </and>
-            <then>
-                <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
-            </then>
-        </if>
-
-        <if>
-            <and>
-                <istrue value="${has_forward_commits}" />
-                <equals arg1="${push}" arg2="y" />
-            </and>
-            <then>
-                <gitpush repository="${styleguide.output_dir}" refspec="${styleguide.branch}" tags="true" />
-            </then>
-        </if>
+        <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="repo.dir" value="${styleguide.output_dir}" />
+            <property name="repo.branch" value="${styleguide.branch}" />
+            <property name="push" value="${push}" />
+        </phing>
     </target>
 
 
@@ -305,23 +265,23 @@
         Link the styleguide css into the theme.
         -->
     <target name="styleguide-link">
-        <fail unless="css_source" />
-        <fail unless="css_dest" />
-        
-        <fail unless="svg_source" />
-        <fail unless="svg_dest" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${css_source}" />
+            <property name="resource_dest" value="${css_dest}" />
+        </phing>
 
-        <fail unless="js_source" />
-        <fail unless="js_dest" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${svg_source}" />
+            <property name="resource_dest" value="${svg_dest}" />
+        </phing>
 
-        <delete file="${css_dest}" />
-        <symlink target="${css_source}" link="${css_dest}" />
-        
-        <delete file="${svg_dest}" />
-        <symlink target="${svg_source}" link="${svg_dest}" />
-
-        <delete file="${js_dest}" />
-        <symlink target="${js_source}" link="${js_dest}" />
+        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="include-resource" inheritAll="false" dir=".">
+            <property name="artifact_mode" value="${build.artifact_mode}" />
+            <property name="resource_source" value="${js_source}" />
+            <property name="resource_dest" value="${js_dest}" />
+        </phing>
     </target>
 
 </project>
