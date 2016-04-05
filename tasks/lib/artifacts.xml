@@ -52,6 +52,15 @@
         </copy>
 
         <!--
+            AND we need to copy the config.
+            -->
+        <tempfile property="tmpfile2" destdir="${build.dir}/artifacts" deleteonexit="true" />
+        <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile2}" />
+        <copy todir="${install_dir}" overwrite="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile2}" />
+        </copy>
+
+        <!--
             then we composer install in the build dir...
             -->
         <exec command="composer install --no-dev" dir="${install_dir}" passthru="true" />
