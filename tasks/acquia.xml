@@ -85,7 +85,6 @@
         <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.branch" value="${acquia.branch}" />
-            <property name="push" value="${push}" />
         </phing>
     </target>
 
