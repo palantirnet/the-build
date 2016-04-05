@@ -145,4 +145,40 @@
         </drush>
     </target>
 
+
+    <!--
+        Target: db-dump-for-prod
+        Dumb wrapper to help consistently dump the database when pushing fresh to prod.
+        -->
+    <target name="db-dump-for-prod">
+        <!-- prompt for a prod admin password -->
+        <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
+        <drush command="user-password">
+           <option name="password" value="admin" />
+           <param>admin</param>
+        </drush>
+
+        <!-- get a commit label to use in the db dump name -->
+        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
+        <property name="build_commit_ref" value="${git_describe_output}">
+            <filterchain>
+                <striplinebreaks />
+            </filterchain>
+        </property>
+
+        <!-- dump the database -->
+        <drush command="sql-dump">
+            <option name="structure-tables-key" value="common" />
+            <option name="gzip" />
+            <option name="result-file" value="${build.dir}/artifacts/db-${build_commit_ref}.sql" />
+        </drush>
+
+        <!-- now we can go back to the worst password ever -->
+        <drush command="user-password">
+           <option name="password" value="admin" />
+           <param>admin</param>
+        </drush>
+    </target>
+
+
 </project>
