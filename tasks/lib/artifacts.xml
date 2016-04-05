@@ -21,7 +21,7 @@
             copy the composer files to the build directory so that we can get
             all of the prod dependencies there.
             -->
-        <copy todir="${install_dir}" overwrite="true">
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
             <fileset dir="${build.dir}">
                 <include name="composer.json" />
                 <include name="composer.lock" />
@@ -45,25 +45,27 @@
             accidentally adding local files or settings.php in to the
             build repository.
             -->
-        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" deleteonexit="true" />
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files" dir="${build.dir}/web" output="${tmpfile}" />
-        <copy todir="${drupal.root}" overwrite="true">
+        <copy todir="${drupal.root}" overwrite="true" haltonerror="true">
             <filelist dir="${build.dir}/web" listfile="${tmpfile}" />
         </copy>
+        <delete file="${tmpfile}" />
 
         <!--
             AND we need to copy the config.
             -->
-        <tempfile property="tmpfile2" destdir="${build.dir}/artifacts" deleteonexit="true" />
-        <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile2}" />
-        <copy todir="${install_dir}" overwrite="true">
-            <filelist dir="${build.dir}" listfile="${tmpfile2}" />
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
+        <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile}" />
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
+        <delete file="${tmpfile}" />
 
         <!--
             then we composer install in the build dir...
             -->
-        <exec command="composer install --no-dev" dir="${install_dir}" passthru="true" />
+        <exec command="composer install --no-dev" dir="${install_dir}" checkreturn="true" />
 
         <!--
             having git repositories in the vendor dir messes up the build
