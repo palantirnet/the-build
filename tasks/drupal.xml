@@ -66,8 +66,8 @@
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
         <!-- Make sure the file source directory exists, and create the Drupal
              modules, themes, profiles, and sites directories. -->
-        <foreach target="create-placeholder" param="dir">
-            <filelist files="${drupal.root}/modules/custom,${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
+        <foreach target="create-placeholder" param="placeholder_for">
+            <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
@@ -109,10 +109,11 @@
 
     <!-- Target: create-placeholder -->
     <target name="create-placeholder">
-        <fail unless="dir" message="The 'dir' property is required." />
+        <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
+        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" />
 
-        <mkdir dir="${dir}" />
-        <touch file="${dir}/.gitkeep" />
+        <mkdir dir="${placeholder_for.resolved}" />
+        <touch file="${placeholder_for.resolved}/.gitkeep" />
     </target>
 
 
