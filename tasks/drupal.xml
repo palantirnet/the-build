@@ -154,7 +154,7 @@
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
-           <option name="password" value="admin" />
+           <option name="password" value="${pass}" />
            <param>admin</param>
         </drush>
 
