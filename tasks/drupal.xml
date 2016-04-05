@@ -158,6 +158,12 @@
            <param>admin</param>
         </drush>
 
+        <!-- put the site in maintenance mode -->
+        <drush command="sset">
+            <param>system.maintenance_mode</param>
+            <param>1</param>
+        </drush>
+
         <!-- get a commit label to use in the db dump name -->
         <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
         <property name="build_commit_ref" value="${git_describe_output}">
@@ -177,6 +183,12 @@
         <drush command="user-password">
            <option name="password" value="admin" />
            <param>admin</param>
+        </drush>
+
+        <!-- and take the site out of maintenance mode -->
+        <drush command="sset">
+            <param>system.maintenance_mode</param>
+            <param>0</param>
         </drush>
     </target>
 
