@@ -11,13 +11,13 @@ if (!empty($output)) {
   $repo = current($output);
 
   # Configure Drush for the current project.
-  $options['root'] = "{$repo}/@drupal.root@";
-  $options['uri'] = "@drupal.uri@";
+  $options['root'] = "{$repo}/${drupal.root}";
+  $options['uri'] = "${drupal.uri}";
 }
 
 $command_specific['site-install'] = array(
-  'sites-subdir' => '@drupal.sites_subdir@',
-  'site-name' => '@drupal.site_name@',
+  'sites-subdir' => '${drupal.sites_subdir}',
+  'site-name' => '${drupal.site_name}',
   'account-name' => 'admin',
   'account-pass' => 'admin',
 );

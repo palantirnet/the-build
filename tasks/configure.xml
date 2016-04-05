@@ -174,14 +174,13 @@
         </if>
 
         <!-- Copy the drushrc template and sub in variables. -->
+        <property name="drupal.root" refid="default.drupal.root" override="true" />
+        <property name="drupal.uri" refid="default.drupal.uri" override="true" />
+        <property name="drupal.site_name" refid="default.drupal.site_name" override="true" />
+        <property name="drupal.sites_subdir" value="default" override="true" />
         <copy file="${phing.dir.configure}/../conf/drushrc.php" tofile="${build.dir}/conf/drushrc.${build.env}.php" overwrite="true">
             <filterchain>
-                <replacetokens>
-                    <token key="drupal.root" value="${default.drupal.root}"/>
-                    <token key="drupal.uri" value="${default.drupal.uri}"/>
-                    <token key="drupal.site_name" value="${default.drupal.site_name}"/>
-                    <token key="drupal.sites_subdir" value="default"/>
-                </replacetokens>
+                <expandproperties />
             </filterchain>
         </copy>
     </target>

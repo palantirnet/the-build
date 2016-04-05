@@ -75,18 +75,9 @@
 
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
-        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="755">
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="770">
             <filterchain>
-                <replacetokens>
-                    <token key="database.database" value="${drupal.database.database}" />
-                    <token key="database.username" value="${drupal.database.username}" />
-                    <token key="database.password" value="${drupal.database.password}" />
-                    <token key="database.host" value="${drupal.database.host}" />
-                    <token key="drupal.config_sync_directory" value="${drupal.config_sync_directory}" />
-                    <token key="hash_salt" value="temporary" />
-                    <token key="settings.file_public_path" value="${drupal.settings.file_public_path}" />
-                    <token key="settings.file_private_path" value="${drupal.settings.file_private_path}" />
-                </replacetokens>
+                <expandproperties />
             </filterchain>
         </copy>
     </target>
@@ -99,9 +90,7 @@
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
         <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="755">
             <filterchain>
-                <replacetokens>
-                    <token key="twig.debug" value="${drupal.twig.debug}" />
-                </replacetokens>
+                <expandproperties />
             </filterchain>
         </copy>
     </target>
