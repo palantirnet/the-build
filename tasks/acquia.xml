@@ -64,16 +64,6 @@
             <property name="repo.branch" value="${acquia.branch}" />
         </phing>
 
-        <if>
-            <not><available file="${acquia.dir}/.gitignore" /></not>
-            <then>
-                <!-- whitespace is significant inside this <echo> -->
-                <echo file="${acquia.dir}/.gitignore">
-/docroot/files
-/docroot/sites/default/files</echo>
-            </then>
-        </if>
-
         <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="run-composer-elsewhere" inheritAll="false" dir=".">
             <property name="install_dir" value="${repo.dir}" />
             <property name="build.dir" value="${build.dir}" />

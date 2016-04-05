@@ -70,6 +70,7 @@
                     <fileset dir="${repo.dir}" defaultexcludes="false">
                         <include name="**/*" />
                         <exclude name=".git" />
+                        <exclude name=".gitignore" />
                         <exclude name=".git/**" />
                     </fileset>
                 </delete>
