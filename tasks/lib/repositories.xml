@@ -145,6 +145,8 @@ ${modified_files}
 
                 <!-- Commit it all. -->
                 <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true" />
+
+                <!-- @todo tag if we're right on a tag and the repo is not dirty. -->
             </else>
         </if>
     </target>
