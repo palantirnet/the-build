@@ -89,9 +89,18 @@
         </if>
 
         <!-- Remove any existing artifact first. -->
-        <phingcall target="remove-resource">
-            <property name="resource" value="${resource_dest}" />
-        </phingcall>
+        <if>
+            <available file="${resource_dest}" type="file" />
+            <then>
+                <delete file="${resource_dest}" />
+            </then>
+            <elseif>
+                <available file="${resource_dest}" type="dir" />
+                <then>
+                    <delete dir="${resource_dest}" />
+                </then>
+            </elseif>
+        </if>
 
         <!-- Then link or copy the current artifact. -->
         <if>
@@ -114,24 +123,6 @@
             <else>
                 <symlink target="${resource_source}" link="${resource_dest}" />
             </else>
-        </if>
-    </target>
-
-
-    <target name="remove-resource">
-        <fail unless="resource" />
-
-        <if>
-            <available file="${resource}" type="file" />
-            <then>
-                <delete file="${resource}" />
-            </then>
-            <elseif>
-                <available file="${resource}" type="dir" />
-                <then>
-                    <delete dir="${resource}" />
-                </then>
-            </elseif>
         </if>
     </target>
 
