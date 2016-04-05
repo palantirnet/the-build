@@ -84,8 +84,8 @@
                     <token key="database.host" value="${drupal.database.host}" />
                     <token key="drupal.config_sync_directory" value="${drupal.config_sync_directory}" />
                     <token key="hash_salt" value="temporary" />
-                    <token key="settings.file_public_path" value="drupal.settings.file_public_path" />
-                    <token key="settings.file_private_path" value="drupal.settings.file_private_path" />
+                    <token key="settings.file_public_path" value="${drupal.settings.file_public_path}" />
+                    <token key="settings.file_private_path" value="${drupal.settings.file_private_path}" />
                 </replacetokens>
             </filterchain>
         </copy>
@@ -119,13 +119,11 @@
 
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
-        <!-- Delete and re-create the public files directory -->
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+
+        <!-- Delete and re-create the public files directory -->
         <delete dir="${drupal.settings.file_public_path.resolved}" />
-        <phingcall target="create-placeholder">
-            <property name="dir" value="${drupal.settings.file_public_path.resolved}" />
-        </phingcall>
-        <chmod file="${drupal.settings.file_public_path}" mode="770" />
+        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="770" />
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>

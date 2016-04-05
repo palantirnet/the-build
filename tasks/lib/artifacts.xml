@@ -101,6 +101,7 @@
                 </then>
             </elseif>
         </if>
+        <delete file="${resource_dest}" />
 
         <!-- Then link or copy the current artifact. -->
         <if>
