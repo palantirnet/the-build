@@ -162,17 +162,21 @@ ${modified_files}
                 <echo>Nothing to push.</echo>
             </then>
             <else>
+                <echo>You have local commits.</echo>
                 <if>
-                    <!-- @todo ${push} is never unset because of the way this target is called -->
-                    <not><isset property="push" /></not>
+                    <or>
+                        <equals arg1="${push}" arg2="" />
+                        <not><isset property="push" /></not>
+                    </or>
                     <then>
-                        <input propertyName="push" message="You have local commits. Push your changes?" validArgs="y,n" />
+                        <input propertyName="push" message="Push your changes?" validArgs="y,n" />
                     </then>
                 </if>
 
                 <if>
                     <equals arg1="${push}" arg2="y" />
                     <then>
+                        <echo>Pushing changes.</echo>
                         <gitpush repository="${repo.dir}" refspec="${repo.branch}" tags="true" />
                     </then>
                 </if>
