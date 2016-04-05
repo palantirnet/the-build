@@ -54,14 +54,11 @@
 
         <!--
             AND we need to copy the config.
-
-            @todo this is now acquia-specific by copying config to the
-            config/default path.
             -->
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
-        <exec command="git ls-files" dir="${build.dir}/conf/drupal/config" output="${tmpfile}" />
-        <copy todir="${install_dir}/config/default" overwrite="true" haltonerror="true">
-            <filelist dir="${build.dir}/conf/drupal/config" listfile="${tmpfile}" />
+        <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile}" />
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
         <delete file="${tmpfile}" />
 
