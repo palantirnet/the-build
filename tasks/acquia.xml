@@ -36,6 +36,13 @@
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/${propertiesfile}" prefix="default" override="true" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <property name="prompt.acquia.accountname" value="Acquia account machine name" />
+            <property name="default.acquia.accountname" value="${projectname}" />
+
             <property name="prompt.acquia.repo" value="Acquia git repository" />
             <property name="default.acquia.repo" value="" />
 
@@ -45,7 +52,7 @@
             <property name="prompt.acquia.dir" value="Location to checkout artifact repository, relative to the project root" />
             <property name="default.acquia.dir" value="artifacts/acquia" />
 
-            <property name="update" value="acquia.repo,acquia.deploy_branch,acquia.checkout_dir" />
+            <property name="update" value="acquia.accountname,acquia.repo,acquia.branch,acquia.dir" />
         </phing>
     </target>
 
