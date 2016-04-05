@@ -75,7 +75,7 @@
                 </delete>
 
                 <!-- Add a single placeholder file. -->
-                <touch file="${repo.dir}/.gitkeep" />
+                <touch file="${repo.dir}/.gitignore" />
 
                 <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
                 <exec command="git add --all" dir="${repo.dir}" />
