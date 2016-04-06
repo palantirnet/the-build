@@ -19,9 +19,16 @@
     <!-- If the command wasn't called with an environment, prompt for one. -->
     <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
 
-    <!-- Load properties for this environment, then for the default environment. -->
-    <property file="${build.dir}/conf/build.${build.env}.properties" />
-    <property file="${build.dir}/conf/build.default.properties" />
+    <if>
+        <not><isset property="status.defaults_loaded" /></not>
+        <then>
+            <!-- Load properties for this environment, then for the default environment. -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" />
+            <property file="${build.dir}/conf/build.default.properties" />
+
+            <property name="status.defaults_loaded" value="true" />
+        </then>
+    </if>
     
 
     <!--
