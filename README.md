@@ -10,7 +10,7 @@ To use these build tasks:
 
 * Add `the-build` to your project using composer: `composer require palantirnet/the-build`
 * Install the default `build.xml` to your project: `vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml`
-* Edit your new build.xml to suit
+* Edit your new `build.xml` and `conf/build.default.properties` to suit
 
 ## Our packages.json
 
