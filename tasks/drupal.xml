@@ -118,7 +118,7 @@
             <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="770" />
     </target>
 
 
@@ -128,7 +128,7 @@
         <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.settings" />
 
-        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="777">
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="550">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -142,8 +142,7 @@
         <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.services" />
 
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="755">
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="550">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -181,8 +180,12 @@
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
 
         <!-- Delete and re-create the public files directory -->
+        <delete file="${drupal.settings.file_public_path.resolved}" />
         <delete dir="${drupal.settings.file_public_path.resolved}" />
         <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="770" />
+
+        <!-- Make settings.php writable -->
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
