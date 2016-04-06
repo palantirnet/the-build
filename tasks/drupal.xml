@@ -156,8 +156,16 @@
         <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
         <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" dir="${build.dir}" />
 
-        <mkdir dir="${placeholder_for.resolved}" />
-        <touch file="${placeholder_for.resolved}/.gitkeep" />
+        <if>
+            <not><available file="${placeholder_for.resolved}" type="dir" /></not>
+            <then>
+                <mkdir dir="${placeholder_for.resolved}" />
+                <touch file="${placeholder_for.resolved}/.gitkeep" />
+            </then>
+            <else>
+                <echo>${placeholder_for} already exists.</echo>
+            </else>
+        </if>
     </target>
 
 
