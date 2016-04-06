@@ -15,11 +15,11 @@ if (!empty($output)) {
   $options['uri'] = "${drupal.uri}";
 }
 
-$command_specific['site-install'] = array(
-  'sites-subdir' => '${drupal.sites_subdir}',
-  'site-name' => '${drupal.site_name}',
-  'account-name' => 'admin',
-  'account-pass' => 'admin',
+/**
+ * Prevent certain modules from being enabled via config exports.
+ */
+$command_specific['config-export'] = array(
+  'skip-modules' => 'devel',
 );
 
 /**
