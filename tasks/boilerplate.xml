@@ -44,7 +44,7 @@
 
     <!-- Target: configure -->
     <target name="configure" description="Interactive configuration for Drupal project settings.">
-        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
+        <phing phingfile="${phing.dir.boilerplate}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
@@ -61,6 +61,21 @@
 
             <property name="update" value="build.artifact_mode,build.test_output" />
         </phing>
+    </target>
+
+
+    <!-- Target: check-deploy-env -->
+    <target name="check-deploy-env">
+        <if>
+            <or>
+                <equals arg1="${build.env}" arg2="vagrant" />
+                <equals arg1="${build.env}" arg2="default" />
+            </or>
+            <then>
+                <echo level="error">Make sure you're running the deployment with a deploy environment!</echo>
+                <fail message="Use a different build.env." />
+            </then>
+        </if>
     </target>
 
 

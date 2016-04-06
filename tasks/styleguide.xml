@@ -13,7 +13,7 @@
 
         Interactive configuration to set the styleguide build properties.
         -->
-    <target name="styleguide-configure" description="Interactive configuration for styleguide build properties.">
+    <target name="styleguide-configure" description="Configure the styleguide build.">
         <phing phingfile="${phing.dir.styleguide}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
@@ -40,7 +40,7 @@
 
         Generate and deploy the prod styleguide CSS and HTML.
         -->
-    <target name="styleguide-build" description="Generate, commit, and optionally deploy the latest changes to the styleguide.">
+    <target name="styleguide-build" description="Build and deploy the current styleguide.">
         <!-- Always render for prod when doing a build. -->
         <property name="styleguide.env" value="prod" override="true" />
         <property name="styleguide.output_dir" value="${build.dir}/styleguide/output_${styleguide.env}" override="true" />
@@ -57,7 +57,7 @@
         Can be run any time, for any environment. Defaults to generating "dev"
         CSS and HTML.
         -->
-    <target name="styleguide-generate" description="Generate the CSS and HTML for the styleguide." >
+    <target name="styleguide-generate">
         <fail unless="styleguide.dir" />
         <resolvepath propertyName="styleguide.dir.absolute_path" file="${styleguide.dir}" />
         <property name="styleguide.env" value="dev" />
@@ -74,7 +74,7 @@
         Can be run any time, for any environment, as long as the fed tools are
         available. Defaults to generating "dev" CSS.
         -->
-    <target name="styleguide-generate-css" description="Generate the CSS for the styleguide." >
+    <target name="styleguide-generate-css">
         <fail unless="styleguide.dir.absolute_path" />
         <property name="styleguide.env" value="dev" />
 

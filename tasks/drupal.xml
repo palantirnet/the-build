@@ -45,7 +45,7 @@
 
 
     <!-- Target: drupal-configure -->
-    <target name="drupal-configure" description="Interactive configuration for Drupal project settings.">
+    <target name="drupal-configure" description="Configure the Drupal build.">
         <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
@@ -56,7 +56,7 @@
 
             <!-- Prompts and defaults -->
             <property name="prompt.drupal.site_name" value="Human-readable site name" />
-            <property name="default.drupal.site_name" value="${phing.project.name}" />
+            <property name="default.drupal.site_name" value="${projectname}" />
 
             <property name="prompt.drupal.profile" value="Drupal install profile" />
             <property name="default.drupal.profile" value="standard" />
@@ -90,8 +90,8 @@
     </target>
 
 
-    <!-- Target: create-drushrc -->
-    <target name="create-drushrc" description="Create a drushrc file for Vagrant.">
+    <!-- Target: drush-prepare-drushrc -->
+    <target name="drush-prepare-drushrc" description="Create a drushrc file for Vagrant.">
         <!-- Copy the drushrc template and sub in variables. -->
         <copy file="${phing.dir.drupal}/../conf/drushrc.php" tofile="${build.dir}/conf/drushrc.php" overwrite="true">
             <filterchain>
@@ -108,7 +108,7 @@
     </target>
 
     <!-- Target: drupal-prepare-filesystem -->
-    <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
+    <target name="drupal-prepare-filesystem">
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
 
@@ -123,7 +123,7 @@
 
 
     <!-- Target: drupal-prepare-settings -->
-    <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
+    <target name="drupal-prepare-settings">
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.settings" />
@@ -137,7 +137,7 @@
 
 
     <!-- Target: drupal-prepare-services -->
-    <target name="drupal-prepare-services" description="Write the services.yml file for Drupal.">
+    <target name="drupal-prepare-services">
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.services" />
@@ -198,10 +198,12 @@
 
 
     <!--
-        Target: db-dump-for-prod
-        Dumb wrapper to help consistently dump the database when pushing fresh to prod.
+        Target: drupal-dump-db
+
+        Dumb wrapper to help consistently dump the database when pushing an
+        installed site to prod.
         -->
-    <target name="db-dump-for-prod">
+    <target name="drupal-dump-db" description="Generate a database dump.">
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">

@@ -29,7 +29,7 @@
 
 
     <!-- Target: acquia-configure -->
-    <target name="acquia-configure" description="Interactive configuration for Acquia build properties.">
+    <target name="acquia-configure" description="Configure the Acquia build.">
         <phing phingfile="${phing.dir.acquia}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
@@ -80,7 +80,7 @@
     </target>
 
 
-    <target name="acquia-deploy-changes">
+    <target name="acquia-deploy">
         <fail unless="acquia.dir" />
         <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 

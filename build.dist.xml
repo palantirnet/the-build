@@ -9,6 +9,7 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
 
 
     <!-- Default target: build -->
@@ -17,20 +18,11 @@
     </target>
 
 
-    <target name="acquia-deploy">
-        <if>
-            <or>
-                <equals arg1="${build.env}" arg2="vagrant" />
-                <equals arg1="${build.env}" arg2="default" />
-            </or>
-            <then>
-                <fail msg="Make sure you're running the deployment with a deploy environment!" />
-            </then>
-        </if>
-
+    <target name="deploy-to-acquia">
+        <phingcall target="check-deploy-env" />
         <phingcall target="acquia-build" />
         <phingcall target="build" />
-        <phingcall target="acquia-deploy-changes" />
+        <phingcall target="acquia-deploy" />
     </target>
 
 
