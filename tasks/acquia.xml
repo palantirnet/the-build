@@ -10,6 +10,7 @@
     <fail unless="build.env" />
 
 
+    <!-- Default task: acquia-status -->
     <target name="acquia-status">
         <fail unless="acquia.repo" />
         <fail unless="acquia.branch" />
@@ -26,11 +27,8 @@
         </if>
     </target>
 
-    <!--
-        Target: configure
 
-        Interactive configuration to set the Acquia build properties.
-        -->
+    <!-- Target: acquia-configure -->
     <target name="acquia-configure" description="Interactive configuration for Acquia build properties.">
         <phing phingfile="${phing.dir.acquia}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
@@ -40,6 +38,7 @@
             <property file="${build.dir}/${propertiesfile}" prefix="default" override="true" />
             <property file="${build.dir}/conf/build.default.properties" prefix="default" />
 
+            <!-- Prompts and defaults -->
             <property name="prompt.acquia.accountname" value="Acquia account machine name" />
             <property name="default.acquia.accountname" value="${projectname}" />
 
@@ -56,22 +55,24 @@
         </phing>
     </target>
 
+
+    <!-- Target: acquia-build -->
     <target name="acquia-build">
         <fail unless="acquia.dir" />
         <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-repository" inheritAll="false" dir=".">
+        <phing target="init-repository" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.source" value="${acquia.repo}" />
         </phing>
 
         <!-- @todo consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch. -->
-        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" target="init-branch" inheritAll="false" dir=".">
+        <phing target="init-branch" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
             <property name="repo.dir" value="${repo.dir}" />
             <property name="repo.branch" value="${acquia.branch}" />
         </phing>
 
-        <phing phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" target="run-composer-elsewhere" inheritAll="false" dir=".">
+        <phing target="run-composer-elsewhere" phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" inheritAll="false" dir=".">
             <property name="install_dir" value="${repo.dir}" />
             <property name="build.dir" value="${build.dir}" />
             <property name="drupal.root" value="${drupal.root}" />
