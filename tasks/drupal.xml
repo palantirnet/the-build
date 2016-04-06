@@ -24,6 +24,7 @@
     <property name="drupal.profile" value="standard" />
     <property name="drupal.modules_enable" value="" />
     <property name="drupal.twig.debug" value="false" />
+    <property name="drupal.hash_salt" value="temporary" />
 
     <property name="drupal.settings.file_public_path" value="sites/default/files" />
     <property name="drupal.settings.file_private_path" value="" />
@@ -64,6 +65,9 @@
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem" description="Prepare the filesystem for running Drupal.">
+        <fail unless="drupal.root" />
+        <fail unless="drupal.sites_subdir" />
+
         <!-- Make sure the file source directory exists, and create the Drupal
              modules, themes, profiles, and sites directories. -->
         <foreach target="create-placeholder" param="placeholder_for">
@@ -73,8 +77,13 @@
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
     </target>
 
+
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings" description="Write the settings.php file for Drupal.">
+        <fail unless="drupal.root" />
+        <fail unless="drupal.sites_subdir" />
+        <fail unless="build.drupal.settings" />
+
         <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="770">
             <filterchain>
                 <expandproperties />
@@ -85,7 +94,9 @@
 
     <!-- Target: drupal-prepare-services -->
     <target name="drupal-prepare-services" description="Write the services.yml file for Drupal.">
-        <fail unless="drupal.twig.debug" />
+        <fail unless="drupal.root" />
+        <fail unless="drupal.sites_subdir" />
+        <fail unless="build.drupal.services" />
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
         <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="755">
@@ -99,7 +110,7 @@
     <!-- Target: create-placeholder -->
     <target name="create-placeholder">
         <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
-        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" />
+        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" dir="${build.dir}" />
 
         <mkdir dir="${placeholder_for.resolved}" />
         <touch file="${placeholder_for.resolved}/.gitkeep" />
@@ -108,6 +119,13 @@
 
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
+        <fail unless="drupal.settings.file_public_path" />
+        <fail unless="drupal.root" />
+        <fail unless="drupal.site_name" />
+        <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.profile" />
+        <fail unless="drupal.modules_enable" />
+
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
 
         <!-- Delete and re-create the public files directory -->
