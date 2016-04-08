@@ -112,13 +112,18 @@
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
 
-        <!-- Make sure the file source directory exists, and create the Drupal
-             modules, themes, profiles, and sites directories. -->
+        <!-- Create the Drupal modules, themes, profiles, and sites directories. -->
         <foreach target="create-placeholder" param="placeholder_for">
             <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+
+        <!-- The public files directory, and everything in it, needs to be world writable. -->
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+        <chmod mode="777">
+            <fileset dir="${drupal.settings.file_public_path.resolved}" />
+        </chmod>
     </target>
 
 
@@ -196,6 +201,11 @@
         </drush>
 
         <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
+
+        <!-- The public files directory, and everything in it, needs to be world writable. -->
+        <chmod mode="777">
+            <fileset dir="${drupal.settings.file_public_path.resolved}" />
+        </chmod>
     </target>
 
 
