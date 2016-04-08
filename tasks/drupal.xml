@@ -117,13 +117,12 @@
             <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+        <!-- The site directory needs to have some perms. -->
+        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
 
         <!-- The public files directory, and everything in it, needs to be world writable. -->
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
-        <chmod mode="777">
-            <fileset dir="${drupal.settings.file_public_path.resolved}" />
-        </chmod>
+        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
     </target>
 
 
@@ -147,7 +146,7 @@
         <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.services" />
 
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="555">
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="644">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -184,13 +183,17 @@
 
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
 
-        <!-- Delete and re-create the public files directory -->
-        <delete file="${drupal.settings.file_public_path.resolved}" />
-        <delete dir="${drupal.settings.file_public_path.resolved}" />
-        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="777" />
+        <!-- The sites subdirectory should be writable; Drupal will change the
+             permissions on this directory after install. -->
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
 
         <!-- Make settings.php writable -->
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
+
+        <!-- Delete and re-create the public files directory -->
+        <delete file="${drupal.settings.file_public_path.resolved}" />
+        <delete dir="${drupal.settings.file_public_path.resolved}" />
+        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
@@ -203,9 +206,7 @@
         <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
 
         <!-- The public files directory, and everything in it, needs to be world writable. -->
-        <chmod mode="777">
-            <fileset dir="${drupal.settings.file_public_path.resolved}" />
-        </chmod>
+        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
     </target>
 
 
