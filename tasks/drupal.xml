@@ -118,7 +118,7 @@
             <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
         </foreach>
 
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="775" />
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
     </target>
 
 
@@ -182,7 +182,7 @@
         <!-- Delete and re-create the public files directory -->
         <delete file="${drupal.settings.file_public_path.resolved}" />
         <delete dir="${drupal.settings.file_public_path.resolved}" />
-        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
+        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="777" />
 
         <!-- Make settings.php writable -->
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
