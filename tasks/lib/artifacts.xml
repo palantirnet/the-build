@@ -73,8 +73,9 @@
             artifact and git will automatically try to do submodules for git
             directories like this. so we strip them.
             -->
-        <delete>
+        <delete includeemptydirs="true">
             <fileset dir="${install_dir}" defaultexcludes="false">
+                <include name="*/**/.git/**" />
                 <include name="*/**/.git" />
             </fileset>
         </delete>
