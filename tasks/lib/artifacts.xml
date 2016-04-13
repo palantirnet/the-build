@@ -74,8 +74,8 @@
             directories like this. so we strip them.
             -->
         <delete>
-            <fileset dir="${install_dir}/vendor" defaultexcludes="false">
-                <include name="**/.git" />
+            <fileset dir="${install_dir}" defaultexcludes="false">
+                <include name="*/**/.git" />
             </fileset>
         </delete>
     </target>
