@@ -21,6 +21,15 @@
             </filterchain>
         </copy>
 
+        <!-- Copy the circle.yml -->
+        <copy file="${phing.dir.install}/../circle.dist.yml" tofile="${application.startdir}/circle.yml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
         <!-- Copy the build configuration templates. -->
         <mkdir dir="${application.startdir}/conf" />
         <copy todir="${application.startdir}/conf/drupal">

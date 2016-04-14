@@ -18,6 +18,34 @@
     </target>
 
 
+    <!-- Target: install -->
+    <target name="install" description="Install the application.">
+        <phingcall target="drupal-install" />
+    </target>
+
+
+    <!-- Target: migrate -->
+    <target name="migrate" description="Run the migrations.">
+        <echo>Configure this target to load sample data and run the migrations.</echo>
+        <fail message="This target is not configured." />
+    </target>
+
+
+    <!-- Target: test -->
+    <target name="test" description="Run all the tests.">
+        <echo>Configure this target to run the tests.</echo>
+        <fail message="This target is not configured." />
+    </target>
+
+
+    <!-- Target: deploy -->
+    <target name="deploy" description="Build and deploy the application.">
+        <echo>Configure this target to build the production artifact; see the `deploy-to-acquia` target for an example.</echo>
+        <fail message="This target is not configured." />
+    </target>
+
+
+    <!-- Target: deploy-to-acquia -->
     <target name="deploy-to-acquia">
         <phingcall target="check-deploy-env" />
         <phingcall target="acquia-build" />
