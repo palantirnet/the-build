@@ -87,12 +87,14 @@
             <else>
                 <!-- Otherwise just make sure the branch is checked out. -->
                 <gitcheckout repository="${repo.dir}" branchname="${repo.branch}" force="true" />
-                <trycatch>
-                    <try>
-                        <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
-                    </try>
-                    <catch></catch>
-                </trycatch>
+
+                <!-- And pull, if there's a remote branch. -->
+                <if>
+                    <not><equals arg1="${branch_remote}" arg2="" /></not>
+                    <then>
+                        <gitpull repository="${repo.dir}" refspec="${repo.branch}" force="true" />
+                    </then>
+                </if>
             </else>
         </if>
     </target>
