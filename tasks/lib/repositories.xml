@@ -92,7 +92,34 @@
                 <if>
                     <not><equals arg1="${branch_remote}" arg2="" /></not>
                     <then>
-                        <gitpull repository="${repo.dir}" refspec="${repo.branch}" force="true" />
+                        <trycatch>
+                            <try>
+                                <!--
+                                    Pull gently at first, allowing fast-forward commits but not obliterating
+                                    local commits. This allows us to build, examine, and rebuild without
+                                    pushing.
+
+                                    Ideally we would use Phing's git pull task, but this should fail if it's
+                                    not a fast forward, because we merges are not meaningful in the
+                                    artifact. If we DID use Phing's task, it would look like this:
+
+                                        <gitpull repository="${repo.dir}" refspec="${repo.branch}" />
+
+                                    Merges in the artifact are bad because they would create code that was
+                                    not generated directly from the development codebase; an artifact with
+                                    a merge would not be reproducible by re-running the artifact build task.
+                                    -->
+                                <exec command="git pull origin ${repo.branch} --ff-only" dir="${repo.dir}" checkreturn="true" />
+                            </try>
+                            <catch>
+                                <!--
+                                    Our local artifact has diverged from the upstream artifact. At this
+                                    point, we're going to lose our local commits, which is ok because this
+                                    is an artifact, not code under active development.
+                                    -->
+                                <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
+                            </catch>
+                        </trycatch>
                     </then>
                 </if>
             </else>
