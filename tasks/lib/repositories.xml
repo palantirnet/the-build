@@ -105,6 +105,8 @@
         <fail unless="repo.dir" />
         <fail unless="message" />
 
+        <property name="tag_prefix" value="" />
+
         <!-- Get a descriptor of the current ref of the main repository. -->
         <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
         <property name="build_commit_ref" value="${git_describe_output}">
@@ -139,6 +141,22 @@ ${modified_files}
                     </then>
                     <else>
                         <property name="build_message">[${build_commit_ref}] ${message}</property>
+
+                        <!-- If we're on a tag and the repo is not dirty, then this try-catch will set the ${build_tag} -->
+                        <trycatch>
+                            <try>
+                                <gitdescribe repository="${build.dir}" tags="true" always="true" candidates="0" outputProperty="git_describe_output_2" />
+                                <property name="build_tag" value="${git_describe_output_2}">
+                                    <filterchain>
+                                        <striplinebreaks />
+                                        <prefixlines prefix="${tag_prefix}" />
+                                    </filterchain>
+                                </property>
+                            </try>
+                            <catch>
+                                <!-- We don't really care if we're not on a tag, we just won't tag. -->
+                            </catch>
+                        </trycatch>
                     </else>
                 </if>
 
@@ -148,7 +166,14 @@ ${modified_files}
                 <!-- Commit it all. -->
                 <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true" />
 
-                <!-- @todo tag if we're right on a tag and the repo is not dirty. -->
+                <!-- We'll have a ${build_tag} if we're right on a tag and the repo is not dirty. -->
+                <if>
+                    <isset property="build_tag" />
+                    <then>
+                        <echo>Congratulations! You've built a tagged release for ${build_tag}.</echo>
+                        <gittag repository="${repo.dir}" name="${build_tag}" annotate="true" message="Build of tag ${build_tag}." />
+                    </then>
+                </if>
             </else>
         </if>
     </target>

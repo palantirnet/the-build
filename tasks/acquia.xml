@@ -48,6 +48,9 @@
             <property name="prompt.acquia.branch" value="Git branch for build artifacts" />
             <property name="default.acquia.branch" value="build" />
 
+            <property name="prompt.acquia.tag_prefix" value="Prefix for build tags, e.g. 'build-'" />
+            <property name="default.acquia.tag_prefix" value="build" />
+
             <property name="prompt.acquia.dir" value="Location to checkout artifact repository, relative to the project root" />
             <property name="default.acquia.dir" value="artifacts/acquia" />
 
@@ -88,6 +91,7 @@
         <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
             <property name="build.dir" value="${build.dir}" />
             <property name="repo.dir" value="${repo.dir}" />
+            <property name="tag_prefix" value="${acquia.tag_prefix}" />
             <property name="message" value="Drupal artifact." />
         </phing>
 
