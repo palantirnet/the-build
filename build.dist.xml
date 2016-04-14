@@ -8,7 +8,6 @@
 
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
 
 
