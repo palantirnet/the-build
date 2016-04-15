@@ -23,11 +23,13 @@ dependencies:
     - composer install
 
   cache_directories:
+    - node_modules
     - vendor
     - web/core
     - web/modules/contrib
     - web/profiles/contrib
-    - $HOME/.composer
+    - ~/.composer
+    - ~/.npm
 
 test:
   pre:
