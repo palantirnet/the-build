@@ -17,6 +17,9 @@ dependencies:
     # Generate a GitHub token per project and add it to the CircleCI environment variables using the web UI.
     - composer config --global github-oauth.github.com $GITHUB_TOKEN
 
+  override:
+    - composer install
+
   cache_directories:
     - vendor
     - web/core
@@ -26,7 +29,7 @@ dependencies:
 
 test:
   pre:
-    - vendor/bin/phing build install
+    - vendor/bin/phing build install migrate
 
   override:
     - vendor/bin/phing test
