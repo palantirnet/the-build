@@ -5,12 +5,14 @@
       -->
 
 
-    <import file="configure.xml" />
+    <property name="build.dir" value="${application.startdir}" />
+    <property name="build.env" value="default" />
+    <basename property="projectname" file="${build.dir}" suffix="local" />
 
 
     <!-- Target: install -->
     <target name="install" description="Install the Phing build template into your project.">
-        <!-- Copy the Vagrantfile template. -->
+        <!-- Copy the build file template. -->
         <copy file="${phing.dir.install}/../build.dist.xml" tofile="${application.startdir}/build.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
@@ -19,19 +21,27 @@
             </filterchain>
         </copy>
 
-        <!-- Copy the build configuration. -->
+        <!-- Copy the circle.yml -->
+        <copy file="${phing.dir.install}/../circle.dist.yml" tofile="${application.startdir}/circle.yml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <!-- Copy the build configuration templates. -->
         <mkdir dir="${application.startdir}/conf" />
         <copy todir="${application.startdir}/conf/drupal">
             <fileset dir="${phing.dir.install}/../conf/drupal" />
         </copy>
 
         <echo message="Configure the default environment..." />
-        <phingcall target="configure-defaults" />
-        <phingcall target="configure-drush">
-            <property name="build.env" value="default" />
-        </phingcall>
+        <phing target="configure" phingfile="${phing.dir.install}/boilerplate.xml" />
+        <phing target="drupal-configure" phingfile="${phing.dir.install}/drupal.xml" />
+        <phing target="drush-prepare-drushrc" phingfile="${phing.dir.install}/drupal.xml" />
 
-        <echo message="To configure properties for more environments, run: vendor/bin/phing configure" />
+        <echo message="To configure properties for more environments, run: vendor/bin/phing configure -Dbuild.env=your_environment" />
     </target>
 
 </project>

@@ -2,26 +2,26 @@
 
 $databases = array();
 
-$settings['hash_salt'] = '@hash_salt@';
+$settings['hash_salt'] = '${drupal.hash_salt}';
 $settings['update_free_access'] = FALSE;
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
-$settings['file_public_path'] = '@settings.file_public_path@';
-$settings['file_private_path'] = '@settings.file_private_path@';
+$settings['file_public_path'] = '${drupal.settings.file_public_path}';
+$settings['file_private_path'] = '${drupal.settings.file_private_path}';
 
 $settings['trusted_host_patterns'] = array(
-  '^@acquia.accountname@dev.prod.acquia-sites.com',
-  '^@acquia.accountname@stg.prod.acquia-sites.com',
+  '^${acquia.accountname}dev.prod.acquia-sites.com',
+  '^${acquia.accountname}stg.prod.acquia-sites.com',
 );
 
 // Include the Acquia database connection and other config.
 if (file_exists('/var/www/site-php')) {
-  require '/var/www/site-php/@acquia.accountname@/@acquia.accountname@-settings.inc';
+  require '/var/www/site-php/${acquia.accountname}/${acquia.accountname}-settings.inc';
 }
 
 // Use our own config sync directory.
 $config_directories = array();
-$config_directories[CONFIG_SYNC_DIRECTORY] = '@drupal.config_sync_directory@';
+$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.config_sync_directory}';
 
 //// Add an htaccess prompt on dev.
 //// @see https://docs.acquia.com/articles/password-protect-your-non-production-environments-acquia-hosting#phpfpm

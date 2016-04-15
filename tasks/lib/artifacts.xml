@@ -16,6 +16,12 @@
         <fail unless="install_dir" />
         <fail unless="build.dir" />
         <fail unless="drupal.root" />
+        <fail unless="drupal.sites_subdir" />
+
+        <!-- Remove all the existing files so that we can install cleanly. -->
+        <delete includeemptydirs="true">
+            <fileset dir="${install_dir}" />
+        </delete>
 
         <!--
             copy the composer files to the build directory so that we can get
@@ -44,7 +50,11 @@
             doing it based on what is checked in to git prevents us from
             accidentally adding local files or settings.php in to the
             build repository.
+
+            AND, drupal has applied permissions to the sites directory that
+            prevent us from writing to it, so we need to squash them.
             -->
+        <exec command="chmod 777 web/sites/${drupal.sites_subdir}" dir="${build.dir}" />
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files" dir="${build.dir}/web" output="${tmpfile}" />
         <copy todir="${drupal.root}" overwrite="true" haltonerror="true">
@@ -73,9 +83,10 @@
             artifact and git will automatically try to do submodules for git
             directories like this. so we strip them.
             -->
-        <delete>
-            <fileset dir="${install_dir}/vendor" defaultexcludes="false">
-                <include name="**/.git" />
+        <delete includeemptydirs="true">
+            <fileset dir="${install_dir}" defaultexcludes="false">
+                <include name="*/**/.git/**" />
+                <include name="*/**/.git" />
             </fileset>
         </delete>
     </target>

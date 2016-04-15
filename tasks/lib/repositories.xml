@@ -87,12 +87,41 @@
             <else>
                 <!-- Otherwise just make sure the branch is checked out. -->
                 <gitcheckout repository="${repo.dir}" branchname="${repo.branch}" force="true" />
-                <trycatch>
-                    <try>
-                        <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
-                    </try>
-                    <catch></catch>
-                </trycatch>
+
+                <!-- And pull, if there's a remote branch. -->
+                <if>
+                    <not><equals arg1="${branch_remote}" arg2="" /></not>
+                    <then>
+                        <trycatch>
+                            <try>
+                                <!--
+                                    Pull gently at first, allowing fast-forward commits but not obliterating
+                                    local commits. This allows us to build, examine, and rebuild without
+                                    pushing.
+
+                                    Ideally we would use Phing's git pull task, but this should fail if it's
+                                    not a fast forward, because we merges are not meaningful in the
+                                    artifact. If we DID use Phing's task, it would look like this:
+
+                                        <gitpull repository="${repo.dir}" refspec="${repo.branch}" />
+
+                                    Merges in the artifact are bad because they would create code that was
+                                    not generated directly from the development codebase; an artifact with
+                                    a merge would not be reproducible by re-running the artifact build task.
+                                    -->
+                                <exec command="git pull origin ${repo.branch} --ff-only" dir="${repo.dir}" checkreturn="true" />
+                            </try>
+                            <catch>
+                                <!--
+                                    Our local artifact has diverged from the upstream artifact. At this
+                                    point, we're going to lose our local commits, which is ok because this
+                                    is an artifact, not code under active development.
+                                    -->
+                                <gitpull repository="${repo.dir}" refspec="${repo.branch}:${repo.branch}" force="true" />
+                            </catch>
+                        </trycatch>
+                    </then>
+                </if>
             </else>
         </if>
     </target>
@@ -102,6 +131,8 @@
         <fail unless="build.dir" />
         <fail unless="repo.dir" />
         <fail unless="message" />
+
+        <property name="tag_prefix" value="" />
 
         <!-- Get a descriptor of the current ref of the main repository. -->
         <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
@@ -137,6 +168,22 @@ ${modified_files}
                     </then>
                     <else>
                         <property name="build_message">[${build_commit_ref}] ${message}</property>
+
+                        <!-- If we're on a tag and the repo is not dirty, then this try-catch will set the ${build_tag} -->
+                        <trycatch>
+                            <try>
+                                <gitdescribe repository="${build.dir}" tags="true" always="true" candidates="0" outputProperty="git_describe_output_2" />
+                                <property name="build_tag" value="${git_describe_output_2}">
+                                    <filterchain>
+                                        <striplinebreaks />
+                                        <prefixlines prefix="${tag_prefix}" />
+                                    </filterchain>
+                                </property>
+                            </try>
+                            <catch>
+                                <!-- We don't really care if we're not on a tag, we just won't tag. -->
+                            </catch>
+                        </trycatch>
                     </else>
                 </if>
 
@@ -146,7 +193,14 @@ ${modified_files}
                 <!-- Commit it all. -->
                 <gitcommit repository="${repo.dir}" message="${build_message}" allFiles="true" />
 
-                <!-- @todo tag if we're right on a tag and the repo is not dirty. -->
+                <!-- We'll have a ${build_tag} if we're right on a tag and the repo is not dirty. -->
+                <if>
+                    <isset property="build_tag" />
+                    <then>
+                        <echo>Congratulations! You've built a tagged release for ${build_tag}.</echo>
+                        <gittag repository="${repo.dir}" name="${build_tag}" annotate="true" message="Build of tag ${build_tag}." />
+                    </then>
+                </if>
             </else>
         </if>
     </target>

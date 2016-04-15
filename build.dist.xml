@@ -2,44 +2,51 @@
     <!-- Run with: vendor/bin/phing -Dbuild.env=vagrant -->
     <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
-    <!-- Boilerplate -->
+
+    <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
+
+
+    <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
-        <phingcall target="drupal-prepare-filesystem" />
-        <phingcall target="drupal-prepare-settings" />
-        <phingcall target="drupal-prepare-services" />
-    </target>
-
-    <target name="configure">
-        <phing phingfile="vendor/palantirnet/the-build/tasks/configure.xml" inheritAll="false" dir=".">
-            <property name="build.env" value="${build.env}" />
-        </phing>
-
-        <phing phingfile="${phing.file.styleguide}" inheritAll="false" target="styleguide-configure">
-            <property name="build.dir" value="${build.dir}" />
-            <property name="build.env" value="${build.env}" />
-            <property name="projectname" value="${projectname}" />
-        </phing>
+        <phingcall target="drupal-build" />
     </target>
 
 
-    <target name="acquia-deploy">
-        <if>
-            <or>
-                <equals arg1="${build.env}" arg2="vagrant" />
-                <equals arg1="${build.env}" arg2="default" />
-            </or>
-            <then>
-                <fail msg="Make sure you're running the deployment with a deploy environment!" />
-            </then>
-        </if>
+    <!-- Target: install -->
+    <target name="install" description="Install the application.">
+        <phingcall target="drupal-install" />
+    </target>
 
+
+    <!-- Target: migrate -->
+    <target name="migrate" description="Run the migrations.">
+        <echo>Configure this target to load sample data and run the migrations.</echo>
+    </target>
+
+
+    <!-- Target: test -->
+    <target name="test" description="Run all the tests.">
+        <echo>Configure this target to run the tests.</echo>
+    </target>
+
+
+    <!-- Target: deploy -->
+    <target name="deploy" description="Build and deploy the application.">
+        <echo>Configure this target to build the production artifact; see the `deploy-to-acquia` target for an example.</echo>
+    </target>
+
+
+    <!-- Target: deploy-to-acquia -->
+    <target name="deploy-to-acquia">
+        <phingcall target="check-deploy-env" />
         <phingcall target="acquia-build" />
         <phingcall target="build" />
-        <phingcall target="acquia-deploy-changes" />
+        <phingcall target="acquia-deploy" />
     </target>
 
 

@@ -1,0 +1,89 @@
+<project name="boilerplate" default="status">
+    <!--
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
+      -->
+
+    <!-- Uses the project directory name as the projectname -->
+    <property name="build.dir" value="${application.startdir}" />
+    <basename property="projectname" file="${build.dir}" suffix="local" />
+
+    <!-- Uses an environment variable for the build.env, if available. -->
+    <if>
+        <isset property="env.PALANTIR_ENVIRONMENT" />
+        <then>
+            <property name="build.env" refid="env.PALANTIR_ENVIRONMENT" />
+        </then>
+    </if>
+
+    <!-- If the command wasn't called with an environment, prompt for one. -->
+    <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
+
+    <if>
+        <not><isset property="status.defaults_loaded" /></not>
+        <then>
+            <!-- Load properties for this environment, then for the default environment. -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" />
+            <property file="${build.dir}/conf/build.default.properties" />
+
+            <property name="status.defaults_loaded" value="true" />
+        </then>
+    </if>
+    
+
+    <!--
+        Default target: status
+        -->
+    <target name="status">
+        <if>
+            <not><available file="${build.dir}/conf/build.default.properties" /></not>
+            <then>
+                <echo>You should at least have a default properties file. Start with:
+                vendor/bin/phing configure -Dbuild.env=default</echo>
+            </then>
+            <else>
+                <echo>A-ok.</echo>
+                <echoproperties />
+            </else>
+        </if>
+    </target>
+
+
+    <!-- Target: configure -->
+    <target name="configure" description="Interactive configuration for Drupal project settings.">
+        <phing phingfile="${phing.dir.boilerplate}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <!-- Prompts and defaults -->
+            <property name="prompt.build.artifact_mode" value="Artifact mode (copy,symlink)" />
+            <property name="default.build.artifact_mode" value="symlink" />
+
+            <property name="prompt.build.test_output" value="Test output directory (use ${env.CIRCLE_TEST_REPORTS} for Circle)" />
+            <property name="default.build.test_output" value="/dev/null" />
+
+            <property name="update" value="build.artifact_mode,build.test_output" />
+        </phing>
+    </target>
+
+
+    <!-- Target: check-deploy-env -->
+    <target name="check-deploy-env">
+        <if>
+            <or>
+                <equals arg1="${build.env}" arg2="vagrant" />
+                <equals arg1="${build.env}" arg2="default" />
+            </or>
+            <then>
+                <echo level="error">Make sure you're running the deployment with a deploy environment!</echo>
+                <fail message="Use a different build.env." />
+            </then>
+        </if>
+    </target>
+
+
+</project>

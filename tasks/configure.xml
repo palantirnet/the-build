@@ -4,9 +4,10 @@
         This can be used to configure the build properties for a project.
       -->
 
-    <!-- Uses the project directory name as the projectname -->
-    <property name="build.dir" value="${application.startdir}" />
-    <basename property="projectname" file="${build.dir}" suffix="local" />
+
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
+
 
     <!-- Target: configure -->
     <!--
@@ -16,60 +17,37 @@
         configure -Dbuild.env=vagrant -Dupdate=drupal.new_setting            ## Adds a new setting
      -->
     <target name="configure">
-        <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
+        <fail unless="build.env" />
 
+        <property name="update" value="" />
+        <property name="dump" value="" />
+
+        <!--
+            Defaults and prompts should come from the caller.
+
+            Interactive updates:
+                <property name="prompt.drupal.root" value="Drupal root" />
+                <property name="default.drupal.root" value="web" />
+                <property name="update" value="drupal.root,something.else" />
+
+            Silent defaults:
+                <property name="default.drupal.uri" value="http://${phing.project.name}.local" />
+                <property name="dump" value="drupal.uri,another.var" />
+            -->
+
+        <!-- Initialized the properties file -->
         <property name="propertiesfile" value="conf/build.${build.env}.properties" />
-
         <phingcall target="configure-init-environment" />
 
         <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
         <property file="${build.dir}/${propertiesfile}" prefix="default" />
         <property file="${build.dir}/conf/build.default.properties" prefix="default" />
 
-        <!-- Defaults and prompts. -->
-        <property name="prompt.drupal.root" value="Drupal root" />
-        <property name="default.drupal.root" value="web" />
-
-        <property name="prompt.drupal.uri" value="Drupal URI" />
-        <property name="default.drupal.uri" value="http://${projectname}.local" />
-
-        <property name="prompt.drupal.site_name" value="Site name" />
-        <property name="default.drupal.site_name" value="${projectname}" />
-
-        <property name="prompt.drupal.settings.file_public_path" value="Drupal public files directory setting" />
-        <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
-
-        <property name="prompt.drupal.settings.file_private_path" value="Drupal private files directory setting" />
-        <property name="default.drupal.settings.file_private_path" value="../artifacts/files_private" />
-
-        <property name="prompt.drupal.database.database" value="Drupal database name" />
-        <property name="default.drupal.database.database" value="drupal" />
-
-        <property name="prompt.drupal.database.username" value="Drupal database username" />
-        <property name="default.drupal.database.username" value="root" />
-
-        <property name="prompt.drupal.database.password" value="Drupal database password" />
-        <property name="default.drupal.database.password" value="root" />
-
-        <property name="prompt.drupal.database.host" value="Drupal database host" />
-        <property name="default.drupal.database.host" value="127.0.0.1" />
-
-        <property name="prompt.drupal.profile" value="Install profile" />
-        <property name="default.drupal.profile" value="standard" />
-
-        <property name="prompt.drupal.modules_enable" value="Modules to enable upon install, separated by commas" />
-        <property name="default.drupal.modules_enable" value="" />
-
-        <property name="prompt.drupal.twig.debug" value="Enable twig debugging?" />
-        <property name="default.drupal.twig.debug" value="false" />
-
-        <property name="prompt.build.artifact_mode" value="Whether to symlink or copy resources; should be 'symlink' or 'copy'." />
-        <property name="default.build.artifact_mode" value="symlink" />
-
-        <property name="update" value="drupal.root,drupal.uri,drupal.site_name,drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.database.database,drupal.database.username,drupal.database.password,drupal.profile,drupal.modules_enable,drupal.twig.debug,build.artifact_mode" />
-
         <!-- Update properties interactively. -->
         <foreach list="${update}" target="configure-update-property" param="propertyname" />
+
+        <!-- Dump other properties without interaction -->
+        <foreach list="${dump}" target="configure-update-property-silent" param="propertyname" />
     </target>
 
 
@@ -92,6 +70,15 @@
                 <touch file="${build.dir}/${propertiesfile}" />
             </then>
         </if>
+    </target>
+
+
+    <target name="configure-update-property-silent">
+        <fail unless="propertyname" />
+        <fail unless="default.${propertyname}" />
+
+        <property name="${propertyname}" value="${default.${propertyname}}" />
+        <phingcall target="configure-update-property" />
     </target>
 
 
@@ -134,56 +121,6 @@
                 </replaceregexp>
             </filterchain>
         </reflexive>
-    </target>
-
-
-    <!-- Target: configure-defaults -->
-    <target name="configure-defaults" description="Create a fresh default properties file.">
-        <!-- A build.env is required. -->
-        <property name="build.env" value="default" override="true" />
-        <property name="propertiesfile" value="conf/build.${build.env}.properties" override="true" />
-
-        <!-- Delete the existing defaults file so that it is recreate with the defaults. -->
-        <delete file="${build.dir}/${propertiesfile}" />
-        <phingcall target="configure" />
-    </target>
-
-
-    <!-- Target: configure-drush -->
-    <target name="configure-drush" description="Create a drushrc file for a specific environment.">
-        <!-- A build.env is required. -->
-        <propertyprompt propertyName="build.env" defaultValue="vagrant" promptText="Environment" promptCharacter=":" useExistingValue="true" />
-        <property name="propertiesfile" value="conf/build.${build.env}.properties" />
-
-        <!-- Load default properties values. -->
-        <property file="${build.dir}/${propertiesfile}" prefix="default" />
-        <property file="${build.dir}/conf/build.default.properties" prefix="default" />
-
-        <!-- Fail if the variables we need aren't available. -->
-        <if>
-            <not>
-                <and>
-                    <isset property="default.drupal.root" />
-                    <isset property="default.drupal.uri" />
-                    <isset property="default.drupal.site_name" />
-                </and>
-            </not>
-            <then>
-                <fail message="Missing properties; Run the 'configure' or 'configure-defaults' task and try again." />
-            </then>
-        </if>
-
-        <!-- Copy the drushrc template and sub in variables. -->
-        <copy file="${phing.dir.configure}/../conf/drushrc.php" tofile="${build.dir}/conf/drushrc.${build.env}.php" overwrite="true">
-            <filterchain>
-                <replacetokens>
-                    <token key="drupal.root" value="${default.drupal.root}"/>
-                    <token key="drupal.uri" value="${default.drupal.uri}"/>
-                    <token key="drupal.site_name" value="${default.drupal.site_name}"/>
-                    <token key="drupal.sites_subdir" value="default"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
     </target>
 
 
