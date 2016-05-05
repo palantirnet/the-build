@@ -10,6 +10,7 @@
     ],
     "require": {
         "phing/phing": "^2.14",
-        "continuousphp/phing-drush-task": "dev-master"
+        "continuousphp/phing-drush-task": "dev-master",
+        "pear/versioncontrol_git": "@dev"
     }
 }
