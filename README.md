@@ -1,5 +1,7 @@
 # "The" Build
 
+_Note: If you are instantiating a project, you likely want to start with [drupal-skeleton](https://github.com/palantirnet/drupal-skeleton)._
+
 Drupal build tools that we can use, reuse, and iterate on in our projects.
 
 ## Phing targets
