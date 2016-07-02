@@ -101,5 +101,23 @@
         </phing>
     </target>
 
+    <!-- Download production databases from Acquia -->
+    <target name="acquia-dbdl-prod">
+        <fail unless="acquia.accountname" />
+        <fail unless="acquia.ssh" />
+        <fail unless="db.backups" />
+
+        <filesync sourcedir="${acquia.accountname}.prod@${acquia.ssh}:/mnt/files/${acquia.accountname}.prod/backups/" destinationdir="${db.backups}" />
+    </target>
+
+    <!-- Download staging databases from Acquia -->
+    <target name="acquia-dbdl-test">
+        <fail unless="acquia.accountname" />
+        <fail unless="acquia.ssh" />
+        <fail unless="db.backups" />
+
+        <filesync sourcedir="${acquia.accountname}.test@${acquia.ssh}:/mnt/files/${acquia.accountname}.test/backups/" destinationdir="${db.backups}" />
+    </target>
+
 
 </project>
