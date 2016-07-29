@@ -203,9 +203,6 @@
                 <delete dir="${drupal.settings.file_private_path.resolved}" />
                 <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
             </then>
-            <else>
-                <echo>${placeholder_for} already exists.</echo>
-            </else>
         </if>
         
         <drush command="site-install" assume="yes">
