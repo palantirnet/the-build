@@ -195,6 +195,21 @@
         <delete dir="${drupal.settings.file_public_path.resolved}" />
         <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
 
+        <if>
+            <and>
+                <isset property="drupal.settings.file_private_path"/>
+                <not>
+                    <equals arg1="${drupal.settings.file_private_path}" arg2="" trim="true" />
+                </not>
+            </and>
+            <then>
+                <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${drupal.root}/${drupal.settings.file_private_path}" />
+                <delete file="${drupal.settings.file_private_path.resolved}" />
+                <delete dir="${drupal.settings.file_private_path.resolved}" />
+                <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
+            </then>
+        </if>
+
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
             <option name="sites-subdir">${drupal.sites_subdir}</option>
