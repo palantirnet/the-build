@@ -34,3 +34,7 @@ This repository also contains a packages.json file listing our private `palantir
     ],
 
 ```
+
+# Troubleshooting
+
+If you get errors after building that indicate the site was installed successfully, but that the system was unable to send an email (updating you about core updates, or anything else), then you may have to update your exported `update.settings.yml` config file to remove the "email" notification. You can [see an example here](https://gist.github.com/lukewertz/70a63df9c0e5a7c1252e6547e701c69b).
