@@ -11,6 +11,7 @@
     "require": {
         "phing/phing": "^2.14",
         "continuousphp/phing-drush-task": "dev-master",
+        "drupal/coder": "^8.2",
         "pear/versioncontrol_git": "@dev"
     }
 }

@@ -9,7 +9,7 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
-
+    <import file="vendor/palantirnet/the-build/tasks/drupal_code_sniffer.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
@@ -31,7 +31,7 @@
 
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
-        <echo>Configure this target to run the tests.</echo>
+        <phingcall target="test-run-code-sniffer" />
     </target>
 
 
