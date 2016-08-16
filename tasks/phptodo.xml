@@ -1,0 +1,6 @@
+php_todo_finder.yml <?xml version="1.0"?>
+<project name="phptodo" default="test-run-phptodo">
+    <target name="test-run-phptodo">
+        <exec command="composer exec &quot;phptodo&quot;" />
+    </target>
+</project>
