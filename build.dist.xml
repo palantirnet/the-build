@@ -11,6 +11,7 @@
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
     <import file="vendor/palantirnet/the-build/tasks/drupal_code_sniffer.xml" />
     <import file="vendor/palantirnet/the-build/tasks/phpmd.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/phplint.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
@@ -34,6 +35,7 @@
     <target name="test" description="Run all the tests.">
         <phingcall target="test-run-code-sniffer" />
         <phingcall target="test-run-phpmd" />
+        <phingcall target="test-run-phplint" />
     </target>
 
 

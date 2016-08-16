@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<project name="phplint" default="test-run-phplint">
+    <target name="test-run-phplint">
+        <phplint>
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+            </fileset>
+        </phplint>
+    </target>
+</project>
