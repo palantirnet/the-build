@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<project name="phpmd" default="test-run-phpmd">
+
+    <target name="test-run-phpmd">
+        <phpmd>
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+            </fileset>
+        </phpmd>
+    </target>
+</project>

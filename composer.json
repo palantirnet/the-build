@@ -12,6 +12,7 @@
         "phing/phing": "^2.14",
         "continuousphp/phing-drush-task": "dev-master",
         "drupal/coder": "^8.2",
+        "phpmd/phpmd" : "^2.4",
         "pear/versioncontrol_git": "@dev"
     }
 }
