@@ -1,6 +1,59 @@
 <?xml version="1.0"?>
 <project name="phptodo" default="test-run-phptodo">
+
+    <!-- Default setting is enabled -->
+    <if>
+        <not><isset property="phptodo.enabled" /></not>
+        <then>
+            <property name="phptodo.enabled" value="1" />
+        </then>
+    </if>
+
+
+    <!-- Target: phptodo-configure -->
+    <target name="phptodo-configure">
+        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <!-- Prompts and defaults -->
+            <property name="prompt.phptodo.enabled" value="Enable PHP Todo" />
+            <property name="default.phptodo.enabled" value="true" />
+
+            <property name="update" value="phptodo.enabled" />
+            <property name="dump" value="" />
+        </phing>
+    </target>
+
+
+    <!-- Target: test-run-phptodo -->
     <target name="test-run-phptodo">
-        <exec command="composer exec &quot;phptodo&quot;" />
+        <if>
+            <equals arg1="${phptodo.enabled}" arg2="1" />
+            <then>
+                <echo>Checking modules</echo>
+                <exec
+                    command="${build.dir}/vendor/bin/php_todo find ${build.dir}/web/modules/custom"
+                    passthru="true"
+                />
+                <echo>Checking profiles</echo>
+                <exec
+                    command="${build.dir}/vendor/bin/php_todo find ${build.dir}/web/profiles/custom"
+                    passthru="true"
+                />
+                <echo>Checking themes</echo>
+                <exec
+                    command="${build.dir}/vendor/bin/php_todo find ${build.dir}/web/themes/custom"
+                    passthru="true"
+                />
+            </then>
+            <else>
+                <echo>PHP Todo is disabled.</echo>
+            </else>
+        </if>
     </target>
 </project>
