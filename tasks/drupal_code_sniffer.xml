@@ -42,7 +42,26 @@
                     haltonerror="true"
                     verbosity="1"
                 >
+                    <!-- Modules -->
                     <fileset dir="${build.dir}/web/modules/custom">
+                        <include name="**/*.php" />
+                        <include name="**/*.module" />
+                        <include name="**/*.inc" />
+                        <include name="**/*.test" />
+                        <include name="**/*.profile" />
+                        <include name="**/*.theme" />
+                    </fileset>
+                    <!-- Themes -->
+                    <fileset dir="${build.dir}/web/themes/custom">
+                        <include name="**/*.php" />
+                        <include name="**/*.module" />
+                        <include name="**/*.inc" />
+                        <include name="**/*.test" />
+                        <include name="**/*.profile" />
+                        <include name="**/*.theme" />
+                    </fileset>
+                    <!-- Profiles -->
+                    <fileset dir="${build.dir}/web/profiles/custom">
                         <include name="**/*.php" />
                         <include name="**/*.module" />
                         <include name="**/*.inc" />
