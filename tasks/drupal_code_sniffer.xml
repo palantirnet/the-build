@@ -3,21 +3,58 @@
 
     <property name="drupal_code_sniffer.phpcs.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
 
+    <!-- Default setting is enabled -->
+    <if>
+        <not><isset property="drupal_code_sniffer.enabled" /></not>
+        <then>
+            <property name="drupal_code_sniffer.enabled" value="1" />
+        </then>
+    </if>
+
+
+    <!-- Target: drupal_code_sniffer-configure -->
+    <target name="drupal_code_sniffer-configure">
+        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <!-- Prompts and defaults -->
+            <property name="prompt.drupal_code_sniffer.enabled" value="Enable PHP Code Sniffer" />
+            <property name="default.drupal_code_sniffer.enabled" value="true" />
+
+            <property name="update" value="drupal_code_sniffer.enabled" />
+            <property name="dump" value="" />
+        </phing>
+    </target>
+
+
     <!-- Target: test-run-code-sniffer -->
     <target name="test-run-code-sniffer">
-        <phpcodesniffer
-            standard="${drupal_code_sniffer.phpcs.standard}"
-            haltonerror="true"
-            verbosity="1"
-        >
-            <fileset dir="${build.dir}/web/modules/custom">
-                <include name="**/*.php" />
-                <include name="**/*.module" />
-                <include name="**/*.inc" />
-                <include name="**/*.test" />
-                <include name="**/*.profile" />
-                <include name="**/*.theme" />
-            </fileset>
-        </phpcodesniffer>
+        <if>
+            <equals arg1="${drupal_code_sniffer.enabled}" arg2="1" />
+            <then>
+                <phpcodesniffer
+                    standard="${drupal_code_sniffer.phpcs.standard}"
+                    haltonerror="true"
+                    verbosity="1"
+                >
+                    <fileset dir="${build.dir}/web/modules/custom">
+                        <include name="**/*.php" />
+                        <include name="**/*.module" />
+                        <include name="**/*.inc" />
+                        <include name="**/*.test" />
+                        <include name="**/*.profile" />
+                        <include name="**/*.theme" />
+                    </fileset>
+                </phpcodesniffer>
+            </then>
+            <else>
+                <echo>Drupal Code Sniffer is disabled</echo>
+            </else>
+        </if>
     </target>
 </project>
