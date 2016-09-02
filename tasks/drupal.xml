@@ -46,6 +46,9 @@
 
     <!-- Target: drupal-configure -->
     <target name="drupal-configure" description="Configure the Drupal build.">
+        <!-- Generate a hash salt -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+
         <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
@@ -81,8 +84,10 @@
             <property name="default.drupal.settings.file_private_path" value="" />
             <property name="default.drupal.twig.debug" value="false" />
             <property name="default.drupal.uri" value="http://${projectname}.local" />
-            <property name="default.drupal.hash_salt" value="temporary" />
             <property name="default.drupal.root" value="web" />
+
+            <!-- Generated hash salt -->
+            <property name="default.drupal.hash_salt" value="${hash_salt}" />
 
             <property name="update" value="drupal.site_name,drupal.profile,drupal.modules_enable,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
             <property name="dump" value="drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt,drupal.root" />
