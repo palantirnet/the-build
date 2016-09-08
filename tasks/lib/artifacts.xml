@@ -40,7 +40,7 @@
                 -->
             <filterchain>
                 <replaceregexp>
-                    <regexp pattern="web(/.+type:drupal-)" replace="docroot\1" />
+                    <regexp pattern="web(/[^\]]+type:drupal-)" replace="docroot\1" />
                 </replaceregexp>
             </filterchain>
         </copy>
