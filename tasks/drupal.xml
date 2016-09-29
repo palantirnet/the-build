@@ -186,6 +186,8 @@
         <fail unless="drupal.profile" />
         <fail unless="drupal.modules_enable" />
 
+        <phingcall target="validate-clean-conf" />
+
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
 
         <!-- The sites subdirectory should be writable; Drupal will change the
@@ -285,6 +287,35 @@
             <param>system.maintenance_mode</param>
             <param>0</param>
         </drush>
+    </target>
+
+    <!--
+        Target: validate-clean-conf
+
+        This will validate that the conf directory is clean, because you can
+        have build problems if it isn't.
+    -->
+    <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
+        <!-- Check for un-committed changes to the main repository, so
+             that we can include information about these changes in the
+             commit message for this build. -->
+        <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
+
+        <if>
+            <not><equals arg1="${modified_files}" arg2="" /></not>
+            <then>
+                <input propertyname="default.drupal.dirty_build" validargs="yes,no">Drupal config directory is dirty. Try to build anyway? </input>
+                <!-- Whitespace within this property value is intentional. -->
+            </then>
+        </if>
+
+        <if>
+            <equals arg1="${default.drupal.dirty_build}" arg2="false" />
+            <then>
+                <echo>Your Drupal config directory is not clean. Aborting install. You might want to run "git clean -f" to remove untracked file from that directory.</echo>
+                <fail message="Dirty config directory." />
+            </then>
+        </if>
     </target>
 
 
