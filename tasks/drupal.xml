@@ -299,7 +299,7 @@
         <!-- Check for un-committed changes to the main repository, so
              that we can include information about these changes in the
              commit message for this build. -->
-        <exec command="git status --porcelain" dir="${build.dir}" outputProperty="modified_files" />
+        <exec command="git status --porcelain" dir="${build.dir}/conf/drupal/config" outputProperty="modified_files" />
 
         <if>
             <not><equals arg1="${modified_files}" arg2="" /></not>
