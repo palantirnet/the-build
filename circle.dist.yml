@@ -8,6 +8,12 @@ machine:
   environment:
     PALANTIR_ENVIRONMENT: circle
 
+general:
+  branches:
+    ignore:
+      - gh-pages
+      - /.*(readme|documentation).*/
+
 dependencies:
   pre:
     - cp $HOME/$CIRCLE_PROJECT_REPONAME/conf/apache.circle.conf /etc/apache2/sites-available/default
