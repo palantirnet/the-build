@@ -13,6 +13,8 @@ if (!empty($output)) {
   # Configure Drush for the current project.
   $options['root'] = "{$repo}/${drupal.root}";
   $options['uri'] = "${drupal.uri}";
+  $options['include'] = "{$repo}/artifacts/acquiacloud/.drush";
+  $options['alias-path'] = "{$repo}/artifacts/acquiacloud/.drush";
 }
 
 /**
