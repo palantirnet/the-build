@@ -2,12 +2,14 @@
 
 $databases = array();
 
+$settings['cache']['default'] = 'cache.backend.database';
+
 $settings['hash_salt'] = '${drupal.hash_salt}';
 $settings['update_free_access'] = FALSE;
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
-$settings['file_public_path'] = '${drupal.settings.file_public_path}';
-$settings['file_private_path'] = '${drupal.settings.file_private_path}';
+$settings['file_public_path'] = 'files';
+$settings['file_private_path'] = "/mnt/files/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
 
 $settings['trusted_host_patterns'] = array(
   '^${acquia.accountname}dev.prod.acquia-sites.com',
