@@ -217,7 +217,6 @@
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
-            <option name="sites-subdir">${drupal.sites_subdir}</option>
             <option name="account-name">admin</option>
             <option name="account-pass">admin</option>
             <param>${drupal.profile}</param>
