@@ -2,12 +2,7 @@
 <project name="phptodo" default="test-run-phptodo">
 
     <!-- Default setting is enabled -->
-    <if>
-        <not><isset property="phptodo.enabled" /></not>
-        <then>
-            <property name="phptodo.enabled" value="1" />
-        </then>
-    </if>
+    <property name="phptodo.enabled" value="1" />
 
 
     <!-- Target: phptodo-configure -->

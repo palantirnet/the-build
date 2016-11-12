@@ -4,12 +4,7 @@
     <property name="drupal_code_sniffer.phpcs.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
 
     <!-- Default setting is enabled -->
-    <if>
-        <not><isset property="drupal_code_sniffer.enabled" /></not>
-        <then>
-            <property name="drupal_code_sniffer.enabled" value="1" />
-        </then>
-    </if>
+    <property name="drupal_code_sniffer.enabled" value="1" />
 
 
     <!-- Target: drupal_code_sniffer-configure -->

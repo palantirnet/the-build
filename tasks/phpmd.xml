@@ -2,12 +2,7 @@
 <project name="phpmd" default="test-run-phpmd">
 
     <!-- Default setting is enabled -->
-    <if>
-        <not><isset property="phpmd.enabled" /></not>
-        <then>
-            <property name="phpmd.enabled" value="1" />
-        </then>
-    </if>
+    <property name="phpmd.enabled" value="1" />
 
 
     <!-- Target: phpmd-configure -->
