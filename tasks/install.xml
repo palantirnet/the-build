@@ -30,12 +30,6 @@
             </filterchain>
         </copy>
 
-        <!-- Copy the phpmd.xml -->
-        <copy file="${phing.dir.install}/../phpmd.dist.xml" tofile="${application.startdir}/phpmd.xml"  overwrite="true" />
-
-        <!-- Copy php_todo_finder.yml -->
-        <copy file="${phing.dir.install}/../php_todo_finder.yml" tofile="${application.startdir}/php_todo_finder.yml"  overwrite="true" />
-
         <!-- Copy the build configuration templates. -->
         <mkdir dir="${application.startdir}/conf" />
         <copy todir="${application.startdir}/conf/drupal">
