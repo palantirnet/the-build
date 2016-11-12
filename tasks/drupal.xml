@@ -304,13 +304,13 @@
         <if>
             <not><equals arg1="${modified_files}" arg2="" /></not>
             <then>
-                <input propertyname="default.drupal.dirty_build" validargs="yes,no">Drupal config directory is dirty. Try to build anyway? </input>
+                <input propertyname="drupal.allow_dirty_config" validargs="yes,no">Drupal config directory is dirty. Try to build anyway? </input>
                 <!-- Whitespace within this property value is intentional. -->
             </then>
         </if>
 
         <if>
-            <equals arg1="${default.drupal.dirty_build}" arg2="false" />
+            <equals arg1="${drupal.allow_dirty_config}" arg2="false" />
             <then>
                 <echo>Your Drupal config directory is not clean. Aborting install. You might want to run "git clean -f" to remove untracked file from that directory.</echo>
                 <fail message="Dirty config directory." />
