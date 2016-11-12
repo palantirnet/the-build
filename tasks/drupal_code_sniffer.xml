@@ -8,7 +8,7 @@
     <target name="test-run-code-sniffer">
         <phpcodesniffer
             standard="${drupal_code_sniffer.phpcs.standard}"
-            haltonerror="true"
+            haltonerror="false"
             verbosity="1"
         >
             <!-- Modules -->
