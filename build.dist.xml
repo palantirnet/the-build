@@ -9,10 +9,10 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/drupal_code_sniffer.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/phpmd.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/phplint.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/phptodo.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/code_review/phptodo.xml" />
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
