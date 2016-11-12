@@ -9,10 +9,7 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/code_review/phptodo.xml" />
+
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
@@ -34,10 +31,18 @@
 
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
-        <phingcall target="test-run-code-sniffer" />
-        <phingcall target="test-run-phpmd" />
-        <phingcall target="test-run-phplint" />
-        <phingcall target="test-run-phptodo" />
+        <echo>Configure this target to run the tests.</echo>
+        <!-- You may want to include one or more of the commands from the 'code-review' target here. -->
+    </target>
+
+
+    <!-- Target: code-review -->
+    <target name="code-review">
+        <!-- These are called directly rather than using <import> because they are single-purpose task files. -->
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phptodo.xml" />
     </target>
 
 
