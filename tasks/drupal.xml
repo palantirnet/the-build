@@ -289,6 +289,7 @@
         </drush>
     </target>
 
+
     <!--
         Target: validate-clean-conf
 
@@ -296,25 +297,40 @@
         have build problems if it isn't.
     -->
     <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
-        <!-- Check for un-committed changes to the main repository, so
-             that we can include information about these changes in the
-             commit message for this build. -->
+        <!-- Check for un-committed changes to the Drupal config directory,
+             because these can cause unexpected behavior during installation. -->
         <exec command="git status --porcelain ${build.dir}/conf/drupal/config/" outputProperty="modified_files" />
 
         <if>
-            <not><equals arg1="${modified_files}" arg2="" /></not>
+            <and>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <!-- Only the value "yes" prevents a failure. -->
+                <not><equals arg1="${drupal.allow_dirty_config}" arg2="yes" /></not>
+            </and>
             <then>
-                <input propertyname="drupal.allow_dirty_config" validargs="yes,no">Drupal config directory is dirty. Try to build anyway? </input>
-                <!-- Whitespace within this property value is intentional. -->
-            </then>
-        </if>
+                <!-- Whitespace is intentional -->
+                <echo>Aborting install; your Drupal config directory is not clean. You may either:
 
-        <if>
-            <equals arg1="${drupal.allow_dirty_config}" arg2="false" />
-            <then>
-                <echo>Your Drupal config directory is not clean. Aborting install. You might want to run "git clean -f" to remove untracked file from that directory.</echo>
+            Re-run your phing command with the flag:
+              -Ddrupal.allow_dirty_config=yes
+
+              - OR -
+
+            Clean up your config directory (destructive):
+              git clean -f conf/drupal/config &amp;&amp; git checkout -- conf/drupal/config
+                </echo>
                 <fail message="Dirty config directory." />
             </then>
+            <elseif>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <then>
+                    <!-- Whitespace is intentional -->
+                    <echo>Continuing install with dirty Drupal config directory. Changes:
+
+${modified_files}
+                    </echo>
+                </then>
+            </elseif>
         </if>
     </target>
 
