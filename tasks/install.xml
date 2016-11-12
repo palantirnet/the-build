@@ -45,9 +45,6 @@
         <echo message="Configure the default environment..." />
         <phing target="configure" phingfile="${phing.dir.install}/boilerplate.xml" />
         <phing target="drupal-configure" phingfile="${phing.dir.install}/drupal.xml" />
-        <phing target="drupal_code_sniffer-configure" phingfile="${phing.dir.install}/drupal_code_sniffer.xml" />
-        <phing target="phpmd-configure" phingfile="${phing.dir.install}/phpmd.xml" />
-        <phing target="phptodo-configure" phingfile="${phing.dir.install}/phptodo.xml" />
         <phing target="drush-prepare-drushrc" phingfile="${phing.dir.install}/drupal.xml" />
 
         <echo message="To configure properties for more environments, run: vendor/bin/phing configure -Dbuild.env=your_environment" />

@@ -1,45 +1,17 @@
 <?xml version="1.0"?>
 <project name="phpmd" default="test-run-phpmd">
 
-    <!-- Default setting is enabled -->
-    <property name="phpmd.enabled" value="1" />
-
-
-    <!-- Target: phpmd-configure -->
-    <target name="phpmd-configure">
-        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
-            <property name="build.env" value="${build.env}" />
-            <property name="build.dir" value="${build.dir}" />
-
-            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
-            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
-
-            <property name="prompt.phpmd.enabled" value="Enable PHPMD" />
-            <property name="default.phpmd.enabled" value="true" />
-
-            <property name="update" value="phpmd.enabled" />
-            <property name="dump" value="" />
-        </phing>
-    </target>
-
 
     <!-- Target: test-run-phpmd -->
     <target name="test-run-phpmd">
-        <if>
-            <equals arg1="${phpmd.enabled}" arg2="1" />
-            <then>
-
-                <phpmd>
-                    <fileset dir="${build.dir}/web/modules/custom">
-                        <include name="**/*.php" />
-                        <include name="**/*.module" />
-                        <include name="**/*.inc" />
-                    </fileset>
-                </phpmd>
-            </then>
-            <else>
-                <echo>PHPMD is disabled.</echo>
-            </else>
-        </if>
+        <phpmd>
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+            </fileset>
+        </phpmd>
     </target>
+
+
 </project>
