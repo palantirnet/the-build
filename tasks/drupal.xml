@@ -15,7 +15,7 @@
 
     <!-- These properties will generally be set in the default build properties file. -->
     <property name="drupal.root" value="web" />
-    <property name="drupal.site_name" value="${phing.project.name}" />
+    <property name="drupal.site_name" value="${projectname}" />
     <property name="drupal.profile" value="standard" />
     <property name="drupal.hash_salt" value="temporary" />
 
@@ -23,7 +23,7 @@
     <property name="drupal.settings.file_private_path" value="" />
 
     <!-- These properties will probably change per-environment. -->
-    <property name="drupal.uri" value="http://${phing.project.name}.local" />
+    <property name="drupal.uri" value="http://${projectname}.local" />
     <property name="drupal.database.database" value="default" />
     <property name="drupal.database.username" value="drupal" />
     <property name="drupal.database.password" value="drupal" />
