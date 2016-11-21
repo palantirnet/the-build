@@ -37,7 +37,7 @@
 
 
     <!-- Target: code-review -->
-    <target name="code-review">
+    <target name="code-review" description="Run the automated code reviews.">
         <!-- These are called directly rather than using <import> because they are single-purpose task files. -->
         <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
         <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
