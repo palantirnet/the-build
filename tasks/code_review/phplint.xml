@@ -4,7 +4,7 @@
 
     <!-- Target: test-run-phplint -->
     <target name="test-run-phplint">
-        <phplint haltonfailure="true">
+        <phplint haltonfailure="false">
             <!-- modules -->
             <fileset dir="${build.dir}/web/modules/custom">
                 <include name="**/*.php" />

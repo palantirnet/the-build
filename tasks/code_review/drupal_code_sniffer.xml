@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <project name="drupal_code_sniffer" default="test-run-code-sniffer">
 
-    <property name="drupal_code_sniffer.phpcs.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
+    <property name="drupal_code_sniffer.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
 
 
     <!-- Target: test-run-code-sniffer -->
     <target name="test-run-code-sniffer">
         <phpcodesniffer
-            standard="${drupal_code_sniffer.phpcs.standard}"
+            standard="${drupal_code_sniffer.standard}"
             haltonerror="false"
             verbosity="1"
         >
