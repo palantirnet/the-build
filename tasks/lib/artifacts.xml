@@ -75,7 +75,7 @@
         <!--
             then we composer install in the build dir...
             -->
-        <exec command="composer install --no-dev" dir="${install_dir}" checkreturn="true" />
+        <exec command="vendor/bin/composer install --no-dev" dir="${install_dir}" checkreturn="true" />
 
         <!--
             having git repositories in the vendor dir messes up the build
