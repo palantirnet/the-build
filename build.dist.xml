@@ -32,6 +32,17 @@
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
         <echo>Configure this target to run the tests.</echo>
+        <!-- You may want to include one or more of the commands from the 'code-review' target here. -->
+    </target>
+
+
+    <!-- Target: code-review -->
+    <target name="code-review" description="Run the automated code reviews.">
+        <!-- These are called directly rather than using <import> because they are single-purpose task files. -->
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
+        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phptodo.xml" />
     </target>
 
 

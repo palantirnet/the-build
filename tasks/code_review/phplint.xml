@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="phplint" default="test-run-phplint">
+
+
+    <!-- Target: test-run-phplint -->
+    <target name="test-run-phplint">
+        <phplint haltonfailure="false">
+            <!-- modules -->
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+            </fileset>
+            <!-- profiles -->
+            <fileset dir="${build.dir}/web/profiles/custom">
+                <include name="**/*.php" />
+            </fileset>
+            <!-- themes -->
+            <fileset dir="${build.dir}/web/themes/custom">
+                <include name="**/*.php" />
+            </fileset>
+        </phplint>
+        <echo>PHP Lint was successful</echo>
+    </target>
+
+
+</project>

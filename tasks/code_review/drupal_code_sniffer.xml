@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project name="drupal_code_sniffer" default="test-run-code-sniffer">
+
+    <property name="drupal_code_sniffer.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
+
+
+    <!-- Target: test-run-code-sniffer -->
+    <target name="test-run-code-sniffer">
+        <phpcodesniffer
+            standard="${drupal_code_sniffer.standard}"
+            haltonerror="false"
+            verbosity="1"
+        >
+            <!-- Modules -->
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+                <include name="**/*.test" />
+                <include name="**/*.profile" />
+                <include name="**/*.theme" />
+            </fileset>
+            <!-- Themes -->
+            <fileset dir="${build.dir}/web/themes/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+                <include name="**/*.test" />
+                <include name="**/*.profile" />
+                <include name="**/*.theme" />
+            </fileset>
+            <!-- Profiles -->
+            <fileset dir="${build.dir}/web/profiles/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+                <include name="**/*.test" />
+                <include name="**/*.profile" />
+                <include name="**/*.theme" />
+            </fileset>
+        </phpcodesniffer>
+    </target>
+
+
+</project>

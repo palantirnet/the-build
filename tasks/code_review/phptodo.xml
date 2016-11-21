@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<project name="phptodo" default="test-run-phptodo">
+
+    <property name="phptodo.config" value="vendor/palantirnet/the-build/conf/php_todo_finder.yml" />
+
+    <!-- Target: test-run-phptodo -->
+    <target name="test-run-phptodo">
+        <echo>Checking modules</echo>
+        <exec
+            command="${build.dir}/vendor/bin/php_todo --config=${build.dir}/${phptodo.config} find ${build.dir}/web/modules/custom"
+            passthru="true"
+        />
+        <echo>Checking profiles</echo>
+        <exec
+            command="${build.dir}/vendor/bin/php_todo --config=${build.dir}/${phptodo.config} find ${build.dir}/web/profiles/custom"
+            passthru="true"
+        />
+        <echo>Checking themes</echo>
+        <exec
+            command="${build.dir}/vendor/bin/php_todo --config=${build.dir}/${phptodo.config} find ${build.dir}/web/themes/custom"
+            passthru="true"
+        />
+    </target>
+
+
+</project>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="phpmd" default="test-run-phpmd">
+
+    <property name="phpmd.rulesets" value="vendor/palantirnet/the-build/conf/phpmd.xml" />
+
+    <!-- Target: test-run-phpmd -->
+    <target name="test-run-phpmd">
+        <phpmd rulesets="${build.dir}/${phpmd.rulesets}">
+            <fileset dir="${build.dir}/web/modules/custom">
+                <include name="**/*.php" />
+                <include name="**/*.module" />
+                <include name="**/*.inc" />
+            </fileset>
+        </phpmd>
+    </target>
+
+
+</project>
