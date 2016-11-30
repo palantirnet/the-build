@@ -31,6 +31,19 @@ Runs codesniffer using the standard provided by Drupal's [Coder](https://www.dru
 drupal_code_sniffer.standard=vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml
 ```
 
+You can also change the set of files that the sniff reviews:
+
+```
+# Default
+drupal_code_sniffer.file=vendor/palantirnet/the-build/conf/drupal_code_sniffer_files_d8.txt
+
+# Drupal 7 code
+vendor/palantirnet/the-build/conf/drupal_code_sniffer_files_d7.txt
+
+# Your own list of files
+conf/drupal_code_sniffer_files_myproject.txt
+```
+
 ### [PHP To-do Finder](https://github.com/nilportugues/php-todo-finder)
 
 Sets a threshold for the number of "to do" comments allowable in a codebase. The default config for this review can be found within the-build at `conf/php_todo_finder.yml`. To customize this config, copy that file to your project's `conf/` directory and add the build property:
