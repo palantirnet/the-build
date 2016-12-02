@@ -24,7 +24,6 @@
 
     <!-- These properties will probably change per-environment. -->
     <property name="drupal.uri" value="http://${projectname}.local" />
-    <property name="drupal.admin_user" value="admin" />
     <property name="drupal.database.database" value="default" />
     <property name="drupal.database.username" value="drupal" />
     <property name="drupal.database.password" value="drupal" />
@@ -37,6 +36,7 @@
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
+    <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
