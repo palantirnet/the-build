@@ -24,7 +24,7 @@
 
     <!-- These properties will probably change per-environment. -->
     <property name="drupal.uri" value="http://${projectname}.local" />
-    <property name="drupal.admin.user_name" value="admin" />
+    <property name="drupal.admin_user" value="admin" />
     <property name="drupal.database.database" value="default" />
     <property name="drupal.database.username" value="drupal" />
     <property name="drupal.database.password" value="drupal" />
@@ -218,7 +218,7 @@
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">${drupal.admin.user_name}</option>
+            <option name="account-name">${drupal.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>${drupal.profile}</param>
         </drush>
@@ -250,7 +250,7 @@
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
            <option name="password" value="${pass}" />
-           <param>${drupal.admin.user_name}</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
@@ -277,7 +277,7 @@
         <!-- now we can go back to the worst password ever -->
         <drush command="user-password">
            <option name="password" value="admin" />
-           <param>${drupal.admin.user_name}</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
