@@ -8,6 +8,9 @@
             "email": "info@palantir.net"
         }
     ],
+    "bin": [
+        "bin/the-build-installer"
+    ],
     "require": {
         "phing/phing": "^2.14",
         "continuousphp/phing-drush-task": "dev-master",

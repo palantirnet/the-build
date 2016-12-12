@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+
+# Run our install task in the most verbose way possible. Previously:
+#   vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml
+$SCRIPTPATH/../../../phing/phing/bin/phing -f $SCRIPTPATH/../tasks/install.xml
+
