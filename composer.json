@@ -9,7 +9,7 @@
         }
     ],
     "bin": [
-        "bin/install-the-build"
+        "bin/the-build-installer"
     ],
     "require": {
         "phing/phing": "^2.14",

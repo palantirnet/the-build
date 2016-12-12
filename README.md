@@ -28,7 +28,7 @@ $> composer require palantirnet/the-build
 Install the default `build.xml` to your project:
 
 ```sh
-$> vendor/bin/install-the-build
+$> vendor/bin/the-build-installer
 ```
 
 This will trigger an interactive prompt to configure your basic build properties, adding the following boilerplate files:
