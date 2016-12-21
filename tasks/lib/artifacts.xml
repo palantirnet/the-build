@@ -19,7 +19,7 @@
         <fail unless="drupal.sites_subdir" />
 
         <!-- Relative path to the Drupal root within the install dir -->
-        <property name="drupal.root_name" value="docroot" />
+        <property name="drupal.root_name" value="docroot/" />
         <!-- Path where the conf dir should be copied -->
         <property name="install_conf_dir" refid="install_dir" />
 
@@ -45,7 +45,7 @@
                 -->
             <filterchain>
                 <replaceregexp>
-                    <regexp pattern="web(/[^\]]+type:drupal-)" replace="${drupal.root_name}\1" />
+                    <regexp pattern="web/([^\]]+type:drupal-)" replace="${drupal.root_name}\1" />
                 </replaceregexp>
             </filterchain>
         </copy>
