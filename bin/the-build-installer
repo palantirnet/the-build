@@ -10,5 +10,11 @@ SCRIPT=$(readlink "$0")
 # Absolute path to this script's parent directory.
 SCRIPTPATH=$(cd `dirname $0` && cd `dirname $SCRIPT` && pwd)
 
-# Run our install task.
-$SCRIPTPATH/../../../bin/phing -f $SCRIPTPATH/../tasks/install.xml
+REPOPATH=$(cd `dirname $SCRIPTPATH` && cd ../../../ && pwd)
+
+if [ "$REPOPATH" = `pwd` ]; then
+  # Run our install task.
+  $SCRIPTPATH/../../../bin/phing -f $SCRIPTPATH/../tasks/install.xml
+else
+  echo "Please run this command from your project root."
+fi
