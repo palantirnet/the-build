@@ -4,11 +4,11 @@
 # Previously:
 #   vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml
 
-# Absolute path to this script, e.g. /home/user/bin/foo.sh
-SCRIPT=$(readlink -f "$0")
-# Absolute path this script is in, thus /home/user/bin
-SCRIPTPATH=$(dirname "$SCRIPT")
+# Relative path to this script.
+SCRIPT=$(readlink "$0")
+
+# Absolute path to this script's parent directory.
+SCRIPTPATH=$(cd `dirname $0` && cd `dirname $SCRIPT` && pwd)
 
 # Run our install task.
 $SCRIPTPATH/../../../bin/phing -f $SCRIPTPATH/../tasks/install.xml
-
