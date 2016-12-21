@@ -71,6 +71,16 @@
             <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
         <delete file="${tmpfile}" />
+        
+        <!--
+            AND we need to copy the top level /drush directory
+            -->
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
+        <exec command="git ls-files drush" dir="${build.dir}" output="${tmpfile}" />
+        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile}" />
+        </copy>
+        <delete file="${tmpfile}" />
 
         <!--
             then we composer install in the build dir...
