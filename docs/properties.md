@@ -77,3 +77,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 | `acquia.dir` | `artifacts/acquia` | Relative path of where to keep the Acquia repository. |
 
 [More info](../tasks/acquia.xml#L32-L59)
+
+----
+Copyright 2016 Palantir.net, Inc.

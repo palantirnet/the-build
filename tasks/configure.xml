@@ -1,3 +1,10 @@
+<!--
+  @file configure.xml
+  Interactive configuration for the-build.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <?xml version="1.0"?>
 <project name="configure" default="configure">
     <!--

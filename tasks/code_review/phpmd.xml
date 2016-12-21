@@ -1,3 +1,10 @@
+<!--
+  @file phpmd.xml
+  Target for running phpmd.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <?xml version="1.0"?>
 <project name="phpmd" default="test-run-phpmd">
 
