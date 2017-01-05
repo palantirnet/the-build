@@ -1,3 +1,10 @@
+<!--
+  @file phplint.xml
+  Target for running phplint.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <?xml version="1.0"?>
 <project name="phplint" default="test-run-phplint">
 

@@ -1,3 +1,10 @@
+<!--
+  @file boilerplate.xml
+  the-build's environment-specific property loading, plus other core targets.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="boilerplate" default="status">
     <!--
       Include this file in your build.xml with:

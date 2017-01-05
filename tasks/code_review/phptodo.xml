@@ -1,3 +1,10 @@
+<!--
+  @file phptodo.xml
+  Target for running phptodo.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <?xml version="1.0"?>
 <project name="phptodo" default="test-run-phptodo">
 

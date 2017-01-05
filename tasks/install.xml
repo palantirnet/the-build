@@ -1,3 +1,10 @@
+<!--
+  @file install.xml
+  Target for installing the-build templates into a project.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <?xml version="1.0"?>
 <project name="install" default="install">
     <!--

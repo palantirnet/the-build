@@ -41,3 +41,6 @@ Manually review these files, then check them in to your project. At this point, 
 ```sh
 $> vendor/bin/phing build install migrate
 ```
+
+----
+Copyright 2016 Palantir.net, Inc.

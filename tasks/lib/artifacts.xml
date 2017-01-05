@@ -1,3 +1,10 @@
+<!--
+  @file artifacts.xml
+  Targets for managing Drupal code artifacts.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="artifacts" default="status">
 
 

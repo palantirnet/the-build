@@ -1,3 +1,10 @@
+<!--
+  @file repositories.xml
+  Targets for managing code artifact repositories.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="repositories" default="status">
 
 
