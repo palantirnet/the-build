@@ -43,6 +43,7 @@
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
+    <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
@@ -224,7 +225,7 @@
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">admin</option>
+            <option name="account-name">${drupal.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>${drupal.profile}</param>
         </drush>
@@ -256,7 +257,7 @@
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
            <option name="password" value="${pass}" />
-           <param>admin</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
@@ -283,7 +284,7 @@
         <!-- now we can go back to the worst password ever -->
         <drush command="user-password">
            <option name="password" value="admin" />
-           <param>admin</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
