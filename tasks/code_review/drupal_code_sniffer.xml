@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+
 <!--
   @file drupal_code_sniffer.xml
   Target for running the Drupal code sniffer standard.
@@ -5,7 +7,6 @@
   Copyright 2016 Palantir.net, Inc.
   -->
 
-<?xml version="1.0"?>
 <project name="drupal_code_sniffer" default="test-run-code-sniffer">
 
     <property name="drupal_code_sniffer.standard" value="vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
