@@ -342,4 +342,24 @@ ${modified_files}
     </target>
 
 
+    <!--
+        Target: drupal-reinstall-module
+
+        Utility method to uninstall and reinstall a module.
+        -->
+    <target name="drupal-reinstall-module">
+        <fail unless="module" />
+
+        <!-- Uninstall the module -->
+        <drush command="pm-uninstall" assume="yes">
+            <param>${module}</param>
+        </drush>
+
+        <!-- Enable the module -->
+        <drush command="pm-enable" assume="yes">
+            <param>${module}</param>
+        </drush>
+    </target>
+
+
 </project>
