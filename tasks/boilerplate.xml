@@ -11,6 +11,8 @@
         <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
       -->
 
+    <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
+
     <!-- Uses the project directory name as the projectname -->
     <property name="build.dir" value="${application.startdir}" />
     <basename property="projectname" file="${build.dir}" suffix="local" />
