@@ -25,6 +25,11 @@
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
 
+        <!-- Relative path to the Drupal root within the install dir -->
+        <property name="drupal.root_name" value="docroot/" />
+        <!-- Path where the conf dir should be copied -->
+        <property name="install_conf_dir" refid="install_dir" />
+
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
             <fileset dir="${install_dir}" />
@@ -47,7 +52,7 @@
                 -->
             <filterchain>
                 <replaceregexp>
-                    <regexp pattern="web(/[^\]]+type:drupal-)" replace="docroot\1" />
+                    <regexp pattern="web/([^\]]+type:drupal-)" replace="${drupal.root_name}\1" />
                 </replaceregexp>
             </filterchain>
         </copy>
@@ -74,7 +79,7 @@
             -->
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files conf" dir="${build.dir}" output="${tmpfile}" />
-        <copy todir="${install_dir}" overwrite="true" haltonerror="true">
+        <copy todir="${install_conf_dir}" overwrite="true" haltonerror="true">
             <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
         <delete file="${tmpfile}" />
