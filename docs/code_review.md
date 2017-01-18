@@ -44,6 +44,12 @@ vendor/palantirnet/the-build/conf/drupal_code_sniffer_files_d7.txt
 conf/drupal_code_sniffer_files_myproject.txt
 ```
 
+By default, when Codesniffer finds problems it will throw an error. If you must, you can quiet this by setting this property:
+
+```
+drupal_code_sniffer.haltonerror=false
+```
+
 ### [PHP To-do Finder](https://github.com/nilportugues/php-todo-finder)
 
 Sets a threshold for the number of "to do" comments allowable in a codebase. The default config for this review can be found within the-build at `conf/php_todo_finder.yml`. To customize this config, copy that file to your project's `conf/` directory and add the build property:
