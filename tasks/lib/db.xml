@@ -6,23 +6,23 @@
     </target>
 
 
-    <!-- Target: load -->
+    <!-- Target: load-db -->
     <target name="load-db" description="Load a database export.">
-        <property name="db.load.export_prefix" value="artifacts/" />
+        <property name="db.load.export_pattern" value="artifacts/*" />
         <property name="db.load.mysql_command" value="drush sqlc" />
 
-        <exec dir="${build.dir}" command="ls ${db.load.export_prefix}*.sql.gz | tail -1" outputProperty="db.load.file" />
+        <exec dir="${build.dir}" command="ls ${db.load.export_pattern}.sql.gz | tail -1" outputProperty="db.load.file" />
 
         <if>
           <equals arg1="${load.db}" arg2="" />
           <then>
-              <echo>Missing database export at '${db.load.export_prefix}.sql.gz'
+              <echo>Missing database export at '${db.load.export_pattern}.sql.gz'
 
 Please download a database export to:
-  ${db.load.export_prefix}*.sql.gz
+  ${db.load.export_pattern}.sql.gz
 
 Alternatively, you can specify the export file prefix; for example:
-  vendor/bin/phing [YOUR-TARGET] -Ddb.load.export_prefix=artifacts/prod-*
+  vendor/bin/phing [YOUR-TARGET] -Ddb.load.export_pattern=artifacts/prod-*
 
 Or, you can specify the export file directly:
   vendor/bin/phing [YOUR-TARGET] -Ddb.load.file=artifacts/my_db.sql.gz
