@@ -1,3 +1,12 @@
+<?xml version="1.0"?>
+
+<!--
+  @file acquia.xml
+  Targets for building and deploying a code artifact for Acquia.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="acquia" default="acquia-status">
     <!--
         Include this file in your build.xml with:

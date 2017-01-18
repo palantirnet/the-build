@@ -51,3 +51,6 @@ Sets a threshold for the number of "to do" comments allowable in a codebase. The
 ```
 phptodo.config=conf/php_todo_finder.yml
 ```
+
+----
+Copyright 2016 Palantir.net, Inc.

@@ -1,3 +1,12 @@
+<?xml version="1.0"?>
+
+<!--
+  @file drupal.xml
+  Targets for managing Drupal.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="Drupal" default="drupal-build">
     <!--
       Include this file in your build.xml with:
@@ -36,6 +45,7 @@
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
+    <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
@@ -186,6 +196,8 @@
         <fail unless="drupal.profile" />
         <fail unless="drupal.modules_enable" />
 
+        <phingcall target="validate-clean-conf" />
+
         <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
 
         <!-- The sites subdirectory should be writable; Drupal will change the
@@ -217,7 +229,7 @@
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">admin</option>
+            <option name="account-name">${drupal.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>${drupal.profile}</param>
         </drush>
@@ -249,7 +261,7 @@
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
            <option name="password" value="${pass}" />
-           <param>admin</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
@@ -276,7 +288,7 @@
         <!-- now we can go back to the worst password ever -->
         <drush command="user-password">
            <option name="password" value="admin" />
-           <param>admin</param>
+           <param>${drupal.admin_user}</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
@@ -284,6 +296,71 @@
             <param>system.maintenance_mode</param>
             <param>0</param>
         </drush>
+    </target>
+
+
+    <!--
+        Target: drupal-reinstall-module
+
+        Utility method to uninstall and reinstall a module.
+        -->
+    <target name="drupal-reinstall-module">
+        <fail unless="module" />
+
+        <!-- Uninstall the module -->
+        <drush command="pm-uninstall" assume="yes">
+            <param>${module}</param>
+        </drush>
+
+        <!-- Enable the module -->
+        <drush command="pm-enable" assume="yes">
+            <param>${module}</param>
+        </drush>
+    </target>
+
+
+    <!--
+        Target: validate-clean-conf
+
+        This will validate that the conf directory is clean, because you can
+        have build problems if it isn't.
+    -->
+    <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
+        <!-- Check for un-committed changes to the Drupal config directory,
+             because these can cause unexpected behavior during installation. -->
+        <exec command="git status --porcelain ${build.dir}/conf/drupal/config/" outputProperty="modified_files" />
+
+        <if>
+            <and>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <!-- Only the value "yes" prevents a failure. -->
+                <not><equals arg1="${drupal.allow_dirty_config}" arg2="yes" /></not>
+            </and>
+            <then>
+                <!-- Whitespace is intentional -->
+                <echo>Aborting install; your Drupal config directory is not clean. You may either:
+
+            Re-run your phing command with the flag:
+              -Ddrupal.allow_dirty_config=yes
+
+              - OR -
+
+            Clean up your config directory (destructive):
+              git clean -f conf/drupal/config &amp;&amp; git checkout -- conf/drupal/config
+                </echo>
+                <fail message="Dirty config directory." />
+            </then>
+            <elseif>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <then>
+                    <!-- Whitespace is intentional -->
+                    <echo>Continuing install with dirty Drupal config directory. Changes:
+
+${modified_files}
+                    </echo>
+                </then>
+            </elseif>
+        </if>
     </target>
 
 

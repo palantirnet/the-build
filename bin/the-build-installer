@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Wrapper for our install command; at least this way it's somewhat discoverable.
+# Previously:
+#   vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml
+
+# Relative path to this script.
+SCRIPT=$(readlink "$0")
+
+# Absolute path to this script's parent directory.
+SCRIPTPATH=$(cd `dirname $0` && cd `dirname $SCRIPT` && pwd)
+
+REPOPATH=$(cd `dirname $SCRIPTPATH` && cd ../../../ && pwd)
+
+if [ "$REPOPATH" = `pwd` ]; then
+  # Run our install task.
+  $SCRIPTPATH/../../../bin/phing -f $SCRIPTPATH/../tasks/install.xml
+else
+  echo "Please run this command from your project root."
+fi

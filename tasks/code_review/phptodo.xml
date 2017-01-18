@@ -1,4 +1,12 @@
 <?xml version="1.0"?>
+
+<!--
+  @file phptodo.xml
+  Target for running phptodo.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="phptodo" default="test-run-phptodo">
 
     <property name="phptodo.config" value="vendor/palantirnet/the-build/conf/php_todo_finder.yml" />
