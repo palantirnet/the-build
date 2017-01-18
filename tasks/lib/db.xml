@@ -1,0 +1,39 @@
+<project name="db" default="status">
+
+
+    <target name="status">
+        <echo>Hello world.</echo>
+    </target>
+
+
+    <!-- Target: load-db -->
+    <target name="load-db" description="Load a database export.">
+        <property name="db.load.export_pattern" value="artifacts/*" />
+        <property name="db.load.mysql_command" value="drush sqlc" />
+
+        <exec dir="${build.dir}" command="ls ${db.load.export_pattern}.sql.gz | tail -1" outputProperty="db.load.file" />
+
+        <if>
+          <equals arg1="${load.db}" arg2="" />
+          <then>
+              <echo>Missing database export at '${db.load.export_pattern}.sql.gz'
+
+Please download a database export to:
+  ${db.load.export_pattern}.sql.gz
+
+Alternatively, you can specify the export file prefix; for example:
+  vendor/bin/phing [YOUR-TARGET] -Ddb.load.export_pattern=artifacts/prod-*
+
+Or, you can specify the export file directly:
+  vendor/bin/phing [YOUR-TARGET] -Ddb.load.file=artifacts/my_db.sql.gz
+              </echo>
+              <fail message="Missing database export." />
+          </then>
+        </if>
+
+        <echo>Loading the `${db.load.file}` database...</echo>
+        <exec dir="${build.dir}" command="gunzip -c ${db.load.file} | ${db.load.mysql_command}" checkreturn="true" logoutput="true" />
+    </target>
+
+
+</project>

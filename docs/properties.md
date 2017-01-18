@@ -82,5 +82,27 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 [More info](../tasks/acquia.xml#L32-L59)
 
+### DB Loading
+
+| Property | Default value | What is it? |
+|---|---|---|
+| `db.load.export_pattern` | `artifacts/*` | Pattern to match gzipped database dump files. |
+| `db.load.mysql_command` | `drush sqlc` | Command with which to load stuff into Drupal. |
+| `db.load.file` |  | Load a specific file rather than one matching the `export_pattern`. |
+
+Example usage:
+
+```
+    <import file="vendor/palantirnet/the-build/tasks/lib/db.xml" />
+
+    <target name="load">
+        <phingcall target="load-db">
+            <property name="db.load.export_prefix" value="artifacts/prod-*" />
+        </phingcall>
+    </target>
+```
+
+[More info](../tasks/lib/db.xml)
+
 ----
 Copyright 2016 Palantir.net, Inc.
