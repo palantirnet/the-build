@@ -28,7 +28,7 @@ $> composer require palantirnet/the-build
 Install the default `build.xml` to your project:
 
 ```sh
-$> vendor/bin/phing -f vendor/palantirnet/the-build/tasks/install.xml
+$> vendor/bin/the-build-installer
 ```
 
 This will trigger an interactive prompt to configure your basic build properties, adding the following boilerplate files:
@@ -41,3 +41,6 @@ Manually review these files, then check them in to your project. At this point, 
 ```sh
 $> vendor/bin/phing build install migrate
 ```
+
+----
+Copyright 2016 Palantir.net, Inc.

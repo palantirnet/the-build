@@ -1,4 +1,12 @@
 <?xml version="1.0"?>
+
+<!--
+  @file configure.xml
+  Interactive configuration for the-build.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="configure" default="configure">
     <!--
         This can be used to configure the build properties for a project.

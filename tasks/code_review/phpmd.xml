@@ -1,4 +1,12 @@
 <?xml version="1.0"?>
+
+<!--
+  @file phpmd.xml
+  Target for running phpmd.
+
+  Copyright 2016 Palantir.net, Inc.
+  -->
+
 <project name="phpmd" default="test-run-phpmd">
 
     <property name="phpmd.rulesets" value="vendor/palantirnet/the-build/conf/phpmd.xml" />
