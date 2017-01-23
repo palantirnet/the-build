@@ -60,6 +60,7 @@ class IncludeResourceTask extends \Task {
     }
 
     // Link or copy the source artifact.
+    $this->dest->getParentFile()->mkdirs();
     if ($this->mode == 'copy') {
       $this->log(sprintf("Copying '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
       $this->source->copyTo($this->dest);
