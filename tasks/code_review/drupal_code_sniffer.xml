@@ -22,7 +22,7 @@
             verbosity="1">
 
             <!-- Drupal code -->
-            <fileset dir="${build.dir}/${drupal.root}" includesfile="${drupal_code_sniffer.files}" />
+            <fileset dir="${build.dir}/${drupal.root}" includesfile="${drupal_code_sniffer.files}" expandsymboliclinks="true" />
 
         </phpcodesniffer>
     </target>
