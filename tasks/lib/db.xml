@@ -11,7 +11,14 @@
         <property name="db.load.export_pattern" value="artifacts/*" />
         <property name="db.load.mysql_command" value="drush sqlc" />
 
-        <exec dir="${build.dir}" command="ls ${db.load.export_pattern}.sql.gz | tail -1" outputProperty="db.load.file" />
+        <if>
+            <not>
+                <isset property="db.load.file" />
+            </not>
+            <then>
+                <exec dir="${build.dir}" command="ls ${db.load.export_pattern}.sql.gz | tail -1" outputProperty="db.load.file" />
+            </then>
+        </if>
 
         <if>
           <equals arg1="${db.load.file}" arg2="" />
