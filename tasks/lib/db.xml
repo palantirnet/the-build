@@ -14,7 +14,7 @@
         <exec dir="${build.dir}" command="ls ${db.load.export_pattern}.sql.gz | tail -1" outputProperty="db.load.file" />
 
         <if>
-          <equals arg1="${load.db}" arg2="" />
+          <equals arg1="${db.load.file}" arg2="" />
           <then>
               <echo>Missing database export at '${db.load.export_pattern}.sql.gz'
 
