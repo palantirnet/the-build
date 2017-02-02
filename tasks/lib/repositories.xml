@@ -220,7 +220,7 @@ ${modified_files}
         <fail unless="repo.branch" />
 
         <!-- If the local repository has forward commits, push them. -->
-        <exec command="git diff origin/${repo.branch}" dir="${repo.dir}" outputProperty="has_forward_commits" />
+        <exec command="git cherry origin/${repo.branch}" dir="${repo.dir}" outputProperty="has_forward_commits" />
 
         <if>
             <not><istrue value="${has_forward_commits}" /></not>
