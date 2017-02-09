@@ -60,6 +60,7 @@ class IncludeResourceTask extends \Task {
     }
 
     // Link or copy the source artifact.
+    $this->dest->getParentFile()->mkdirs();
     if ($this->mode == 'copy') {
       $this->log(sprintf("Copying '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
       $this->source->copyTo($this->dest);
@@ -75,6 +76,10 @@ class IncludeResourceTask extends \Task {
    * Verify that the required attributes are set.
    */
   public function validate() {
+    if (!in_array($this->mode, ['symlink', 'copy'])) {
+      throw new BuildException("mode attribute must be either 'symlink' or 'copy'", $this->location);
+    }
+
     if (empty($this->source) || empty($this->dest)) {
       throw new BuildException("Both the 'source' and 'dest' attributes are required.");
     }
@@ -88,10 +93,6 @@ class IncludeResourceTask extends \Task {
    * Use 'symlink' to link resources, and 'copy' to copy them.
    */
   public function setMode($mode) {
-    if (!in_array($mode, ['symlink', 'copy'])) {
-      throw new BuildException("mode attribute must be either 'symlink' or 'copy'", $this->location);
-    }
-
     $this->mode = $mode;
   }
 
