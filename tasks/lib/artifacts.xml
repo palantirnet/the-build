@@ -33,7 +33,7 @@
         <property name="install_conf_dir" refid="install_dir" />
 
         <!-- Remove all the existing files so that we can install cleanly. -->
-        <delete includeemptydirs="true">
+        <delete includeemptydirs="true" failonerror="true">
             <fileset dir="${install_dir}" />
         </delete>
 
