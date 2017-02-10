@@ -99,7 +99,14 @@
         <!--
             then we composer install in the build dir...
             -->
-        <exec command="composer install --no-dev" dir="${install_dir}" checkreturn="true" />
+        <exec command="composer install --no-dev" dir="${install_dir}" returnproperty="composer_return" outputproperty="composer_output" />
+        <if>
+            <not><equals arg1="${composer_return}" arg2="0" /></not>
+            <then>
+                <echo>${composer_output}</echo>
+                <fail msg="Composer install failed." />
+            </then>
+        </if>
 
         <!--
             having git repositories in the vendor dir messes up the build
