@@ -20,3 +20,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
 $settings['file_public_path'] = '${drupal.settings.file_public_path}';
 $settings['file_private_path'] = '${drupal.settings.file_private_path}';
+
+if (file_exists(__DIR__ . '/settings.local.php')) {
+  include __DIR__ . '/settings.local.php';
+}
