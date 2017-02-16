@@ -108,7 +108,6 @@
             </then>
         </if>
 
-
         <!--
             remove all composer dev dependencies so external scripts (e.g.
             Acquia RA) and absent-minded manual artifact editors (ahem) don't
@@ -126,14 +125,14 @@
         <exec command="composer show --name-only --direct" dir="${build.dir}" output="${tmpfile_composer_dev}" />
 
         <!-- diff the two sets of dependencies, outputting only the ones in dev but not in prod -->
-        <exec command="diff --new-line-format='' --unchanged-line-format='' ${tmpfile_composer_dev} ${tmpfile_composer_prod} | xargs" outputProperty="composer_remove" />
+        <exec command="diff --new-line-format='' --unchanged-line-format='' --ignore-all-space ${tmpfile_composer_dev} ${tmpfile_composer_prod} | xargs" outputProperty="composer_remove" />
         <!-- use composer to remove all of the dev dependencies from the composer.json -->
+        <echo>Removing dev dependencies: ${composer_remove}</echo>
         <exec command="composer remove ${composer_remove} --dev --update-no-dev --no-interaction" dir="${install_dir}" />
-        <exec command="composer install --no-dev --no-interaction" dir="${install_dir}" />
+
         <!-- now clean up those temporary files -->
         <delete file="${tmpfile_composer_prod}" />
         <delete file="${tmpfile_composer_dev}" />
-
 
         <!--
             having git repositories in the vendor dir messes up the build
