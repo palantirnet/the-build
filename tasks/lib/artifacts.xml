@@ -108,6 +108,7 @@
                 <fail msg="Composer install failed." />
             </then>
         </if>
+        <echo>Hope your coffee was good!</echo>
 
         <!--
             having git repositories in the vendor dir messes up the build
