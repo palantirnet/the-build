@@ -99,6 +99,7 @@
         <!--
             then we composer install in the build dir...
             -->
+        <echo>Running composer install, go get some coffee... or hot beverage of your choice!</echo>
         <exec command="composer install --no-dev --no-interaction" dir="${install_dir}" returnproperty="composer_return" outputproperty="composer_output" />
         <if>
             <not><equals arg1="${composer_return}" arg2="0" /></not>
