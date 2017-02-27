@@ -25,7 +25,6 @@
         <fail unless="install_dir" />
         <fail unless="build.dir" />
         <fail unless="drupal.root" />
-        <fail unless="drupal.sites_subdir" />
 
         <!-- Relative path to the Drupal root within the install dir -->
         <property name="drupal.root_name" value="docroot/" />
@@ -64,11 +63,7 @@
             doing it based on what is checked in to git prevents us from
             accidentally adding local files or settings.php in to the
             build repository.
-
-            AND, drupal has applied permissions to the sites directory that
-            prevent us from writing to it, so we need to squash them.
             -->
-        <exec command="chmod 777 web/sites/${drupal.sites_subdir}" dir="${build.dir}" />
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files" dir="${build.dir}/web" output="${tmpfile}" />
         <copy todir="${drupal.root}" overwrite="true" haltonerror="true">

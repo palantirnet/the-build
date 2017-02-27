@@ -88,7 +88,6 @@
             <property name="install_dir" value="${repo.dir}" />
             <property name="build.dir" value="${build.dir}" />
             <property name="drupal.root" value="${drupal.root}" />
-            <property name="drupal.sites_subdir" value="${drupal.sites_subdir}" />
         </phing>
     </target>
 
