@@ -54,6 +54,25 @@
     <property name="drush.config" value="${build.dir}/conf/drushrc.php" />
 
 
+    <target name="drupal-add-site" description="Multisite: Add a site to this drupal instance.">
+        <propertyprompt promptText="URL friendly name of site to add to this environment. (ie 'default' or '${projectname}.local'"
+                        propertyName="new.build.env" defaultValue="${projectname}.local" promptCharacter=":" useExistingValue="true" />
+
+        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
+
+            <!-- Load properties from the default environment, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <!-- Add this site to the list of sites in build.default.properties. -->
+            <property name="build.sites" value="${build.sites},${build.env"/>
+            <property name="update" value="build.sites" />
+        </phing>
+        <property name="build.env" value="${new.build.env}" override="true"/>
+
+        <phingcall target="drupal-configure"/>
+    </target>
+
     <!-- Target: drupal-configure -->
     <target name="drupal-configure" description="Configure the Drupal build.">
         <!-- Generate a hash salt -->
@@ -70,6 +89,12 @@
             <!-- Prompts and defaults -->
             <property name="prompt.drupal.site_name" value="Human-readable site name" />
             <property name="default.drupal.site_name" value="${projectname}" />
+
+            <property name="prompt.drupal.sites_subdir" value="Directory within 'sites' dir in the Drupal root." />
+            <property name="default.drupal.sites_subdir" value="${build.env}" />
+
+            <property name="prompt.drupal.settings.file_public_path" value="Public files path for Drupal." />
+            <property name="default.drupal.settings.file_public_path" value="sites/${drupal.sites_subdir}/files" />
 
             <property name="prompt.drupal.profile" value="Drupal install profile" />
             <property name="default.drupal.profile" value="standard" />
@@ -90,7 +115,6 @@
             <property name="default.drupal.database.host" value="127.0.0.1" />
 
             <!-- Just defaults -->
-            <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
             <property name="default.drupal.settings.file_private_path" value="" />
             <property name="default.drupal.twig.debug" value="false" />
             <property name="default.drupal.uri" value="http://${projectname}.local" />
