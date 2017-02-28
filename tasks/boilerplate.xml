@@ -77,7 +77,13 @@
             <property name="prompt.build.test_output" value="Test output directory (use ${env.CIRCLE_TEST_REPORTS} for Circle)" />
             <property name="default.build.test_output" value="/dev/null" />
 
-            <property name="update" value="build.artifact_mode,build.test_output" />
+            <property name="prompt.drupal.sites_subdir" value="Multisite sites_subdir: Directory within the Drupal 'sites' directory for the default site." />
+            <property name="default.drupal.sites_subdir" value="default" />
+
+            <property name="default.build.multisite.sites" value="${drupal.sites_subdir}"/>
+
+            <property name="update" value="build.artifact_mode,build.test_output,drupal.sites_subdir" />
+            <property name="dump" value="build.multisite.sites"/>
         </phing>
     </target>
 
