@@ -20,18 +20,10 @@ $settings['trusted_host_patterns'] = array(
 if (file_exists('/var/www/site-php')) {
   require '/var/www/site-php/${acquia.accountname}/${acquia.accountname}-settings.inc';
 
-  // Acquia is in the process of upgrading their platform-provided memcache. In
-  // the meantime, use the old $conf vars for the memcache configuration.
-  // @see https://docs.acquia.com/article/drupal-8-cache-backend
-  // @see https://docs.acquia.com/cloud/performance/memcached
-  if (empty($settings['memcache']['servers'])) {
-    $settings['memcache']['servers'] = $conf['memcache_servers'];
-    $settings['memcache']['key_prefix'] = $conf['memcache_key_prefix'];
-    $settings['memcache']['bins'] = ['default' => 'default'];
-  }
-
   // Use memcache as the default cache backend.
-  $settings['cache']['default'] = 'cache.backend.memcache';
+  // @see https://docs.acquia.com/cloud/performance/memcached
+  // Uncomment this **after** the site is installed.
+  // $settings['cache']['default'] = 'cache.backend.memcache';
 }
 
 // Use our own config sync directory.
