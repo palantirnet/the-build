@@ -4,7 +4,7 @@
   @file configure.xml
   Interactive configuration for the-build.
 
-  Copyright 2016 Palantir.net, Inc.
+  Copyright 2016, 2017 Palantir.net, Inc.
   -->
 
 <project name="configure" default="configure">
@@ -18,38 +18,61 @@
 
 
     <!-- Target: configure -->
+    <target name="configure-sites" >
+
+        <if>
+            <not><isset property="build.sites"></isset></not>
+            <then>
+                <property name="build.sites" value="default" />
+            </then>
+        </if>
+
+        <!-- Configure each drupal site. -->
+        <foreach list="${build.sites}" target="drupal-configure" param="drupal.sites_subdir" />
+
+    </target>
+
+
+    <!-- Configure the build environment. -->
     <!--
-        Try:
-        configure -Dbuild.env=vagrant -Dupdate=drupal.site_name              ## Updates drupal.site_name only
-        configure -Dbuild.env=vagrant -Dupdate=drupal.root -Ddrupal.root=www ## Updates drupal.root to www
-        configure -Dbuild.env=vagrant -Dupdate=drupal.new_setting            ## Adds a new setting
-     -->
-    <target name="configure">
+    Try:
+    configure-env -Dbuild.env=vagrant -Dupdate=drupal.root -Ddrupal.root=www ## Updates drupal.root to www
+    configure-env -Dbuild.env=vagrant -Dupdate=env.new_setting               ## Adds a new setting
+    -->
+    <target name="configure-env">
         <fail unless="build.env" />
+
+        <!-- Initialize the environment. -->
+        <phingcall target="configure-init-environment" />
+
+        <phingcall target="configure" description="Configure ${build.env} environment." >
+            <property name="properties.type" value="env" />
+            <property name="properties.name" value="${build.env}" />
+        </phingcall>
+
+        <phingcall target="configure-sites" description="Configure Drupal sites." >
+            <property name="properties.type" value="site" />
+        </phingcall>
+
+    </target>
+
+
+    <!-- Add/update a configuration file. -->
+    <target name="configure">
+
+        <fail unless="properties.type" />
+        <fail unless="properties.name" />
 
         <property name="update" value="" />
         <property name="dump" value="" />
 
-        <!--
-            Defaults and prompts should come from the caller.
-
-            Interactive updates:
-                <property name="prompt.drupal.root" value="Drupal root" />
-                <property name="default.drupal.root" value="web" />
-                <property name="update" value="drupal.root,something.else" />
-
-            Silent defaults:
-                <property name="default.drupal.uri" value="http://${phing.project.name}.local" />
-                <property name="dump" value="drupal.uri,another.var" />
-            -->
-
-        <!-- Initialized the properties file -->
-        <property name="propertiesfile" value="conf/build.${build.env}.properties" />
+        <!-- Initialize the environment. -->
+        <property name="propertiesfile" value="conf/build.${properties.name}.${properties.type}.properties" />
         <phingcall target="configure-init-environment" />
 
-        <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+        <!-- Load properties from the file we're editing, with the prefix "default.*" -->
         <property file="${build.dir}/${propertiesfile}" prefix="default" />
-        <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+        <property file="${build.dir}/conf/build.default.${properties.type}.properties" prefix="default" />
 
         <!-- Update properties interactively. -->
         <foreach list="${update}" target="configure-update-property" param="propertyname" />
@@ -61,7 +84,6 @@
 
     <target name="configure-init-environment">
         <fail unless="build.dir" />
-        <fail unless="propertiesfile" />
 
         <!-- Create the conf directory if it doesn't already exist. -->
         <if>
@@ -73,7 +95,10 @@
 
         <!-- Create the properties file if it doesn't already exist. -->
         <if>
-            <not><available file="${build.dir}/${propertiesfile}" /></not>
+            <and>
+                <isset property="propertiesfile" />
+                <not><available file="${build.dir}/${propertiesfile}" /></not>
+            </and>
             <then>
                 <touch file="${build.dir}/${propertiesfile}" />
             </then>
@@ -83,6 +108,7 @@
 
     <target name="configure-update-property-silent">
         <fail unless="propertyname" />
+        <fail unless="propertiesfile" />
         <fail unless="default.${propertyname}" />
 
         <property name="${propertyname}" value="${default.${propertyname}}" />

@@ -12,6 +12,7 @@
       Include this file in your build.xml with:
         <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
       -->
+    <property name="build.sites" value="default" />
 
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
 
@@ -34,8 +35,8 @@
         <not><isset property="status.defaults_loaded" /></not>
         <then>
             <!-- Load properties for this environment, then for the default environment. -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" />
-            <property file="${build.dir}/conf/build.default.properties" />
+            <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+            <property file="${build.dir}/conf/build.default.env.properties" />
 
             <property name="status.defaults_loaded" value="true" />
         </then>
@@ -47,7 +48,7 @@
         -->
     <target name="status">
         <if>
-            <not><available file="${build.dir}/conf/build.default.properties" /></not>
+            <not><available file="${build.dir}/conf/build.default.env.properties" /></not>
             <then>
                 <echo>You should at least have a default properties file. Start with:
                 vendor/bin/phing configure -Dbuild.env=default</echo>
@@ -61,23 +62,28 @@
 
 
     <!-- Target: configure -->
-    <target name="configure" description="Interactive configuration for Drupal project settings.">
+    <target name="configure" description="Interactive configuration for project environment settings.">
         <phing phingfile="${phing.dir.boilerplate}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
+            <property name="properties.type" value="env" />
+            <property name="properties.name" value="${build.env}" />
 
-            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
-            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+            <!-- Load properties for this environment, then for the default environment. -->
+            <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+            <property file="${build.dir}/conf/build.default.env.properties" />
 
             <!-- Prompts and defaults -->
+            <property name="prompt.build.sites" value="Drupal multisite(s) to configure?" />
+            <property name="default.build.sites" value="default" />
+
             <property name="prompt.build.artifact_mode" value="Artifact mode (copy,symlink)" />
             <property name="default.build.artifact_mode" value="symlink" />
 
             <property name="prompt.build.test_output" value="Test output directory (use ${env.CIRCLE_TEST_REPORTS} for Circle)" />
             <property name="default.build.test_output" value="/dev/null" />
 
-            <property name="update" value="build.artifact_mode,build.test_output" />
+            <property name="update" value="build.sites,build.artifact_mode,build.test_output" />
         </phing>
     </target>
 
