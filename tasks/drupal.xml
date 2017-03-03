@@ -42,9 +42,9 @@
     <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
     <property name="build.drupal.services" value="conf/drupal/services.yml" />
+    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
 
     <!-- These properties will generally not change. -->
-    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
     <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->

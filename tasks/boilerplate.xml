@@ -74,7 +74,7 @@
             <property file="${build.dir}/conf/build.default.env.properties" />
 
             <!-- Prompts and defaults -->
-            <property name="prompt.build.sites" value="Drupal multisite(s) to configure?" />
+            <property name="prompt.build.sites" value="Drupal multisite(s) to configure separated by commas" />
             <property name="default.build.sites" value="default" />
 
             <property name="prompt.build.artifact_mode" value="Artifact mode (copy,symlink)" />
