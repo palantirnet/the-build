@@ -12,7 +12,6 @@
       Include this file in your build.xml with:
         <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
       -->
-    <property name="build.sites" value="default" />
 
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
 
@@ -61,8 +60,15 @@
     </target>
 
 
-    <!-- Target: configure -->
-    <target name="configure" description="Interactive configuration for project environment settings.">
+    <!-- Configure ALL the things. -->
+    <target name="configure" description="Interactive configuration for project settings.">
+        <phingcall target="configure-emv" />
+        <phing phingfile="${phing.dir.drupal}/drupal.xml" inheritAll="true" dir="${build.dir}" target="drupal-configure-sites" />
+    </target>
+
+
+    <!-- Do environment-specific configurations. -->
+    <target name="configure-emv" description="Interactive configuration for project environment settings.">
         <phing phingfile="${phing.dir.boilerplate}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />

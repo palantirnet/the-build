@@ -72,7 +72,6 @@
 
         <!-- Load properties from the file we're editing, with the prefix "default.*" -->
         <property file="${build.dir}/${propertiesfile}" prefix="default" />
-        <property file="${build.dir}/conf/build.default.${properties.type}.properties" prefix="default" />
 
         <!-- Update properties interactively. -->
         <foreach list="${update}" target="configure-update-property" param="propertyname" />

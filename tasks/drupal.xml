@@ -22,6 +22,11 @@
     <fail unless="projectname" />
 
 
+    <!-- Load properties for the environment." -->
+    <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+    <property file="${build.dir}/conf/build.default.env.properties" />
+
+
     <!-- These properties will generally be set in the default build properties file. -->
     <property name="drupal.root" value="web" />
     <property name="drupal.site_name" value="${projectname}" />
@@ -55,45 +60,52 @@
 
 
     <!-- Target: drupal-configure -->
-    <target name="drupal-configure" description="Configure the Drupal build.">
+    <target name="drupal-configure" description="Interactively configure a Drupal site for this build.">
+        <fail unless="drupal.sites_subdir" />
+
+
         <!-- Generate a hash salt -->
-        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+        <php expression="hash('sha256', print_r($_SERVER . '${drupal.sites_subdir}', TRUE))" returnProperty="hash_salt" />
 
         <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
-            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
-            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+            <property name="properties.type" value="site" />
+            <property name="properties.name" value="${drupal.sites_subdir}" />
 
-            <!-- Prompts and defaults -->
-            <property name="prompt.drupal.site_name" value="Human-readable site name" />
+            <!--<property name="drupal.sites_subdir" value="${drupal.sites_subdir}" />-->
+
+            <!-- Load properties for the site we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${drupal.sites_subdir}.site.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.site.properties" prefix="default" />
+
+            <property name="prompt.drupal.site_name" value="${drupal.sites_subdir}: Human-readable site name" />
             <property name="default.drupal.site_name" value="${projectname}" />
 
-            <property name="prompt.drupal.profile" value="Drupal install profile" />
+            <property name="prompt.drupal.profile" value="${drupal.sites_subdir}: Drupal install profile" />
             <property name="default.drupal.profile" value="standard" />
 
-            <property name="prompt.drupal.modules_enable" value="Comma-separated list of modules to enable after install" />
+            <property name="prompt.drupal.modules_enable" value="${drupal.sites_subdir}: Comma-separated list of modules to enable after install" />
             <property name="default.drupal.modules_enable" value="" />
 
-            <property name="prompt.drupal.database.database" value="Drupal database name" />
-            <property name="default.drupal.database.database" value="drupal" />
+            <property name="prompt.drupal.database.database" value="${drupal.sites_subdir}: Drupal database name" />
+            <property name="default.drupal.database.database" value="${drupal.sites_subdir}" />
 
-            <property name="prompt.drupal.database.username" value="Drupal database username" />
-            <property name="default.drupal.database.username" value="root" />
+            <property name="prompt.drupal.database.username" value="${drupal.sites_subdir}: Drupal database username" />
+            <property name="default.drupal.database.username" value="${drupal.sites_subdir}" />
 
-            <property name="prompt.drupal.database.password" value="Drupal database password" />
-            <property name="default.drupal.database.password" value="root" />
+            <property name="prompt.drupal.database.password" value="${drupal.sites_subdir}: Drupal database password" />
+            <property name="default.drupal.database.password" value="${drupal.sites_subdir}" />
 
             <property name="prompt.drupal.database.host" value="Drupal database host" />
             <property name="default.drupal.database.host" value="127.0.0.1" />
 
             <!-- Just defaults -->
-            <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
+            <property name="default.drupal.settings.file_public_path" value="sites/${drupal.sites_subdir}/files" />
             <property name="default.drupal.settings.file_private_path" value="" />
             <property name="default.drupal.twig.debug" value="false" />
-            <property name="default.drupal.uri" value="http://${projectname}.local" />
+            <property name="default.drupal.uri" value="http://${drupal.sites_subdir}.${projectname}.local" />
             <property name="default.drupal.root" value="web" />
 
             <!-- Generated hash salt -->
@@ -104,6 +116,11 @@
         </phing>
     </target>
 
+    <!-- Configure the Drupal sites. -->
+    <target name="drupal-configure-sites" description="Configure the Drupal sites.">
+        <fail unless="build.sites" />
+        <foreach list="${build.sites}" target="drupal-configure" param="drupal.sites_subdir" />
+    </target>
 
     <!-- Target: drush-prepare-drushrc -->
     <target name="drush-prepare-drushrc" description="Create a drushrc file for Vagrant.">
@@ -117,7 +134,11 @@
 
 
     <target name="drupal-build" description="Prepare Drupal for installation.">
+
+        <fail unless="build.sites"/>
+
         <phingcall target="drupal-prepare-filesystem" />
+        <foreach list="$(build.sites)" target="prepare-site" param="build.sitename" />
         <phingcall target="drupal-prepare-settings" />
         <phingcall target="drupal-prepare-services" />
     </target>
