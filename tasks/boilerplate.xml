@@ -89,7 +89,10 @@
             <property name="prompt.build.test_output" value="Test output directory (use ${env.CIRCLE_TEST_REPORTS} for Circle)" />
             <property name="default.build.test_output" value="/dev/null" />
 
+            <!-- Defaults. -->
+            <property name="default.build.drupal.root" value="web" />
             <property name="update" value="build.sites,build.artifact_mode,build.test_output" />
+            <property name="dump" value="build.drupal.root" />
         </phing>
     </target>
 

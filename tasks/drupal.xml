@@ -22,104 +22,87 @@
     <fail unless="projectname" />
 
 
-    <!-- Load properties for the environment." -->
+    <!-- Load properties for the environment. -->
     <property file="${build.dir}/conf/build.${build.env}.env.properties" />
     <property file="${build.dir}/conf/build.default.env.properties" />
 
 
     <!-- These properties will generally be set in the default build properties file. -->
-    <property name="drupal.root" value="web" />
     <property name="drupal.site_name" value="${projectname}" />
     <property name="drupal.profile" value="standard" />
     <property name="drupal.hash_salt" value="temporary" />
-
-    <property name="drupal.settings.file_public_path" value="sites/default/files" />
-    <property name="drupal.settings.file_private_path" value="" />
-
-    <!-- These properties will probably change per-environment. -->
-    <property name="drupal.uri" value="http://${projectname}.local" />
-    <property name="drupal.database.database" value="default" />
-    <property name="drupal.database.username" value="drupal" />
-    <property name="drupal.database.password" value="drupal" />
-    <property name="drupal.database.host" value="127.0.0.1" />
-    <property name="drupal.modules_enable" value="" />
-    <property name="drupal.twig.debug" value="false" />
-    <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
-    <property name="build.drupal.settings" value="conf/drupal/settings.php" />
-    <property name="build.drupal.services" value="conf/drupal/services.yml" />
-    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
 
     <!-- These properties will generally not change. -->
     <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
+    <!-- @todo One URI won't work with multisite. Try Drupal VM's aliases? -->
+    <property name="drupal.uri" value="http://${projectname}.local" />
     <property name="drush.uri" refid="drupal.uri" />
-    <property name="drush.root" value="${build.dir}/${drupal.root}" />
+    <property name="drush.root" value="${build.dir}/${build.drupal.root}" />
     <property name="drush.config" value="${build.dir}/conf/drushrc.php" />
 
 
     <!-- Target: drupal-configure -->
     <target name="drupal-configure" description="Interactively configure a Drupal site for this build.">
-        <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.site" />
 
 
         <!-- Generate a hash salt -->
-        <php expression="hash('sha256', print_r($_SERVER . '${drupal.sites_subdir}', TRUE))" returnProperty="hash_salt" />
+        <php expression="hash('sha256', print_r($_SERVER . '${drupal.site}', TRUE))" returnProperty="hash_salt" />
 
         <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
             <property name="properties.type" value="site" />
-            <property name="properties.name" value="${drupal.sites_subdir}" />
-
-            <!--<property name="drupal.sites_subdir" value="${drupal.sites_subdir}" />-->
+            <property name="properties.name" value="${drupal.site}" />
 
             <!-- Load properties for the site we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/conf/build.${drupal.sites_subdir}.site.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.${drupal.site}.site.properties" prefix="default" />
             <property file="${build.dir}/conf/build.default.site.properties" prefix="default" />
 
-            <property name="prompt.drupal.site_name" value="${drupal.sites_subdir}: Human-readable site name" />
+            <property name="prompt.drupal.site_name" value="${drupal.site}: Human-readable site name" />
             <property name="default.drupal.site_name" value="${projectname}" />
 
-            <property name="prompt.drupal.profile" value="${drupal.sites_subdir}: Drupal install profile" />
+            <property name="prompt.drupal.profile" value="${drupal.site}: Drupal install profile" />
             <property name="default.drupal.profile" value="standard" />
 
-            <property name="prompt.drupal.modules_enable" value="${drupal.sites_subdir}: Comma-separated list of modules to enable after install" />
+            <property name="prompt.drupal.modules_enable" value="${drupal.site}: Comma-separated list of modules to enable after install" />
             <property name="default.drupal.modules_enable" value="" />
 
-            <property name="prompt.drupal.database.database" value="${drupal.sites_subdir}: Drupal database name" />
-            <property name="default.drupal.database.database" value="${drupal.sites_subdir}" />
+            <property name="prompt.drupal.database.database" value="${drupal.site}: Drupal database name" />
+            <property name="default.drupal.database.database" value="${drupal.site}" />
 
-            <property name="prompt.drupal.database.username" value="${drupal.sites_subdir}: Drupal database username" />
-            <property name="default.drupal.database.username" value="${drupal.sites_subdir}" />
+            <property name="prompt.drupal.database.username" value="${drupal.site}: Drupal database username" />
+            <property name="default.drupal.database.username" value="${drupal.site}" />
 
-            <property name="prompt.drupal.database.password" value="${drupal.sites_subdir}: Drupal database password" />
-            <property name="default.drupal.database.password" value="${drupal.sites_subdir}" />
+            <property name="prompt.drupal.database.password" value="${drupal.site}: Drupal database password" />
+            <property name="default.drupal.database.password" value="${drupal.site}" />
 
             <property name="prompt.drupal.database.host" value="Drupal database host" />
             <property name="default.drupal.database.host" value="127.0.0.1" />
 
             <!-- Just defaults -->
-            <property name="default.drupal.settings.file_public_path" value="sites/${drupal.sites_subdir}/files" />
+            <property name="default.drupal.config_sync_directory" value="../conf/drupal/${drupal.site}/config" />
+            <property name="default.drupal.settings.file_public_path" value="sites/${drupal.site}/files" />
             <property name="default.drupal.settings.file_private_path" value="" />
             <property name="default.drupal.twig.debug" value="false" />
-            <property name="default.drupal.uri" value="http://${drupal.sites_subdir}.${projectname}.local" />
-            <property name="default.drupal.root" value="web" />
+            <property name="default.drupal.uri" value="http://${drupal.site}.${projectname}.local" />
 
             <!-- Generated hash salt -->
             <property name="default.drupal.hash_salt" value="${hash_salt}" />
 
             <property name="update" value="drupal.site_name,drupal.profile,drupal.modules_enable,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
-            <property name="dump" value="drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt,drupal.root" />
+            <property name="dump" value="drupal.config_sync_directory,drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt" />
         </phing>
     </target>
 
     <!-- Configure the Drupal sites. -->
     <target name="drupal-configure-sites" description="Configure the Drupal sites.">
         <fail unless="build.sites" />
-        <foreach list="${build.sites}" target="drupal-configure" param="drupal.sites_subdir" />
+        <foreach list="${build.sites}" target="drupal-configure" param="drupal.site" />
     </target>
 
     <!-- Target: drush-prepare-drushrc -->
@@ -138,37 +121,46 @@
         <fail unless="build.sites"/>
 
         <phingcall target="drupal-prepare-filesystem" />
-        <foreach list="$(build.sites)" target="prepare-site" param="build.sitename" />
+        <foreach list="$(build.sites)" target="prepare-site" param="drupal.site" />
         <phingcall target="drupal-prepare-settings" />
         <phingcall target="drupal-prepare-services" />
     </target>
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem">
-        <fail unless="drupal.root" />
-        <fail unless="drupal.sites_subdir" />
+        <fail unless="build.drupal.root" />
 
-        <!-- Create the Drupal modules, themes, profiles, and sites directories. -->
+        <!-- Create the Drupal modules, themes, and profiles directories. -->
         <foreach target="create-placeholder" param="placeholder_for">
-            <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
+            <filelist dir="${build.dir}" files="${build.drupal.root}/modules/custom,${build.drupal.root}/themes/custom,${build.drupal.root}/profiles/custom" />
         </foreach>
 
+    </target>
+
+    <target name="prepare-site">
+        <fail unless="build.dir" />
+        <fail unless="build.drupal.root" />
+        <fail unless="drupal.site" />
+        <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+
+
+        <mkdir dir="${build.dir}/${build.drupal.root}/sites/${drupal.site}" />
+        <mkdir dir="${build.dir}/${build.drupal.root}/${drupal.settings.file_public_path}" />
+
         <!-- The site directory needs to have some perms. -->
-        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+        <chmod file="${build.drupal.root}/sites/${drupal.site}" mode="750" />
 
         <!-- The public files directory, and everything in it, needs to be world writable. -->
-        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${build.drupal.root}/${drupal.settings.file_public_path}" />
         <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" />
     </target>
 
-
     <!-- Target: drupal-prepare-settings -->
     <target name="drupal-prepare-settings">
-        <fail unless="drupal.root" />
-        <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.site" />
         <fail unless="build.drupal.settings" />
 
-        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" overwrite="true" mode="555">
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${build.drupal.root}/sites/${drupal.site}/settings.php" overwrite="true" mode="555">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -178,11 +170,11 @@
 
     <!-- Target: drupal-prepare-services -->
     <target name="drupal-prepare-services">
-        <fail unless="drupal.root" />
-        <fail unless="drupal.sites_subdir" />
+        <fail unless="build.drupal.root" />
+        <fail unless="drupal.site" />
         <fail unless="build.drupal.services" />
 
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="644">
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${build.drupal.root}/sites/${drupal.site}/services.yml" overwrite="true" mode="644">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -211,22 +203,22 @@
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
         <fail unless="drupal.settings.file_public_path" />
-        <fail unless="drupal.root" />
+        <fail unless="build.drupal.root" />
         <fail unless="drupal.site_name" />
-        <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.site" />
         <fail unless="drupal.profile" />
         <fail unless="drupal.modules_enable" />
 
         <phingcall target="validate-clean-conf" />
 
-        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${build.drupal.root}/${drupal.settings.file_public_path}" />
 
         <!-- The sites subdirectory should be writable; Drupal will change the
              permissions on this directory after install. -->
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+        <chmod file="${build.dir}/${build.drupal.root}/sites/${drupal.site}" mode="777" />
 
         <!-- Make settings.php writable -->
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
+        <chmod file="${build.dir}/${build.drupal.root}/sites/${drupal.site}/settings.php" mode="777" />
 
         <!-- Delete and re-create the public files directory -->
         <delete file="${drupal.settings.file_public_path.resolved}" />
@@ -241,7 +233,7 @@
                 </not>
             </and>
             <then>
-                <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${drupal.root}/${drupal.settings.file_private_path}" />
+                <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${build.drupal.root}/${drupal.settings.file_private_path}" />
                 <delete file="${drupal.settings.file_private_path.resolved}" />
                 <delete dir="${drupal.settings.file_private_path.resolved}" />
                 <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
