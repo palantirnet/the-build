@@ -91,8 +91,11 @@
 
             <!-- Defaults. -->
             <property name="default.build.drupal.root" value="web" />
+            <property name="default.build.drupal.settings" value="conf/drupal/settings.php" />
+            <property name="default.build.drupal.services" value="conf/drupal/services.yml" />
+
             <property name="update" value="build.sites,build.artifact_mode,build.test_output" />
-            <property name="dump" value="build.drupal.root" />
+            <property name="dump" value="build.drupal.root,build.drupal.settings,build.drupal.services" />
         </phing>
     </target>
 

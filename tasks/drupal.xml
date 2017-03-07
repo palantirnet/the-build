@@ -117,14 +117,13 @@
 
 
     <target name="drupal-build" description="Prepare Drupal for installation.">
-
         <fail unless="build.sites"/>
 
         <phingcall target="drupal-prepare-filesystem" />
-        <foreach list="$(build.sites)" target="prepare-site" param="drupal.site" />
-        <phingcall target="drupal-prepare-settings" />
-        <phingcall target="drupal-prepare-services" />
+        <foreach list="${build.sites}" target="prepare-site" param="drupal.site" />
+
     </target>
+
 
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem">
@@ -137,13 +136,34 @@
 
     </target>
 
-    <target name="prepare-site">
+
+    <!-- Prepare the Drupal site directory, config dir, settings, and services. -->
+    <target name="prepare-site" description="Prepare the Drupal site directory, config dir, settings, and services." >
+        <fail unless="build.env" />
+        <fail unless="build.dir" />
+        <fail unless="drupal.site" />
+
+        <!-- Load properties for this site. -->
+        <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+        <property file="${build.dir}/conf/build.${drupal.site}.site.properties" />
+
+        <phingcall target="prepare-site-dir" />
+        <phingcall target="drupal-prepare-settings" />
+        <phingcall target="drupal-prepare-services" />
+
+    </target>
+
+
+    <!-- Prepare the site directory and set file permissions. -->
+    <target name="prepare-site-dir" description="Prepare the Drupal site directory and set file permissions.">
+        <fail unless="drupal.site" />
         <fail unless="build.dir" />
         <fail unless="build.drupal.root" />
-        <fail unless="drupal.site" />
-        <property file="${build.dir}/conf/build.${build.env}.env.properties" />
+        <echoproperties />
 
 
+
+        <mkdir dir="${build.dir}/conf/${drupal.config_sync_directory}" />
         <mkdir dir="${build.dir}/${build.drupal.root}/sites/${drupal.site}" />
         <mkdir dir="${build.dir}/${build.drupal.root}/${drupal.settings.file_public_path}" />
 
