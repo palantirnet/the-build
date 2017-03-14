@@ -43,4 +43,4 @@ $> vendor/bin/phing build install migrate
 ```
 
 ----
-Copyright 2016 Palantir.net, Inc.
+Copyright 2016, 2017 Palantir.net, Inc.
