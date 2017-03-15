@@ -221,7 +221,20 @@
 
 
     <!-- Target: drupal-install -->
-    <target name="drupal-install" description="Install Drupal.">
+    <target name="drupal-install" description="Install all the Drupals.">
+        <fail unless="build.env" />
+        <fail unless="build.sites" />
+        <foreach list="${build.sites}" target="drupal-install-site" param="drupal.site" />
+    </target>
+
+    <target name="drupal-install-site" description="Install a Drupal site.">
+        <!-- Ask which site to install if one wasn't specified. -->
+        <propertyprompt propertyName="drupal.site" promptText="Which Drupal site should we install? (${build.sites})" defaultValue="default" useExistingValue="true" />
+        <fail unless="drupal.site" />
+
+        <!-- Load the properties for the site. -->
+        <property file="${build.dir}/conf/build.${drupal.site}.site.properties" />
+
         <fail unless="drupal.settings.file_public_path" />
         <fail unless="build.drupal.root" />
         <fail unless="drupal.site_name" />
