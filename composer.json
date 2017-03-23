@@ -13,16 +13,19 @@
         "bin/the-build-installer"
     ],
     "require": {
-        "phing/phing": "^2.14",
         "continuousphp/phing-drush-task": "dev-master",
-        "drupal/coder": "^8.2",
+        "drupal/coder": "*",
+        "pear/versioncontrol_git": "@dev",
+        "phing/phing": "^2.14",
         "phpmd/phpmd" : "^2.4",
-        "nilportugues/php_todo": "^1.0",
-        "pear/versioncontrol_git": "@dev"
+        "nilportugues/php_todo": "^1.0"
     },
     "autoload": {
         "psr-0": {
             "TheBuild\\": "src/"
         }
+    },
+    "config": {
+        "sort-packages": "true"
     }
 }
