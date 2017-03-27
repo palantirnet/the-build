@@ -29,7 +29,7 @@ dependencies:
     - composer install --no-interaction
 
   cache_directories:
-    - node_modules
+    - styleguide/node_modules
     - vendor
     - web/core
     - web/modules/contrib
@@ -39,6 +39,7 @@ dependencies:
 
 test:
   pre:
+    - npm --prefix styleguide/ install styleguide/
     - vendor/bin/phing build install migrate
 
   override:
