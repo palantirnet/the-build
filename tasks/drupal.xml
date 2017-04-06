@@ -43,6 +43,7 @@
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
     <property name="build.drupal.settings_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/settings.php" />
     <property name="build.drupal.services" value="conf/drupal/services.yml" />
+    <property name="build.drupal.services_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/services.yml" />
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
@@ -157,11 +158,10 @@
 
     <!-- Target: drupal-prepare-services -->
     <target name="drupal-prepare-services">
-        <fail unless="drupal.root" />
-        <fail unless="drupal.sites_subdir" />
         <fail unless="build.drupal.services" />
+        <fail unless="build.drupal.services_dest" />
 
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/services.yml" overwrite="true" mode="644">
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${build.drupal.services_dest}" overwrite="true" mode="644">
             <filterchain>
                 <expandproperties />
             </filterchain>

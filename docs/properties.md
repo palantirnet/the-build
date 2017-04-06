@@ -37,6 +37,7 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 | `build.drupal.settings` | `conf/drupal/settings.php` | Source template for Drupal's `settings.php` file. |
 | `build.drupal.settings_dest` | `web/sites/default/settings.php` | Destination for the templated settings.php file. |
 | `build.drupal.services` | `conf/drupal/services.yml` | Source template for Drupal's `services.yml` file. |
+| `build.drupal.services_dest` | `web/sites/default/services.yml` | Destination for the templated `services.yml` file. |
 
 
 ### Drupal
