@@ -14,6 +14,7 @@
       -->
 
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
+    <taskdef name="acquiaclouddatabase" classname="TheBuild\AcquiaCloudDatabaseTask" />
 
     <!-- Uses the project directory name as the projectname -->
     <property name="build.dir" value="${application.startdir}" />
