@@ -14,10 +14,11 @@
     "require": {
         "continuousphp/phing-drush-task": "dev-master",
         "drupal/coder": "*",
+        "guzzlehttp/guzzle": "^6.2",
+        "nilportugues/php_todo": "^1.0",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
-        "phpmd/phpmd" : "^2.4",
-        "nilportugues/php_todo": "^1.0"
+        "phpmd/phpmd": "^2.4"
     },
     "autoload": {
         "psr-0": {
