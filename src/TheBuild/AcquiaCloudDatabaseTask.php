@@ -9,29 +9,58 @@ namespace TheBuild;
 
 use PhingFile;
 use BuildException;
-use FileSystem;
 use GuzzleHttp\Client as GuzzleHttpClient;
 
 
 class AcquiaCloudDatabaseTask extends \Task {
 
-  protected $acquiaCloudConfPath = '~/.acquia/cloudapi.conf';
-  protected $acquiaCloudEmail = 'me@example.com';
-  protected $acquiaCloudKey = 'fake_key';
-  protected $acquiaCloudEndpoint = 'https://cloudapi.acquia.com/v1';
-  protected $acquiaRealm = 'prod';
-  protected $acquiaSite = 'some_site';
+  /**
+   * Configurable: location of the Acquia Cloud configuration file.
+   * @var PhingFile
+   */
+  protected $acquiaCloudConf;
+
+  /**
+   * Configurable: the Acquia Cloud "realm", generally either "prod" or "devcloud".
+   * @var string
+   */
+  protected $acquiaRealm;
+
+  /**
+   * Configurable: the Acquia site name.
+   * @var string
+   */
+  protected $acquiaSite;
+
+  /**
+   * Configurable: the Acquia environment to download backups from.
+   * @var string
+   */
   protected $acquiaEnv = 'dev';
 
   /**
-   * @var bool
-   */
-  protected $overwriteExisting = FALSE;
-
-  /**
+   * Configurable: the directory to download the latest backup to.
    * @var PhingFile
    */
   protected $dest;
+
+  /**
+   * Configurable: allow re-downloading a backup.
+   * @var bool
+   */
+  protected $overwrite = FALSE;
+
+  /**
+   * Configurable: a property name to use for the path to the downloaded backup.
+   * @var string
+   */
+  protected $resultProperty;
+
+  /**
+   * Acquia Cloud configuration loaded from the $acquiaCloudConf.
+   * @var \stdClass
+   */
+  protected $conf;
 
   /**
    * @var \GuzzleHttp\Client
@@ -39,21 +68,11 @@ class AcquiaCloudDatabaseTask extends \Task {
   protected $client;
 
   /**
-   * @var string
-   */
-  protected $property;
-
-  /**
    * Init tasks.
+   *
+   * No user values are available at this point.
    */
-  public function init() {
-    // @todo load Cloud API configuration from $this->confPath;
-
-    $this->client = new GuzzleHttpClient([
-      'base_uri' => $this->acquiaCloudEndpoint,
-      'auth' => [$this->acquiaCloudEmail, $this->acquiaCloudKey],
-    ]);
-  }
+  public function init() {}
 
 
   /**
@@ -61,16 +80,31 @@ class AcquiaCloudDatabaseTask extends \Task {
    */
   public function main() {
     $this->validate();
+    $this->configure();
 
     $backups = $this->getAvailableBackups();
     $latest = $this->selectMostRecent($backups);
     $file = $this->downloadBackup($latest);
 
-    $this->log(print_r($file, TRUE));
-
-    if ($this->property) {
-      $this->getProject()->setNewProperty($this->property, $file->getAbsolutePath());
+    if ($this->resultProperty) {
+      $this->getProject()->setNewProperty($this->resultProperty, $file->getAbsolutePath());
     }
+  }
+
+  public function configure() {
+    $this->conf = \GuzzleHttp\json_decode($this->acquiaCloudConf->contents());
+    if (empty($this->conf->email) || empty($this->conf->key)) {
+      throw new BuildException(sprintf("Email or key not found in Acquia Cloud conf file at '%s'", $this->acquiaCloudConf->getPath()));
+    }
+
+    if (empty($this->conf->endpoint)) {
+      $this->conf->endpoint = 'https://cloudapi.acquia.com/v1/';
+    }
+
+    $this->client = new GuzzleHttpClient([
+      'base_uri' => $this->conf->endpoint,
+      'auth' => [$this->conf->email, $this->conf->key],
+    ]);
   }
 
 
@@ -78,15 +112,33 @@ class AcquiaCloudDatabaseTask extends \Task {
    * Verify required attributes (?).
    */
   public function validate() {
+    $errors = [];
+
+    if (!(isset($this->acquiaCloudConf) && $this->acquiaCloudConf->exists() && $this->acquiaCloudConf->isFile() && $this->acquiaCloudConf->canRead())) {
+      $errors[] = sprintf("Can't read Acquia Cloud conf file at '%s'", $this->acquiaCloudConf->getPath());
+    }
+
+    if (empty($this->acquiaRealm)) {
+      $errors[] = "The 'acquiaRealm' attribute must be set; this depends on the Acquia account type and is generally 'devcloud' or 'prod'.";
+    }
+
+    if (empty($this->acquiaSite)) {
+      $errors[] = "The 'acquiaSite' attribute must be set to the name of your Acquia site.";
+    }
+
     if (!in_array($this->acquiaEnv, ['dev', 'test', 'prod'])) {
-      throw new BuildException("env attribute must be either 'dev', 'test', or 'prod'", $this->env);
+      $errors[] = "The 'acquiaEnv' attribute must be either 'dev', 'test', or 'prod'.";
     }
 
     if (empty($this->dest) || !$this->dest->isDirectory()) {
-      throw new BuildException("The 'dest' attribute must be set to a directory.");
+      $errors[] = "The 'dest' attribute must be set to a directory.";
+    }
+
+    if (!empty($errors)) {
+      $msg = sprintf("%s attribute problems: \r\n * %s", count($errors), implode("\r\n * ", $errors));
+      throw new BuildException($msg);
     }
   }
-
 
   public function getAvailableBackups() {
     $path = "sites/{$this->acquiaRealm}:{$this->acquiaSite}/envs/{$this->acquiaEnv}/dbs/{$this->acquiaSite}/backups.json";
@@ -126,7 +178,7 @@ class AcquiaCloudDatabaseTask extends \Task {
     $file = new PhingFile($this->dest, basename($backup->path));
     $file->getParentFile()->mkdirs();
 
-    if ($this->overwriteExisting && $file->exists()) {
+    if ($this->overwrite && $file->exists()) {
       // Remove existing backup.
       $this->log("Deleting existing backup '" . $file->getPath() . "'");
 
@@ -150,20 +202,36 @@ class AcquiaCloudDatabaseTask extends \Task {
     return $file;
   }
 
-  /**
-   * Set the destination for the resource.
-   * @param PhingFile $dest
-   */
-  public function setDest(PhingFile $dest) {
-    $this->dest = $dest;
+  /******
+   * Setters for Phing attributes.
+   ******/
+
+  public function setAcquiaCloudConf(PhingFile $conf) {
+    $this->acquiaCloudConf = $conf;
   }
 
   public function setAcquiaRealm($val) {
     $this->acquiaRealm = $val;
   }
 
-  public function setProperty($val) {
-    $this->property = $val;
+  public function setAcquiaSite($val) {
+    $this->acquiaSite = $val;
+  }
+
+  public function setAcquiaEnv($val) {
+    $this->acquiaEnv = $val;
+  }
+
+  public function setDest(PhingFile $dest) {
+    $this->dest = $dest;
+  }
+
+  public function setOverwrite($val) {
+    $this->overwrite = $val;
+  }
+
+  public function setResultProperty($val) {
+    $this->resultProperty = $val;
   }
 
 }

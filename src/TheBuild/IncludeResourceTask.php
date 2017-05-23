@@ -102,6 +102,7 @@ class IncludeResourceTask extends \Task {
    *
    * @param \PhingFile $source
    * @throws BuildException
+   * @throws BuildException
    */
   public function setSource(PhingFile $source) {
     if (!$source->exists()) {
