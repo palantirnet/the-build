@@ -198,6 +198,9 @@ class AcquiaCloudDatabaseTask extends \Task {
 
       $this->log(sprintf('%s bytes written to %s', $bytes, $file->getPath()));
     }
+    else {
+      $this->log(sprintf('Latest backup already downloaded to %s', $file->getPath()));
+    }
 
     return $file;
   }
