@@ -12,31 +12,31 @@ use BuildException;
 use GuzzleHttp\Client as GuzzleHttpClient;
 
 
-class AcquiaCloudDatabaseTask extends \Task {
+class AcquiaCloudDownloadLatestBackupTask extends \Task {
 
   /**
    * Configurable: location of the Acquia Cloud configuration file.
    * @var PhingFile
    */
-  protected $acquiaCloudConf;
+  protected $conf;
 
   /**
    * Configurable: the Acquia Cloud "realm", generally either "prod" or "devcloud".
    * @var string
    */
-  protected $acquiaRealm;
+  protected $realm;
 
   /**
    * Configurable: the Acquia site name.
    * @var string
    */
-  protected $acquiaSite;
+  protected $site;
 
   /**
    * Configurable: the Acquia environment to download backups from.
    * @var string
    */
-  protected $acquiaEnv = 'dev';
+  protected $env = 'dev';
 
   /**
    * Configurable: the directory to download the latest backup to.
@@ -55,12 +55,6 @@ class AcquiaCloudDatabaseTask extends \Task {
    * @var string
    */
   protected $resultProperty;
-
-  /**
-   * Acquia Cloud configuration loaded from the $acquiaCloudConf.
-   * @var \stdClass
-   */
-  protected $conf;
 
   /**
    * @var \GuzzleHttp\Client
@@ -92,18 +86,18 @@ class AcquiaCloudDatabaseTask extends \Task {
   }
 
   public function configure() {
-    $this->conf = \GuzzleHttp\json_decode($this->acquiaCloudConf->contents());
-    if (empty($this->conf->email) || empty($this->conf->key)) {
-      throw new BuildException(sprintf("Email or key not found in Acquia Cloud conf file at '%s'", $this->acquiaCloudConf->getPath()));
+    $conf = \GuzzleHttp\json_decode($this->conf->contents());
+    if (empty($conf->email) || empty($conf->key)) {
+      throw new BuildException(sprintf("Email or key not found in Acquia Cloud conf file at '%s'", $this->conf->getPath()));
     }
 
-    if (empty($this->conf->endpoint)) {
-      $this->conf->endpoint = 'https://cloudapi.acquia.com/v1/';
+    if (empty($conf->endpoint)) {
+      $conf->endpoint = 'https://cloudapi.acquia.com/v1/';
     }
 
     $this->client = new GuzzleHttpClient([
-      'base_uri' => $this->conf->endpoint,
-      'auth' => [$this->conf->email, $this->conf->key],
+      'base_uri' => $conf->endpoint,
+      'auth' => [$conf->email, $conf->key],
     ]);
   }
 
@@ -114,20 +108,20 @@ class AcquiaCloudDatabaseTask extends \Task {
   public function validate() {
     $errors = [];
 
-    if (!(isset($this->acquiaCloudConf) && $this->acquiaCloudConf->exists() && $this->acquiaCloudConf->isFile() && $this->acquiaCloudConf->canRead())) {
-      $errors[] = sprintf("Can't read Acquia Cloud conf file at '%s'", $this->acquiaCloudConf->getPath());
+    if (!(isset($this->conf) && $this->conf->exists() && $this->conf->isFile() && $this->conf->canRead())) {
+      $errors[] = sprintf("Can't read Acquia Cloud conf file at '%s'", $this->conf->getPath());
     }
 
-    if (empty($this->acquiaRealm)) {
-      $errors[] = "The 'acquiaRealm' attribute must be set; this depends on the Acquia account type and is generally 'devcloud' or 'prod'.";
+    if (empty($this->realm)) {
+      $errors[] = "The 'realm' attribute must be set; this depends on the Acquia account type and is generally 'devcloud' or 'prod'.";
     }
 
-    if (empty($this->acquiaSite)) {
-      $errors[] = "The 'acquiaSite' attribute must be set to the name of your Acquia site.";
+    if (empty($this->site)) {
+      $errors[] = "The 'site' attribute must be set to the name of your Acquia site.";
     }
 
-    if (!in_array($this->acquiaEnv, ['dev', 'test', 'prod'])) {
-      $errors[] = "The 'acquiaEnv' attribute must be either 'dev', 'test', or 'prod'.";
+    if (!in_array($this->env, ['dev', 'test', 'prod'])) {
+      $errors[] = "The 'env' attribute must be either 'dev', 'test', or 'prod'.";
     }
 
     if (empty($this->dest) || !$this->dest->isDirectory()) {
@@ -141,7 +135,7 @@ class AcquiaCloudDatabaseTask extends \Task {
   }
 
   public function getAvailableBackups() {
-    $path = "sites/{$this->acquiaRealm}:{$this->acquiaSite}/envs/{$this->acquiaEnv}/dbs/{$this->acquiaSite}/backups.json";
+    $path = "sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->site}/backups.json";
 
     try {
       $response = $this->client->get($path);
@@ -209,20 +203,20 @@ class AcquiaCloudDatabaseTask extends \Task {
    * Setters for Phing attributes.
    ******/
 
-  public function setAcquiaCloudConf(PhingFile $conf) {
-    $this->acquiaCloudConf = $conf;
+  public function setConf(PhingFile $conf) {
+    $this->conf = $conf;
   }
 
-  public function setAcquiaRealm($val) {
-    $this->acquiaRealm = $val;
+  public function setRealm($val) {
+    $this->realm = $val;
   }
 
-  public function setAcquiaSite($val) {
-    $this->acquiaSite = $val;
+  public function setSite($val) {
+    $this->site = $val;
   }
 
-  public function setAcquiaEnv($val) {
-    $this->acquiaEnv = $val;
+  public function setEnv($val) {
+    $this->env = $val;
   }
 
   public function setDest(PhingFile $dest) {
