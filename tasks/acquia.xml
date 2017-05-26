@@ -18,6 +18,7 @@
     <fail unless="build.dir" />
     <fail unless="build.env" />
 
+    <taskdef name="downloadlatestacquiabackup" classname="TheBuild\AcquiaCloudDownloadLatestBackupTask" />
 
     <!-- Default task: acquia-status -->
     <target name="acquia-status">
