@@ -42,4 +42,5 @@ test:
     - vendor/bin/phing build install migrate
 
   override:
-    - vendor/bin/phing code-review test
+    - vendor/bin/phing code-review
+    - vendor/bin/phing test
