@@ -179,6 +179,7 @@
     <target name="drupal-prepare-settings">
         <fail unless="drupal.site" />
         <fail unless="build.drupal.settings" />
+        <fail unless="build.drupal.settings_dest" />
 
         <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${build.drupal.root}/sites/${drupal.site}/settings.php" overwrite="true" mode="555">
             <filterchain>
@@ -193,6 +194,7 @@
         <fail unless="build.drupal.root" />
         <fail unless="drupal.site" />
         <fail unless="build.drupal.services" />
+        <fail unless="build.drupal.services_dest" />
 
         <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${build.drupal.root}/sites/${drupal.site}/services.yml" overwrite="true" mode="644">
             <filterchain>

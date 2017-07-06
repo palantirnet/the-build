@@ -6,19 +6,6 @@ This repository contains reusable phing build tasks for our Drupal projects.
 
 ## Adding the-build with composer
 
-Before you can add `the-build` to your project, you need to it as a source in your `repositories` key:
-
-```json
-    "repositories": {
-        "palantirnet/the-build": {
-            "type": "vcs",
-            "url": "git@github.com:palantirnet/the-build.git"
-        }
-    },
-```
-
-Then you can require the package:
-
 ```sh
 $> composer require palantirnet/the-build
 ```

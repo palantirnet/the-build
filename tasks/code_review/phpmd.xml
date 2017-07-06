@@ -14,7 +14,7 @@
     <!-- Target: test-run-phpmd -->
     <target name="test-run-phpmd">
         <phpmd rulesets="${build.dir}/${phpmd.rulesets}">
-            <fileset dir="${build.dir}/web/modules/custom">
+            <fileset dir="${build.dir}/${drupal.root}/modules/custom">
                 <include name="**/*.php" />
                 <include name="**/*.module" />
                 <include name="**/*.inc" />

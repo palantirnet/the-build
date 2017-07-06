@@ -14,10 +14,10 @@ $settings['trusted_host_patterns'] = array(
 );
 
 $settings['file_public_path'] = 'files';
-$settings['file_private_path'] = "/mnt/files/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
+$settings['file_private_path'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
 
 // Configure the tmp directory.
-$config['system.file']['path']['temporary'] = "/mnt/files/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/tmp";
+$config['system.file']['path']['temporary'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/tmp";
 
 // Include the Acquia database connection and other config.
 if (file_exists('/var/www/site-php')) {
