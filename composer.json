@@ -12,9 +12,16 @@
         "bin/the-build-installer"
     ],
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/froboy/phing-drush-task.git"
+        "continuousphp/phing-drush-task": {
+            "type": "package",
+            "package": {
+                "name": "continuousphp/phing-drush-task",
+                "version": "dev-update-drush",
+                "dist": {
+                    "url": "https://github.com/froboy/phing-drush-task/archive/update-drush.zip",
+                    "type": "zip"
+                }
+            }
         }
     ],
     "require": {
