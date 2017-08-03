@@ -11,8 +11,14 @@
     "bin": [
         "bin/the-build-installer"
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/froboy/phing-drush-task.git"
+        }
+    ],
     "require": {
-        "continuousphp/phing-drush-task": "dev-master",
+        "froboy/phing-drush-task": "dev-master",
         "drupal/coder": "*",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
