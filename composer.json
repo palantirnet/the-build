@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "continuousphp/phing-drush-task": "dev-update-drush as dev-master",
+        "continuousphp/phing-drush-task": "dev-update-drush",
         "drupal/coder": "*",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
