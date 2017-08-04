@@ -15,7 +15,7 @@
         "drupal/coder": "*",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
-        "phpmd/phpmd" : "^2.4",
+        "phpmd/phpmd" : "^2.4"
     },
     "autoload": {
         "psr-0": {
