@@ -1,131 +1,338 @@
 <?xml version="1.0"?>
 
 <!--
-  @file acquia.xml
-  Targets for building and deploying a code artifact for Acquia.
+  @file drupal.xml
+  Targets for managing Drupal.
 
   Copyright 2016 Palantir.net, Inc.
   -->
 
-<project name="acquia" default="acquia-status">
+<project name="Drupal" default="drupal-build">
     <!--
-        Include this file in your build.xml with:
-        <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
       -->
 
+    <!--taskdef name="drush" classname="Drush\Task" /-->
 
-    <fail unless="projectname" />
+
     <fail unless="build.dir" />
     <fail unless="build.env" />
+    <fail unless="projectname" />
 
 
-    <!-- Default task: acquia-status -->
-    <target name="acquia-status">
-        <fail unless="acquia.repo" />
-        <fail unless="acquia.branch" />
-        <fail unless="acquia.dir" />
+    <!-- These properties will generally be set in the default build properties file. -->
+    <property name="drupal.root" value="web" />
+    <property name="drupal.site_name" value="${projectname}" />
+    <property name="drupal.profile" value="standard" />
+    <property name="drupal.hash_salt" value="temporary" />
 
-        <if>
-            <or>
-                <not><available file="${acquia.dir}" type="dir" /></not>
-                <not><available file="${acquia.dir}/.git" type="dir" /></not>
-            </or>
-            <then>
-                <fail message="Acquia repository not present at ${acquia.dir}." />
-            </then>
-        </if>
-    </target>
+    <property name="drupal.settings.file_public_path" value="sites/default/files" />
+    <property name="drupal.settings.file_private_path" value="" />
+
+    <!-- These properties will probably change per-environment. -->
+    <property name="drupal.uri" value="http://${projectname}.local" />
+    <property name="drupal.database.database" value="default" />
+    <property name="drupal.database.username" value="drupal" />
+    <property name="drupal.database.password" value="drupal" />
+    <property name="drupal.database.host" value="127.0.0.1" />
+    <property name="drupal.modules_enable" value="" />
+    <property name="drupal.twig.debug" value="false" />
+    <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
+    <property name="build.drupal.settings" value="conf/drupal/settings.php" />
+    <property name="build.drupal.settings_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/settings.php" />
+    <property name="build.drupal.services" value="conf/drupal/services.yml" />
+    <property name="build.drupal.services_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/services.yml" />
+
+    <!-- These properties will generally not change. -->
+    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
+    <property name="drupal.admin_user" value="admin" />
+
+    <!-- Configuration properties for the 'drush' Phing task. -->
+    <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
+    <property name="drush.uri" refid="drupal.uri" />
+    <property name="drush.root" value="${build.dir}/${drupal.root}" />
+    <property name="drush.config" value="${build.dir}/conf/drushrc.php" />
 
 
-    <!-- Target: acquia-configure -->
-    <target name="acquia-configure" description="Configure the Acquia build.">
-        <phing phingfile="${phing.dir.acquia}/configure.xml" inheritAll="false" dir="${build.dir}">
+    <!-- Target: drupal-configure -->
+    <target name="drupal-configure" description="Configure the Drupal build.">
+        <!-- Generate a hash salt -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+
+        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
             <property name="build.env" value="${build.env}" />
             <property name="build.dir" value="${build.dir}" />
 
             <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/${propertiesfile}" prefix="default" override="true" />
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
             <property file="${build.dir}/conf/build.default.properties" prefix="default" />
 
             <!-- Prompts and defaults -->
-            <property name="prompt.acquia.accountname" value="Acquia account machine name" />
-            <property name="default.acquia.accountname" value="${projectname}" />
+            <property name="prompt.drupal.site_name" value="Human-readable site name" />
+            <property name="default.drupal.site_name" value="${projectname}" />
 
-            <property name="prompt.acquia.repo" value="Acquia git repository" />
-            <property name="default.acquia.repo" value="" />
+            <property name="prompt.drupal.profile" value="Drupal install profile" />
+            <property name="default.drupal.profile" value="standard" />
 
-            <property name="prompt.acquia.branch" value="Git branch for build artifacts" />
-            <property name="default.acquia.branch" value="build" />
+            <property name="prompt.drupal.modules_enable" value="Comma-separated list of modules to enable after install" />
+            <property name="default.drupal.modules_enable" value="" />
 
-            <property name="prompt.acquia.tag_prefix" value="Prefix for build tags, e.g. 'build-'" />
-            <property name="default.acquia.tag_prefix" value="build" />
+            <property name="prompt.drupal.database.database" value="Drupal database name" />
+            <property name="default.drupal.database.database" value="drupal" />
 
-            <property name="prompt.acquia.dir" value="Location to checkout artifact repository, relative to the project root" />
-            <property name="default.acquia.dir" value="artifacts/acquia" />
+            <property name="prompt.drupal.database.username" value="Drupal database username" />
+            <property name="default.drupal.database.username" value="root" />
 
-            <property name="update" value="acquia.accountname,acquia.repo,acquia.branch,acquia.dir" />
+            <property name="prompt.drupal.database.password" value="Drupal database password" />
+            <property name="default.drupal.database.password" value="root" />
+
+            <property name="prompt.drupal.database.host" value="Drupal database host" />
+            <property name="default.drupal.database.host" value="127.0.0.1" />
+
+            <!-- Just defaults -->
+            <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
+            <property name="default.drupal.settings.file_private_path" value="" />
+            <property name="default.drupal.twig.debug" value="false" />
+            <property name="default.drupal.uri" value="http://${projectname}.local" />
+            <property name="default.drupal.root" value="web" />
+
+            <!-- Generated hash salt -->
+            <property name="default.drupal.hash_salt" value="${hash_salt}" />
+
+            <property name="update" value="drupal.site_name,drupal.profile,drupal.modules_enable,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
+            <property name="dump" value="drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt,drupal.root" />
         </phing>
     </target>
 
 
-    <!-- Target: acquia-build -->
-    <target name="acquia-build">
-        <fail unless="acquia.dir" />
-        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
-
-        <phing target="init-repository" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="repo.dir" value="${repo.dir}" />
-            <property name="repo.source" value="${acquia.repo}" />
-        </phing>
-
-        <!-- @todo consider whether to build into branches like "build-BRANCHNAME" instead of a single build branch. -->
-        <phing target="init-branch" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="repo.dir" value="${repo.dir}" />
-            <property name="repo.branch" value="${acquia.branch}" />
-        </phing>
-
-        <phing target="run-composer-elsewhere" phingfile="vendor/palantirnet/the-build/tasks/lib/artifacts.xml" inheritAll="false" dir=".">
-            <property name="install_dir" value="${repo.dir}" />
-            <property name="build.dir" value="${build.dir}" />
-            <property name="drupal.root" value="${drupal.root}" />
-            <property name="drupal.sites_subdir" value="${drupal.sites_subdir}" />
-        </phing>
+    <!-- Target: drush-prepare-drushrc -->
+    <target name="drush-prepare-drushrc" description="Create a drushrc file for Vagrant.">
+        <!-- Copy the drushrc template and sub in variables. -->
+        <copy file="${phing.dir.drupal}/../conf/drushrc.php" tofile="${build.dir}/conf/drushrc.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
     </target>
 
 
-    <target name="acquia-deploy">
-        <fail unless="acquia.dir" />
-        <resolvepath propertyName="repo.dir" file="${acquia.dir}" />
-
-        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="build.dir" value="${build.dir}" />
-            <property name="repo.dir" value="${repo.dir}" />
-            <property name="tag_prefix" value="${acquia.tag_prefix}" />
-            <property name="message" value="Drupal artifact." />
-        </phing>
-
-        <phing target="push" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="repo.dir" value="${repo.dir}" />
-            <property name="repo.branch" value="${acquia.branch}" />
-        </phing>
+    <target name="drupal-build" description="Prepare Drupal for installation.">
+        <phingcall target="drupal-prepare-filesystem" />
+        <phingcall target="drupal-prepare-settings" />
+        <phingcall target="drupal-prepare-services" />
     </target>
 
-    <!-- Download production databases from Acquia -->
-    <target name="acquia-dbdl-prod">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="db.backups" />
+    <!-- Target: drupal-prepare-filesystem -->
+    <target name="drupal-prepare-filesystem">
+        <fail unless="drupal.root" />
+        <fail unless="drupal.sites_subdir" />
 
-        <filesync sourcedir="${acquia.accountname}.prod@${acquia.ssh}:/mnt/files/${acquia.accountname}.prod/backups/" destinationdir="${db.backups}" />
+        <!-- Create the Drupal modules, themes, profiles, and sites directories. -->
+        <foreach target="create-placeholder" param="placeholder_for">
+            <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
+        </foreach>
+
+        <!-- The site directory needs to have some perms. -->
+        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+
+        <!-- The public files directory, and everything in it, needs to be world writable. -->
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" />
     </target>
 
-    <!-- Download staging databases from Acquia -->
-    <target name="acquia-dbdl-test">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="db.backups" />
 
-        <filesync sourcedir="${acquia.accountname}.test@${acquia.ssh}:/mnt/files/${acquia.accountname}.test/backups/" destinationdir="${db.backups}" />
+    <!-- Target: drupal-prepare-settings -->
+    <target name="drupal-prepare-settings">
+        <fail unless="build.drupal.settings" />
+        <fail unless="build.drupal.settings_dest" />
+
+        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${build.drupal.settings_dest}" overwrite="true" mode="555">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+    </target>
+
+
+    <!-- Target: drupal-prepare-services -->
+    <target name="drupal-prepare-services">
+        <fail unless="build.drupal.services" />
+        <fail unless="build.drupal.services_dest" />
+
+        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${build.drupal.services_dest}" overwrite="true" mode="644">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+    </target>
+
+
+    <!-- Target: create-placeholder -->
+    <target name="create-placeholder">
+        <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
+        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" dir="${build.dir}" />
+
+        <if>
+            <not><available file="${placeholder_for.resolved}" type="dir" /></not>
+            <then>
+                <mkdir dir="${placeholder_for.resolved}" />
+                <touch file="${placeholder_for.resolved}/.gitkeep" />
+            </then>
+            <else>
+                <echo>${placeholder_for} already exists.</echo>
+            </else>
+        </if>
+    </target>
+
+
+    <!-- Target: drupal-install -->
+    <target name="drupal-install" description="Install Drupal.">
+        <fail unless="drupal.settings.file_public_path" />
+        <fail unless="drupal.root" />
+        <fail unless="drupal.site_name" />
+        <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.profile" />
+        <fail unless="drupal.modules_enable" />
+
+        <phingcall target="validate-clean-conf" />
+
+        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
+
+        <!-- The sites subdirectory should be writable; Drupal will change the
+             permissions on this directory after install. -->
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
+
+        <!-- Make settings.php writable -->
+        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
+
+        <!-- Delete and re-create the public files directory -->
+        <delete file="${drupal.settings.file_public_path.resolved}" />
+        <delete dir="${drupal.settings.file_public_path.resolved}" />
+        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
+
+        <if>
+            <and>
+                <isset property="drupal.settings.file_private_path"/>
+                <not>
+                    <equals arg1="${drupal.settings.file_private_path}" arg2="" trim="true" />
+                </not>
+            </and>
+            <then>
+                <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${drupal.root}/${drupal.settings.file_private_path}" />
+                <delete file="${drupal.settings.file_private_path.resolved}" />
+                <delete dir="${drupal.settings.file_private_path.resolved}" />
+                <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
+            </then>
+        </if>
+
+        <exec command="drush site-install -y --site-name=${drupal.site_name} --account-name=${drupal.admin_user} --account-pass=admin ${drupal.profile}" checkreturn="true" passthru="true" />
+
+        <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
+
+        <!-- The public files directory, and everything in it, needs to be world writable. -->
+        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
+    </target>
+
+
+    <!-- Target: drupal-enable-module -->
+    <target name="drupal-enable-module">
+        <fail unless="module" />
+        <exec command="drush pm-enable -y ${module}" checkreturn="true" />
+    </target>
+
+
+    <!--
+        Target: drupal-dump-db
+
+        Dumb wrapper to help consistently dump the database when pushing an
+        installed site to prod.
+        -->
+    <target name="drupal-dump-db" description="Generate a database dump.">
+        <!-- prompt for a prod admin password -->
+        <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
+        <exec command="drush user-password --password=${pass} ${drupal.admin_user}" checkreturn="true" passthru="true" />
+
+        <!-- put the site in maintenance mode -->
+        <exec command="drush sset system.maintenance_mode 1" checkreturn="true" passthru="true" />
+
+        <!-- get a commit label to use in the db dump name -->
+        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
+        <property name="build_commit_ref" value="${git_describe_output}">
+            <filterchain>
+                <striplinebreaks />
+            </filterchain>
+        </property>
+
+        <!-- dump the database -->
+        <exec command="drush sql-dump --structure-tables-key=common --gzip --result-file=${build.dir}/artifacts/db-${build_commit_ref}.sql" checkreturn="true" passthru="true" />
+
+        <!-- now we can go back to the worst password ever -->
+        <exec command="drush user-password --password=admin ${drupal.admin_user}" checkreturn="true" passthru="true" />
+
+        <!-- and take the site out of maintenance mode -->
+        <exec command="drush sset system.maintenance_mode 0" checkreturn="true" passthru="true" />
+    </target>
+
+
+    <!--
+        Target: drupal-reinstall-module
+
+        Utility method to uninstall and reinstall a module.
+        -->
+    <target name="drupal-reinstall-module">
+        <fail unless="module" />
+
+        <!-- Uninstall the module -->
+        <exec command="drush pm-uninstall -y ${module}" checkreturn="true" passthru="true" />
+
+        <!-- Enable the module -->
+        <exec command="drush pm-enable -y ${module}" checkreturn="true" passthru="true" />
+    </target>
+
+
+    <!--
+        Target: validate-clean-conf
+
+        This will validate that the conf directory is clean, because you can
+        have build problems if it isn't.
+    -->
+    <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
+        <!-- Check for un-committed changes to the Drupal config directory,
+             because these can cause unexpected behavior during installation. -->
+        <exec command="git status --porcelain ${build.dir}/conf/drupal/config/" outputProperty="modified_files" />
+
+        <if>
+            <and>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <!-- Only the value "yes" prevents a failure. -->
+                <not><equals arg1="${drupal.allow_dirty_config}" arg2="yes" /></not>
+            </and>
+            <then>
+                <!-- Whitespace is intentional -->
+                <echo>Aborting install; your Drupal config directory is not clean. You may either:
+
+            Re-run your phing command with the flag:
+              -Ddrupal.allow_dirty_config=yes
+
+              - OR -
+
+            Clean up your config directory (destructive):
+              git clean -f conf/drupal/config &amp;&amp; git checkout -- conf/drupal/config
+                </echo>
+                <fail message="Dirty config directory." />
+            </then>
+            <elseif>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <then>
+                    <!-- Whitespace is intentional -->
+                    <echo>Continuing install with dirty Drupal config directory. Changes:
+
+${modified_files}
+                    </echo>
+                </then>
+            </elseif>
+        </if>
     </target>
 
 
