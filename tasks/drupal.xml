@@ -13,9 +13,6 @@
         <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
       -->
 
-    <!--taskdef name="drush" classname="Drush\Task" /-->
-
-
     <fail unless="build.dir" />
     <fail unless="build.env" />
     <fail unless="projectname" />
