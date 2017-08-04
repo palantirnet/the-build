@@ -11,7 +11,22 @@
     "bin": [
         "bin/the-build-installer"
     ],
+    "repositories": [
+        {
+          "type": "package",
+          "package": {
+              "name": "continuousphp/phing-drush-task",
+              "version": "dev-update-drush",
+              "source": {
+                  "url": "https://github.com/froboy/phing-drush-task.git",
+                  "type": "git",
+                  "reference": "update-drush"
+              }
+          }
+        }
+    ],
     "require": {
+        "continuousphp/phing-drush-task": "dev-update-drush as dev-master",
         "drupal/coder": "*",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
