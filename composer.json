@@ -16,7 +16,6 @@
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
         "phpmd/phpmd" : "^2.4",
-        "nilportugues/php_todo": "^1.0"
     },
     "autoload": {
         "psr-0": {
