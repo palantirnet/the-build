@@ -223,7 +223,7 @@
             </then>
         </if>
 
-        <exec command="drush site-install -y --site-name=${drupal.site_name} --account-name=${drupal.admin_user} --account-pass=admin ${drupal.profile}" checkreturn="true" passthru="true" />
+        <exec command="drush site-install -y --site-name=${drupal.site_name} --account-name=${drupal.admin_user} --account-pass=admin ${drupal.profile}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
 
@@ -235,7 +235,7 @@
     <!-- Target: drupal-enable-module -->
     <target name="drupal-enable-module">
         <fail unless="module" />
-        <exec command="drush pm-enable -y ${module}" checkreturn="true" />
+        <exec command="drush pm-enable -y ${module}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
     </target>
 
 
@@ -248,10 +248,10 @@
     <target name="drupal-dump-db" description="Generate a database dump.">
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
-        <exec command="drush user-password --password=${pass} ${drupal.admin_user}" checkreturn="true" passthru="true" />
+        <exec command="drush user-password --password=${pass} ${drupal.admin_user}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <!-- put the site in maintenance mode -->
-        <exec command="drush sset system.maintenance_mode 1" checkreturn="true" passthru="true" />
+        <exec command="drush sset system.maintenance_mode 1" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <!-- get a commit label to use in the db dump name -->
         <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
@@ -262,13 +262,13 @@
         </property>
 
         <!-- dump the database -->
-        <exec command="drush sql-dump --structure-tables-key=common --gzip --result-file=${build.dir}/artifacts/db-${build_commit_ref}.sql" checkreturn="true" passthru="true" />
+        <exec command="drush sql-dump --structure-tables-key=common --gzip --result-file=${build.dir}/artifacts/db-${build_commit_ref}.sql" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <!-- now we can go back to the worst password ever -->
-        <exec command="drush user-password --password=admin ${drupal.admin_user}" checkreturn="true" passthru="true" />
+        <exec command="drush user-password --password=admin ${drupal.admin_user}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <!-- and take the site out of maintenance mode -->
-        <exec command="drush sset system.maintenance_mode 0" checkreturn="true" passthru="true" />
+        <exec command="drush sset system.maintenance_mode 0" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
     </target>
 
 
@@ -281,10 +281,10 @@
         <fail unless="module" />
 
         <!-- Uninstall the module -->
-        <exec command="drush pm-uninstall -y ${module}" checkreturn="true" passthru="true" />
+        <exec command="drush pm-uninstall -y ${module}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
 
         <!-- Enable the module -->
-        <exec command="drush pm-enable -y ${module}" checkreturn="true" passthru="true" />
+        <exec command="drush pm-enable -y ${module}" dir="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" checkreturn="true" passthru="true" />
     </target>
 
 
