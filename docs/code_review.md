@@ -7,7 +7,6 @@ This will review your code with:
 * Drupal Codesniffer
 * PHPmd
 * PHP Lint
-* PHPtodo
 
 Generally, you should configure your `build.xml` to run code reviews as part of your `test` target so that developers run the reviews by default.
 
@@ -50,13 +49,5 @@ By default, when Codesniffer finds problems it will throw an error. If you must,
 drupal_code_sniffer.haltonerror=false
 ```
 
-### [PHP To-do Finder](https://github.com/nilportugues/php-todo-finder)
-
-Sets a threshold for the number of "to do" comments allowable in a codebase. The default config for this review can be found within the-build at `conf/php_todo_finder.yml`. To customize this config, copy that file to your project's `conf/` directory and add the build property:
-
-```
-phptodo.config=conf/php_todo_finder.yml
-```
-
 ----
-Copyright 2016 Palantir.net, Inc.
+Copyright 2017 Palantir.net, Inc.

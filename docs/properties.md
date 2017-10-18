@@ -68,7 +68,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 |---|---|---|
 | `phpmd.rulesets` | `vendor/palantirnet/the-build/conf/phpmd.xml` | Relative path to the PHPMD configuration. |
 | `drupal_code_sniffer.standard` | `vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml` | Relative path the the Drupal codesniffer standard. |
-| `phptodo.config` | `conf/php_todo_finder.yml` | Relative path to the PHP To-do Finder configuration. |
 
 [More info](code_review.md)
 
