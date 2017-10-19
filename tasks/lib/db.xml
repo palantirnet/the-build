@@ -9,7 +9,7 @@
     <!-- Target: load-db -->
     <target name="load-db" description="Load a database export.">
         <property name="db.load.export_pattern" value="artifacts/*" />
-        <property name="db.load.mysql_command" value="drush sqlc" />
+        <property name="db.load.mysql_command" value="drush sql:cli" />
 
         <if>
             <not>

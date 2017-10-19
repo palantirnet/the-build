@@ -245,7 +245,7 @@
     <!-- Target: drupal-enable-module -->
     <target name="drupal-enable-module">
         <fail unless="module" />
-        <drush command="pm-enable" assume="yes">
+        <drush command="pm:enable" assume="yes">
             <param>${module}</param>
         </drush>
     </target>
@@ -260,13 +260,13 @@
     <target name="drupal-dump-db" description="Generate a database dump.">
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
-        <drush command="user-password">
-           <option name="password" value="${pass}" />
+        <drush command="user:password">
            <param>${drupal.admin_user}</param>
+           <param>${pass}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
-        <drush command="sset">
+        <drush command="state:set">
             <param>system.maintenance_mode</param>
             <param>1</param>
         </drush>
@@ -280,20 +280,20 @@
         </property>
 
         <!-- dump the database -->
-        <drush command="sql-dump">
+        <drush command="sql:dump">
             <option name="structure-tables-key" value="common" />
             <option name="gzip" />
             <option name="result-file" value="${build.dir}/artifacts/db-${build_commit_ref}.sql" />
         </drush>
 
         <!-- now we can go back to the worst password ever -->
-        <drush command="user-password">
-           <option name="password" value="admin" />
+        <drush command="user:password">
            <param>${drupal.admin_user}</param>
+           <param>admin</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
-        <drush command="sset">
+        <drush command="state:set">
             <param>system.maintenance_mode</param>
             <param>0</param>
         </drush>
@@ -309,12 +309,12 @@
         <fail unless="module" />
 
         <!-- Uninstall the module -->
-        <drush command="pm-uninstall" assume="yes">
+        <drush command="pm:uninstall" assume="yes">
             <param>${module}</param>
         </drush>
 
         <!-- Enable the module -->
-        <drush command="pm-enable" assume="yes">
+        <drush command="pm:enable" assume="yes">
             <param>${module}</param>
         </drush>
     </target>

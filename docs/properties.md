@@ -88,7 +88,7 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 | Property | Default value | What is it? |
 |---|---|---|
 | `db.load.export_pattern` | `artifacts/*` | Pattern to match gzipped database dump files. |
-| `db.load.mysql_command` | `drush sqlc` | Command with which to load stuff into Drupal. |
+| `db.load.mysql_command` | `drush sql:cli` | Command with which to load stuff into Drupal. |
 | `db.load.file` |  | Load a specific file rather than one matching the `export_pattern`. |
 
 Example usage:
