@@ -2,6 +2,7 @@
     "name": "palantirnet/the-build",
     "description": "Phing build tasks for Drupal projects.",
     "license": "GPL-2.0+",
+    "minimum-stability": "beta",
     "authors": [
         {
             "name": "Palantir.net",
@@ -11,8 +12,14 @@
     "bin": [
         "bin/the-build-installer"
     ],
+    "repositories": [
+      {
+        "type": "vcs",
+        "url": "https://github.com/becw/phing-drush-task"
+      }
+    ],
     "require": {
-        "continuousphp/phing-drush-task": "dev-master",
+        "continuousphp/phing-drush-task": "dev-drush-9",
         "drupal/coder": "*",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
