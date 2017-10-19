@@ -227,8 +227,9 @@
             </then>
         </if>
 
-        <drush command="site-install" assume="yes">
+        <drush command="site:install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
+            <option name="sites-subdir">${drupal.sites_subdir}</option>
             <option name="account-name">${drupal.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>${drupal.profile}</param>
