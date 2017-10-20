@@ -42,7 +42,6 @@
         <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
         <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
         <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
-        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phptodo.xml" />
     </target>
 
 

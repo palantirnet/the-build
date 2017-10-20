@@ -68,7 +68,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 |---|---|---|
 | `phpmd.rulesets` | `vendor/palantirnet/the-build/conf/phpmd.xml` | Relative path to the PHPMD configuration. |
 | `drupal_code_sniffer.standard` | `vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml` | Relative path the the Drupal codesniffer standard. |
-| `phptodo.config` | `conf/php_todo_finder.yml` | Relative path to the PHP To-do Finder configuration. |
 
 [More info](code_review.md)
 
@@ -89,7 +88,7 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 | Property | Default value | What is it? |
 |---|---|---|
 | `db.load.export_pattern` | `artifacts/*` | Pattern to match gzipped database dump files. |
-| `db.load.mysql_command` | `drush sqlc` | Command with which to load stuff into Drupal. |
+| `db.load.mysql_command` | `drush sql:cli` | Command with which to load stuff into Drupal. |
 | `db.load.file` |  | Load a specific file rather than one matching the `export_pattern`. |
 
 Example usage:
