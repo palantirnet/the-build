@@ -207,11 +207,14 @@
         <!-- Make settings.php writable -->
         <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
 
-        <!-- Delete and re-create the public files directory -->
-        <delete file="${drupal.settings.file_public_path.resolved}" />
-        <delete dir="${drupal.settings.file_public_path.resolved}" />
+        <!-- Make sure the public files directory exists and is empty. -->
         <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
+        <delete>
+            <fileset dir="${drupal.settings.file_public_path.resolved}" includes="**/*" />
+        </delete>
 
+        <!-- If the private files directory is provided, make sure the it exists
+             and is empty. -->
         <if>
             <and>
                 <isset property="drupal.settings.file_private_path"/>
@@ -221,9 +224,10 @@
             </and>
             <then>
                 <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${drupal.root}/${drupal.settings.file_private_path}" />
-                <delete file="${drupal.settings.file_private_path.resolved}" />
-                <delete dir="${drupal.settings.file_private_path.resolved}" />
-                <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
+                <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="775" />
+                <delete>
+                    <fileset dir="${drupal.settings.file_private_path.resolved}" includes="**/*" />
+                </delete>
             </then>
         </if>
 
