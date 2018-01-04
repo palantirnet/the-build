@@ -26,6 +26,6 @@
         }
     },
     "config": {
-        "sort-packages": "true"
+        "sort-packages": true
     }
 }
