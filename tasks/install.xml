@@ -49,7 +49,7 @@
         </copy>
 
         <!-- Copy the CircleCI properties. -->
-        <copy file="${phing.dir.install}/conf/build.circle.dist.properties" tofile="${application.startdir}/conf/build.circle.properties" overwrite="true" />
+        <copy file="${phing.dir.install}/../conf/build.circle.dist.properties" tofile="${application.startdir}/conf/build.circle.properties" overwrite="true" />
 
         <!-- Copy the build configuration templates. -->
         <mkdir dir="${application.startdir}/conf" />
