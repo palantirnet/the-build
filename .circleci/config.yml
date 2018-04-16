@@ -54,8 +54,8 @@ jobs:
 
       - checkout
       - run:
-          name: Composer install / update
-          command: composer update --no-interaction --prefer-dist
+          name: Composer install
+          command: composer install --no-interaction --prefer-dist
 
       # Composer package cache - update when the contents of the Composer cache directory
       # change
