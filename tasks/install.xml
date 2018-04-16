@@ -29,14 +29,27 @@
             </filterchain>
         </copy>
 
-        <!-- Copy the circle.yml -->
-        <copy file="${phing.dir.install}/../circle.dist.yml" tofile="${application.startdir}/circle.yml" overwrite="true">
+        <!-- Copy the behat template. -->
+        <copy file="${phing.dir.install}/../behat.dist.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}"/>
                 </replacetokens>
             </filterchain>
         </copy>
+
+        <!-- Copy the CircleCI configuration -->
+        <copy todir="${application.startdir}/" overwrite="true">
+            <fileset dir="${phing.dir.install}/../" includes=".circleci/" />
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <!-- Copy the CircleCI properties. -->
+        <copy file="${phing.dir.install}/../conf/build.circle.dist.properties" tofile="${application.startdir}/conf/build.circle.properties" overwrite="true" />
 
         <!-- Copy the build configuration templates. -->
         <mkdir dir="${application.startdir}/conf" />
