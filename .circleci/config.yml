@@ -12,6 +12,7 @@ jobs:
 
     environment:
       - PALANTIR_ENVIRONMENT: circle
+      - DRUPAL_ROOT: web
 
     branches:
       ignore:
@@ -37,6 +38,9 @@ jobs:
       - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
+      - run:
+          name: Configure URL in /etc/hosts
+          command: echo 127.0.0.1 ${CIRCLE_PROJECT_REPONAME}.local | sudo tee -a /etc/hosts
 
       # Composer package cache
       - restore_cache:
@@ -86,7 +90,7 @@ jobs:
       - run:
           name: Run Behat tests
           command: |
-              nohup php -S 127.0.0.1:8000 -t $(pwd)/web/ > /tmp/artifacts/phpd.log 2>&1 &
+              nohup php -S ${CIRCLE_PROJECT_REPONAME}.local:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
               vendor/bin/phing test
 
       - store_artifacts:

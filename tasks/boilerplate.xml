@@ -74,7 +74,7 @@
             <property name="prompt.build.artifact_mode" value="Artifact mode (copy,symlink)" />
             <property name="default.build.artifact_mode" value="symlink" />
 
-            <property name="prompt.build.test_output" value="Test output directory (use ${env.CIRCLE_TEST_REPORTS} for Circle)" />
+            <property name="prompt.build.test_output" value="Test output directory (for example, use '/tmp/artifacts' on CircleCI)" />
             <property name="default.build.test_output" value="/dev/null" />
 
             <property name="update" value="build.artifact_mode,build.test_output" />
