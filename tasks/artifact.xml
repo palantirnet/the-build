@@ -168,6 +168,11 @@
                 <gitclone repository="${artifact.git.remote}" targetPath="${artifact.directory}" />
             </then>
         </if>
+        
+        <!-- Wipe out any local customizations. -->
+        <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
     </target>
 
     <target name="artifact-setupBranch">
@@ -193,7 +198,9 @@
         <!-- At this point, we should have the latest work from the remote destination
              branch available locally. Now create a fresh, temporary branch for our
              artifact work, to avoid naming conflicts and allow clean rebuilds. -->
-        <exec dir="${artifact.directory}" command="git branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" />
+        <!-- If the build failed previously, there might be an abandoned branch for this build. -->
+        <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.temporary_branch}" checkreturn="true" />
         <echo>Using on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
@@ -227,7 +234,6 @@
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" includes="**/.git,**/.gitignore" />
         </delete>
-        <fail message="DEBUG" />
 
         <echo>Running 'phing build' in the artifact...</echo>
         <phingcall target="build" />
