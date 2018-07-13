@@ -66,8 +66,6 @@
         </if>
 
 
-        <!-- Check the state of the repository and build environment to make sure it is
-             safe to build an artifact. -->
         <phingcall target="artifact-safeToBuild" />
 
         <phingcall target="artifact-initializeRepository" />
@@ -80,22 +78,8 @@
 
         <phingcall target="artifact-commit" />
 
-        <!--
-        <echoproperties />
-        -->
-<exec dir="${artifact.directory}" command="git checkout master" checkreturn="true" logoutput="true" />
-<exec dir="${artifact.directory}" command="git branch -d ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
-<fail message="debug" />
-
-
-
-
-
-
-        <!-- Optionally push the updated artifact to Pantheon. -->
         <phingcall target="artifact-optionalPush" />
 
-        <!-- Restore the local repository to its previous state. -->
         <phingcall target="artifact-resetState" />
     </target>
 
@@ -202,7 +186,7 @@
                 <exec dir="${artifact.directory}" command="git branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}" checkreturn="true" />
                 <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}" checkreturn="true" />
                 <exec dir="${artifact.directory}" command="git branch -d ${artifact.git.remote_branch}" checkreturn="true" />
-                <echo>Branch '${artifact.git.remote_name}/${artifact.git.remote_branch}' created.</echo>
+                <echo>Remote branch '${artifact.git.remote_name}/${artifact.git.remote_branch}' created.</echo>
             </then>
         </if>
 
@@ -257,16 +241,6 @@
             <property name="message" value="Drupal artifact build of ${artifact.git.commit_message}" />
         </phing>
     </target>
-
-
-
-
-
-
-
-
-
-
 
     <target name="artifact-optionalPush">
         <if>
