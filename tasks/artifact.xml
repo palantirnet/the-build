@@ -62,17 +62,18 @@
              safe to build an artifact. -->
         <phingcall target="artifact-safeToBuild" />
 
+        <phingcall target="artifact-initializeRepository" />
 
+
+        <!--
         <echoproperties />
+        -->
         <fail message="debug" />
 
-        <phingcall target="init-repository">
-            <property name="repo.dir" value="${artifact.directory}" />
-            <property name="repo.source" value="${artifact.git.remote}" />
-        </phingcall>
+
 
         <phingcall target="artifact-setupBranch">
-            // like init-branch but no orphans
+            <!-- like init-branch but no orphans -->
         </phingcall>
         <!-- Add the git remote if it's not present. Then, create a fresh branch on top of
              the latest work in pantheon/master. -->
@@ -119,7 +120,7 @@
 
     <target name="artifact-safeToBuild">
         <!-- Make sure the caller is using a deployment environment. -->
-        <echo>Deploy environment:  ${build.env}</echo>
+        <echo>Deploy environment:   ${build.env}</echo>
         <if>
             <or>
                 <equals arg1="${build.env}" arg2="vagrant" />
@@ -139,15 +140,46 @@
         <if>
             <not><equals arg1="${modified_files}" arg2="" /></not>
             <then>
-                <echo>Repository status:   dirty</echo>
+                <echo>Repository status:    dirty</echo>
                 <echo level="error">  * You have changes which must be committed before you may build an artifact.</echo>
                 <property name="ready_to_build" value="n" />
             </then>
             <else>
-                <echo>Repository status:   clean</echo>
+                <echo>Repository status:    clean</echo>
             </else>
         </if>
         
+        <!-- Check that our artifact directory either doesn't exist or is the right repo -->
+        <exec command="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show origin -n | grep '${artifact.git.remote}'" returnProperty="artifact_repo_has_remote.error" />
+        <if>
+            <not><available file="${artifact.directory}" type="dir" /></not>
+            <then><echo>Artifact repository:  does not exist (will be created)</echo></then>
+            <elseif>
+                <and>
+                    <available file="${artifact.directory}" type="dir" />
+                    <not><available file="${artifact.directory}/.git" type="dir" /></not>
+                </and>
+                <then>
+                    <echo>Artifact repository:  ${artifact.directory} is not a git repository</echo>
+                    <echo level="error">  * Directory '${artifact.directory}' exists but is not a git repository. Please move or delete before continuing.</echo>
+                    <property name="ready_to_build" value="n" />
+                </then>
+            </elseif>
+            <elseif>
+                <!-- does git remote show origin -n | grep '${artifact.git.remote}' return the right status? -->
+                <equals arg1="${artifact_repo_has_remote.error}" arg2="1" />
+                <then>
+                    <echo>Artifact repository:  ${artifact.directory} has wrong origin</echo>
+                    <echo level="error">  * Directory '${artifact.directory}' exists but the origin is not ${artifact.git.remote}. Please move or delete before continuing.</echo>
+                    <property name="ready_to_build" value="n" />
+                </then>
+            </elseif>
+            <else>
+                <echo>Artifact repository:  ${artifact.directory}</echo>
+                <echo>                      ${artifact.git.remote}</echo>
+            </else>
+        </if>
+
         <if>
             <equals arg1="${ready_to_build}" arg2="n" />
             <then>
@@ -156,6 +188,21 @@
             </then>
         </if>
         <echo>Ok, ready to build!</echo>
+    </target>
+
+
+    <target name="artifact-initializeRepository">
+        <fail unless="artifact.directory" />
+        <fail unless="artifact.git.remote" />
+
+        <!-- If there is no directory there, clone the repo. -->
+        <if>
+            <not><available file="${artifact.directory}/.git" type="dir" /></not>
+            <then>
+                <echo>Cloning the repository from ${artifact.git.remote}</echo>
+                <gitclone repository="${artifact.git.remote}" targetPath="${artifact.directory}" />
+            </then>
+        </if>
     </target>
 
 
