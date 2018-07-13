@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+
+<!--
+  @file artifact.xml
+  Targets for managing Drupal code artifacts.
+
+  Copyright 2018 Palantir.net, Inc.
+  -->
+
+<project name="artifact" default="artifact-main">
+
+
+    <!--
+      Required configuration for building artifacts:
+        artifact.directory
+        artifact.git.remote
+
+      Optional configuration:
+        artifact.git.remote_branch - if not configured, uses the current branch
+        artifact.prefix - if not configured, uses 'artifact-'
+      
+      Run time flags:
+        push
+        
+      -->
+
+    <!--
+      Target: build-artifact
+      -->
+    <target name="artifact-main" description="Build and deploy the application.">
+        <!-- These two properties MUST be provided. -->
+        <fail unless="artifact.directory" message="The directory where the artifact should be built must be configured in the 'artifact.directory' property." />
+        <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
+        
+        <!-- Default property value(s). -->
+        <property name="artifact.prefix" value="artifact-" />
+        
+        <!-- Get the current commit, branch, and tag so that they can be used to label the
+             resulting artifact and reset the repository after the artifact is built. -->
+        <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
+        <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="artifact.git.branch" checkreturn="true" />
+        <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="git.no_tag" />
+
+        <!-- Create a temporary branch name based on the commit for building the artifact,
+             to avoid branch conflicts. -->
+        <property name="artifact.git.temporary_branch" value="artifact-${artifact.git.commit}" />
+        <!-- Prefix the repository tag so that we're not using the exact same tag on the
+             artifact and on the repository, to avoid confusion, especially when the
+             artifact is built on a branch of the development repository. -->
+        <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" />
+        <!-- If the remote branch isn't configured, use a remote branch based on the name
+             of the current branch. -->
+        <if>
+            <not><equals arg1="${artifact.git.remote_branch}" arg2="" /></not>
+            <then>
+                <property name="git.remote_branch" value="${artifact.prefix}${git.branch}" />
+            </then>
+        </if>
+
+
+        <!-- Check the state of the repository and build environment to make sure it is
+             safe to build an artifact. -->
+        <phingcall target="artifact-safeToBuild" />
+
+
+        <echoproperties />
+        <fail message="debug" />
+
+        <phingcall target="init-repository">
+            <property name="repo.dir" value="${artifact.directory}" />
+            <property name="repo.source" value="${artifact.git.remote}" />
+        </phingcall>
+
+        <phingcall target="artifact-setupBranch">
+            // like init-branch but no orphans
+        </phingcall>
+        <!-- Add the git remote if it's not present. Then, create a fresh branch on top of
+             the latest work in pantheon/master. -->
+        <phingcall target="artifact-addGitRemote" />
+        <exec command="git fetch pantheon ${git.remote_branch}" checkreturn="true" />
+        <exec command="git checkout -b ${git.temporary_branch}" checkreturn="true" />
+        <exec command="git reset --soft pantheon/${git.remote_branch}" checkreturn="true" />
+
+        <!-- Set up the working directory to reflect how prod should be set up. -->
+        <phingcall target="build" />
+        <echo>Switching .gitignore for the artifact</echo>
+        <copy file="conf/circle.gitignore" tofile=".gitignore" overwrite="true" />
+        <!-- Note that our dev environment (including phing commands with dependencies
+             outside of this file) will be broken after running composer install with
+             "no-dev", hence the restore process at the end of this target. -->
+        <echo>Running `composer install --no-dev`</echo>
+        <exec command="composer install --no-interaction --no-dev" checkreturn="true" />
+                <exec dir="${drupal.theme}" command="ls" passthru="true" checkreturn="true"/>
+
+        <!-- Commit the current set of files. -->
+        <echo>Committing the artifact</echo>
+        <exec command="git add -A" checkreturn="true" />
+        <exec command="git add -f web/themes/custom/ntc/dist/*" checkreturn="true" />
+        <exec command="git commit -a -m 'Artifact from ${env.CIRCLE_BRANCH}:${env.CIRCLE_SHA1}'" checkreturn="true" />
+
+        <!-- Run composer install so that we have access to phing commands again. -->
+        <exec command="composer install --no-interaction" checkreturn="true" />
+
+        <!-- If this is a build of a tag, create a matching tag for the artifact. -->
+        <if>
+            <equals arg1="${git.no_tag}" arg2="0" />
+            <then>
+                <exec command="git tag ${git.artifact_tag}" checkreturn="true" />
+            </then>
+        </if>
+
+        <!-- Optionally push the updated artifact to Pantheon. -->
+        <phingcall target="artifact-optionalPush" />
+
+        <!-- Restore the local repository to its previous state. -->
+        <phingcall target="artifact-resetState" />
+    </target>
+
+
+    <target name="artifact-safeToBuild">
+        <!-- Make sure the caller is using a deployment environment. -->
+        <echo>Deploy environment:  ${build.env}</echo>
+        <if>
+            <or>
+                <equals arg1="${build.env}" arg2="vagrant" />
+                <equals arg1="${build.env}" arg2="default" />
+            </or>
+            <then>
+                <echo level="error">  * Specify the 'build.env' property for your artifact; this is often 'acquia' or 'pantheon'</echo>
+                <property name="ready_to_build" value="n" />
+            </then>
+        </if>
+        
+
+        <!-- Prevent an artifact from being built when there are changes that are not
+             committed to git, since those changes wouldn't be replicable in later builds.
+             -->
+        <exec command="git status --porcelain" outputProperty="modified_files" />
+        <if>
+            <not><equals arg1="${modified_files}" arg2="" /></not>
+            <then>
+                <echo>Repository status:   dirty</echo>
+                <echo level="error">  * You have changes which must be committed before you may build an artifact.</echo>
+                <property name="ready_to_build" value="n" />
+            </then>
+            <else>
+                <echo>Repository status:   clean</echo>
+            </else>
+        </if>
+        
+        <if>
+            <equals arg1="${ready_to_build}" arg2="n" />
+            <then>
+                <echo />
+                <fail msg="Build state" />
+            </then>
+        </if>
+        <echo>Ok, ready to build!</echo>
+    </target>
+
+
+    <target name="artifact-setupBranch">
+        <echo>artifact-setupBranch</echo>
+    </target>
+
+
+    <target name="artifact-optionalPush">
+        <if>
+            <or>
+                <equals arg1="${push}" arg2="" />
+                <not><isset property="push" /></not>
+            </or>
+            <then>
+                <input propertyName="push" message="Push artifact changes to the '${git.remote_branch}' branch on Pantheon?" validArgs="y,n" />
+            </then>
+        </if>
+
+        <if>
+            <equals arg1="${push}" arg2="y" />
+            <then>
+                <echo>Pushing changes.</echo>
+                <exec command="git push pantheon ${git.temporary_branch}:${git.remote_branch}" checkreturn="true" />
+
+                <!-- If this is a build of a tag, push the new artifact tag. -->
+                <if>
+                    <equals arg1="${git.no_tag}" arg2="0" />
+                    <then>
+                        <exec command="git push pantheon ${git.artifact_tag}" checkreturn="true" />
+                    </then>
+                </if>
+            </then>
+        </if>
+    </target>
+
+
+    <target name="artifact-resetState">
+        <exec command="git checkout -- ." checkreturn="true" />
+        <exec command="git checkout ${git.branch}" checkreturn="true" />
+        <exec command="git branch -D ${git.temporary_branch}" checkreturn="true" />
+        <exec command="git tag -d ${git.artifact_tag}" checkreturn="false" />
+    </target>
+
+
+</project>
