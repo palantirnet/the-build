@@ -20,10 +20,10 @@
         artifact.prefix - if not configured, uses 'artifact-'
         artifact.git.remote_base_branch - branch off of this base branch if the remote_branch does not exist
         artifact.git.remote_name - 'origin'
-      
+
       Run time flags:
         push
-        
+
       -->
 
     <!--
@@ -33,7 +33,7 @@
         <!-- These two properties MUST be provided. -->
         <fail unless="artifact.directory" message="The directory where the artifact should be built must be configured in the 'artifact.directory' property." />
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
-        
+
         <!-- Default property value(s). -->
         <property name="artifact.prefix" value="artifact-" />
         <property name="artifact.git.remote_base_branch" value="master" />
@@ -41,7 +41,7 @@
 
         <!-- Override the Drupal root so that it is within the artifact directory. -->
         <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
-        
+
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
         <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
@@ -73,7 +73,7 @@
         <phingcall target="artifact-setupBranch" />
 
         <phingcall target="artifact-updateCode" />
-        
+
         <phingcall target="artifact-build" />
 
         <phingcall target="artifact-commit" />
@@ -97,7 +97,7 @@
                 <property name="ready_to_build" value="n" />
             </then>
         </if>
-        
+
 
         <!-- Prevent an artifact from being built when there are changes that are not
              committed to git, since those changes wouldn't be replicable in later builds.
@@ -114,7 +114,7 @@
                 <echo>Repository status:    clean</echo>
             </else>
         </if>
-        
+
         <!-- Check that our artifact directory either doesn't exist or is the right repo -->
         <exec command="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show ${artifact.git.remote_name} -n | grep '${artifact.git.remote}'" returnProperty="artifact_repo_has_remote.error" />
         <if>
@@ -168,7 +168,7 @@
                 <gitclone repository="${artifact.git.remote}" targetPath="${artifact.directory}" />
             </then>
         </if>
-        
+
         <!-- Wipe out any local customizations. -->
         <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
@@ -214,7 +214,7 @@
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**,.gitignore" includes="**/*" />
         </delete>
-        
+
         <!-- List all files that are checked in to git, EXCEPT for the .gitignore, then
              use the list to copy them all into the artifact. -->
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
