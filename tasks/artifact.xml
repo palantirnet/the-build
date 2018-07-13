@@ -16,8 +16,10 @@
         artifact.git.remote
 
       Optional configuration:
-        artifact.git.remote_branch - if not configured, uses the current branch
+        artifact.git.remote_branch - if not configured, uses the current branch with a prefix
         artifact.prefix - if not configured, uses 'artifact-'
+        artifact.git.remote_base_branch - branch off of this base branch if the remote_branch does not exist
+        artifact.git.remote_name - 'origin'
       
       Run time flags:
         push
@@ -34,6 +36,8 @@
         
         <!-- Default property value(s). -->
         <property name="artifact.prefix" value="artifact-" />
+        <property name="artifact.git.remote_base_branch" value="master" />
+        <property name="artifact.git.remote_name" value="origin" />
         
         <!-- Get the current commit, branch, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
@@ -53,7 +57,7 @@
         <if>
             <not><equals arg1="${artifact.git.remote_branch}" arg2="" /></not>
             <then>
-                <property name="git.remote_branch" value="${artifact.prefix}${git.branch}" />
+                <property name="artifact.git.remote_branch" value="${artifact.prefix}${artifact.git.branch}" />
             </then>
         </if>
 
@@ -64,6 +68,8 @@
 
         <phingcall target="artifact-initializeRepository" />
 
+        <phingcall target="artifact-setupBranch" />
+
 
         <!--
         <echoproperties />
@@ -72,15 +78,6 @@
 
 
 
-        <phingcall target="artifact-setupBranch">
-            <!-- like init-branch but no orphans -->
-        </phingcall>
-        <!-- Add the git remote if it's not present. Then, create a fresh branch on top of
-             the latest work in pantheon/master. -->
-        <phingcall target="artifact-addGitRemote" />
-        <exec command="git fetch pantheon ${git.remote_branch}" checkreturn="true" />
-        <exec command="git checkout -b ${git.temporary_branch}" checkreturn="true" />
-        <exec command="git reset --soft pantheon/${git.remote_branch}" checkreturn="true" />
 
         <!-- Set up the working directory to reflect how prod should be set up. -->
         <phingcall target="build" />
@@ -150,7 +147,7 @@
         </if>
         
         <!-- Check that our artifact directory either doesn't exist or is the right repo -->
-        <exec command="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show origin -n | grep '${artifact.git.remote}'" returnProperty="artifact_repo_has_remote.error" />
+        <exec command="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show ${artifact.git.remote_name} -n | grep '${artifact.git.remote}'" returnProperty="artifact_repo_has_remote.error" />
         <if>
             <not><available file="${artifact.directory}" type="dir" /></not>
             <then><echo>Artifact repository:  does not exist (will be created)</echo></then>
@@ -169,14 +166,14 @@
                 <!-- does git remote show origin -n | grep '${artifact.git.remote}' return the right status? -->
                 <equals arg1="${artifact_repo_has_remote.error}" arg2="1" />
                 <then>
-                    <echo>Artifact repository:  ${artifact.directory} has wrong origin</echo>
-                    <echo level="error">  * Directory '${artifact.directory}' exists but the origin is not ${artifact.git.remote}. Please move or delete before continuing.</echo>
+                    <echo>Artifact repository:  ${artifact.directory} has wrong remote configuration</echo>
+                    <echo level="error">  * Directory '${artifact.directory}' exists but the '${artifact.git.remote_name}' remote is not ${artifact.git.remote}. Please move or delete before continuing.</echo>
                     <property name="ready_to_build" value="n" />
                 </then>
             </elseif>
             <else>
                 <echo>Artifact repository:  ${artifact.directory}</echo>
-                <echo>                      ${artifact.git.remote}</echo>
+                <echo>                      ${artifact.git.remote_name}=${artifact.git.remote}</echo>
             </else>
         </if>
 
@@ -207,7 +204,12 @@
 
 
     <target name="artifact-setupBranch">
-        <echo>artifact-setupBranch</echo>
+    <echoproperties />
+    <fail />
+        <!-- Create a fresh branch on top of the latest work in pantheon/master. -->
+        <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" command="git checkout -b ${artifact.git.temporary_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" command="git reset --soft ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" />
     </target>
 
 
