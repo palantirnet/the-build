@@ -70,6 +70,8 @@
 
         <phingcall target="artifact-setupBranch" />
 
+        <phingcall target="artifact-updateCode" />
+
 
         <!--
         <echoproperties />
@@ -233,7 +235,26 @@
         <echo>Using on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
 
+    <target name="artifact-updateCode">
+        <!-- TODO:
+             * Generate a README for the artifact
+             * Copy a .gitignore template for the artifact
+             -->
+        <!-- Remove all the existing files so that we can install cleanly. -->
+        <delete includeemptydirs="true">
+            <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**,.gitignore" includes="**/*" />
+        </delete>
+        
+        <!-- List all files that are checked in to git, EXCEPT for the .gitignore, then
+             use the list to copy them all into the artifact. -->
+        <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
+        <exec command="git ls-files | grep -v '^.gitignore'" dir="${build.dir}" output="${tmpfile}" />
 
+        <copy todir="${artifact.directory}" overwrite="true" haltonerror="true">
+            <filelist dir="${build.dir}" listfile="${tmpfile}" />
+        </copy>
+        <delete file="${tmpfile}" />
+    </target>
 
 
 
