@@ -42,10 +42,11 @@
         <!-- Override the Drupal root so that it is within the artifact directory. -->
         <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
         
-        <!-- Get the current commit, branch, and tag so that they can be used to label the
+        <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
         <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
         <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="artifact.git.branch" checkreturn="true" />
+        <exec command="git log -1 --oneline" outputProperty="artifact.git.commit_message" />
         <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="git.no_tag" />
 
         <!-- Create a temporary branch name based on the commit for building the artifact,
@@ -74,10 +75,10 @@
         <phingcall target="artifact-setupBranch" />
 
         <phingcall target="artifact-updateCode" />
+        
+        <phingcall target="artifact-build" />
 
-        <echo>Running `composer install --no-dev`</echo>
-        <exec dir="${artifact.directory}" command="composer install --no-interaction --no-dev" checkreturn="true" />
-        <phingcall target="build" />
+        <phingcall target="artifact-commit" />
 
         <!--
         <echoproperties />
@@ -89,25 +90,7 @@
 
 
 
-        <!-- Set up the working directory to reflect how prod should be set up. -->
-        <phingcall target="build" />
-        <echo>Switching .gitignore for the artifact</echo>
-        <copy file="conf/circle.gitignore" tofile=".gitignore" overwrite="true" />
-        <!-- Note that our dev environment (including phing commands with dependencies
-             outside of this file) will be broken after running composer install with
-             "no-dev", hence the restore process at the end of this target. -->
-        <echo>Running `composer install --no-dev`</echo>
-        <exec command="composer install --no-interaction --no-dev" checkreturn="true" />
-                <exec dir="${drupal.theme}" command="ls" passthru="true" checkreturn="true"/>
 
-        <!-- Commit the current set of files. -->
-        <echo>Committing the artifact</echo>
-        <exec command="git add -A" checkreturn="true" />
-        <exec command="git add -f web/themes/custom/ntc/dist/*" checkreturn="true" />
-        <exec command="git commit -a -m 'Artifact from ${env.CIRCLE_BRANCH}:${env.CIRCLE_SHA1}'" checkreturn="true" />
-
-        <!-- Run composer install so that we have access to phing commands again. -->
-        <exec command="composer install --no-interaction" checkreturn="true" />
 
         <!-- If this is a build of a tag, create a matching tag for the artifact. -->
         <if>
@@ -211,7 +194,6 @@
         </if>
     </target>
 
-
     <target name="artifact-setupBranch">
         <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
         <if>
@@ -261,7 +243,28 @@
         <delete file="${tmpfile}" />
     </target>
 
+    <target name="artifact-build">
+        <echo>Installing composer dependencies in the artifact...</echo>
+        <exec dir="${artifact.directory}" command="composer install --no-interaction --no-dev" checkreturn="true" />
 
+        <echo>Deleting .git subdirectories added by Composer...</echo>
+        <delete includeemptydirs="true">
+            <fileset dir="${artifact.directory}" defaultexcludes="false" includes="**/.git,**/.gitignore" />
+        </delete>
+        <fail message="DEBUG" />
+
+        <echo>Running 'phing build' in the artifact...</echo>
+        <phingcall target="build" />
+    </target>
+
+    <target name="artifact-commit">
+        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
+            <property name="build.dir" value="${build.dir}" />
+            <property name="repo.dir" value="${artifact.directory}" />
+            <property name="tag_prefix" value="${artifact.prefix}" />
+            <property name="message" value="Drupal artifact build of ${artifact.git.commit_message}" />
+        </phing>
+    </target>
 
 
 
