@@ -47,7 +47,7 @@
         <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
         <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="artifact.git.branch" checkreturn="true" />
         <exec command="git log -1 --oneline" outputProperty="artifact.git.commit_message" />
-        <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="git.no_tag" />
+        <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="artifact.git.no_tag" />
 
         <!-- Create a temporary branch name based on the commit for building the artifact,
              to avoid branch conflicts. -->
@@ -91,14 +91,6 @@
 
 
 
-
-        <!-- If this is a build of a tag, create a matching tag for the artifact. -->
-        <if>
-            <equals arg1="${git.no_tag}" arg2="0" />
-            <then>
-                <exec command="git tag ${git.artifact_tag}" checkreturn="true" />
-            </then>
-        </if>
 
         <!-- Optionally push the updated artifact to Pantheon. -->
         <phingcall target="artifact-optionalPush" />
@@ -283,7 +275,7 @@
                 <not><isset property="push" /></not>
             </or>
             <then>
-                <input propertyName="push" message="Push artifact changes to the '${git.remote_branch}' branch on Pantheon?" validArgs="y,n" />
+                <input propertyName="push" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" validArgs="y,n" />
             </then>
         </if>
 
@@ -291,13 +283,13 @@
             <equals arg1="${push}" arg2="y" />
             <then>
                 <echo>Pushing changes.</echo>
-                <exec command="git push pantheon ${git.temporary_branch}:${git.remote_branch}" checkreturn="true" />
+                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
 
                 <!-- If this is a build of a tag, push the new artifact tag. -->
                 <if>
-                    <equals arg1="${git.no_tag}" arg2="0" />
+                    <equals arg1="${artifact.git.no_tag}" arg2="0" />
                     <then>
-                        <exec command="git push pantheon ${git.artifact_tag}" checkreturn="true" />
+                        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
                     </then>
                 </if>
             </then>
@@ -306,10 +298,9 @@
 
 
     <target name="artifact-resetState">
-        <exec command="git checkout -- ." checkreturn="true" />
-        <exec command="git checkout ${git.branch}" checkreturn="true" />
-        <exec command="git branch -D ${git.temporary_branch}" checkreturn="true" />
-        <exec command="git tag -d ${git.artifact_tag}" checkreturn="false" />
+        <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
     </target>
 
 
