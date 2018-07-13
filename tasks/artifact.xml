@@ -74,7 +74,9 @@
         <!--
         <echoproperties />
         -->
-        <fail message="debug" />
+<exec dir="${artifact.directory}" command="git checkout master" checkreturn="true" logoutput="true" />
+<exec dir="${artifact.directory}" command="git branch -d ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
+<fail message="debug" />
 
 
 
@@ -204,13 +206,45 @@
 
 
     <target name="artifact-setupBranch">
-    <echoproperties />
-    <fail />
-        <!-- Create a fresh branch on top of the latest work in pantheon/master. -->
-        <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" checkreturn="true" />
-        <exec dir="${artifact.directory}" command="git checkout -b ${artifact.git.temporary_branch}" checkreturn="true" />
-        <exec dir="${artifact.directory}" command="git reset --soft ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
+        <if>
+            <not><equals arg1="${remote_fetch.error}" arg2="0" /></not>
+            <then>
+                <echo>Remote branch does not exist. Creating '${artifact.git.remote_branch}' on remote repository...</echo>
+                <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_base_branch}" returnProperty="remote_fetch_base.error" />
+                <if>
+                    <not><equals arg1="${remote_fetch_base.error}" arg2="0" /></not>
+                    <then><fail msg="Failed to create remote branch: base branch '${artifact.git.remote_base_branch}' could not be fetched." /></then>
+                </if>
+
+                <!-- The 'remote branch' should only exist on the remote, so we create, push, then delete the local copy. -->
+                <exec dir="${artifact.directory}" command="git branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}" checkreturn="true" />
+                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+                <exec dir="${artifact.directory}" command="git branch -d ${artifact.git.remote_branch}" checkreturn="true" />
+                <echo>Branch '${artifact.git.remote_name}/${artifact.git.remote_branch}' created.</echo>
+            </then>
+        </if>
+
+        <!-- At this point, we should have the latest work from the remote destination
+             branch available locally. Now create a fresh, temporary branch for our
+             artifact work, to avoid naming conflicts and allow clean rebuilds. -->
+        <exec dir="${artifact.directory}" command="git branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.temporary_branch}" checkreturn="true" />
+        <echo>Using on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <target name="artifact-optionalPush">
