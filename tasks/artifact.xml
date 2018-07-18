@@ -20,6 +20,8 @@
         artifact.prefix - if not configured, uses 'artifact-'
         artifact.git.remote_base_branch - branch off of this base branch if the remote_branch does not exist
         artifact.git.remote_name - 'origin'
+        artifact.gitignore_template - defaults to conf/artifact-gitignore within the-build
+        artifact.readme_template - defaults to conf/artifact-README.md within the-build
 
       Run time flags:
         push
@@ -38,6 +40,8 @@
         <property name="artifact.prefix" value="artifact-" />
         <property name="artifact.git.remote_base_branch" value="master" />
         <property name="artifact.git.remote_name" value="origin" />
+        <property name="artifact.gitignore_template" value="${phing.dir.artifact}/../conf/artifact-gitignore" />
+        <property name="artifact.readme_template" value="${phing.dir.artifact}/../conf/artifact-README.md" />
 
         <!-- Override the Drupal root so that it is within the artifact directory. -->
         <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
@@ -227,10 +231,14 @@
         <delete file="${tmpfile}" />
 
         <!-- Copy a template .gitignore specific to the artifact. -->
-        <includeresource mode="${artifact_mode}" source="${phing.dir.artifact}/../conf/artifact-gitignore" dest="${artifact.directory}/.gitignore" />
+        <copy file="${artifact.gitignore_template}" tofile="${artifact.directory}/.gitignore" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
 
         <!-- Copy a template README into the artifact. -->
-        <copy file="${phing.dir.artifact}/../conf/artifact-README.md" tofile="${artifact.directory}/README.md" overwrite="true">
+        <copy file="${artifact.readme_template}" tofile="${artifact.directory}/README.md" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
