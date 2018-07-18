@@ -8,7 +8,8 @@
 
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
+
 
 
     <!-- Default target: build -->
@@ -45,18 +46,11 @@
     </target>
 
 
-    <!-- Target: deploy -->
-    <target name="deploy" description="Build and deploy the application.">
-        <echo>Configure this target to build the production artifact; see the `deploy-to-acquia` target for an example.</echo>
-    </target>
-
-
-    <!-- Target: deploy-to-acquia -->
-    <target name="deploy-to-acquia">
-        <phingcall target="check-deploy-env" />
-        <phingcall target="acquia-build" />
-        <phingcall target="build" />
-        <phingcall target="acquia-deploy" />
+    <!-- Target: artifact -->
+    <target name="artifact" description="Build and deploy the application.">
+        <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
+            <property name="build.env" value="acquia" />
+        </phing>
     </target>
 
 
