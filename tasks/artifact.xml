@@ -211,9 +211,6 @@
     </target>
 
     <target name="artifact-updateCode">
-        <!-- TODO:
-             * Generate a README for the artifact
-             -->
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*" />
@@ -231,6 +228,13 @@
 
         <!-- Copy a template .gitignore specific to the artifact. -->
         <includeresource mode="${artifact_mode}" source="${phing.dir.artifact}/../conf/artifact-gitignore" dest="${artifact.directory}/.gitignore" />
+
+        <!-- Copy a template README into the artifact. -->
+        <copy file="${phing.dir.artifact}/../conf/artifact-README.md" tofile="${artifact.directory}/README.md" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
     </target>
 
     <target name="artifact-build">
