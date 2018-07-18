@@ -28,6 +28,7 @@
 
       -->
 
+
     <!--
       Target: build-artifact
       -->
@@ -165,6 +166,7 @@
         <echo>Ok, ready to build!</echo>
     </target>
 
+
     <target name="artifact-initializeRepository">
         <fail unless="artifact.directory" />
         <fail unless="artifact.git.remote" />
@@ -183,6 +185,7 @@
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
     </target>
+
 
     <target name="artifact-setupBranch">
         <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
@@ -213,6 +216,7 @@
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.temporary_branch}" checkreturn="true" />
         <echo>Using on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
+
 
     <target name="artifact-updateCode">
         <!-- Remove all the existing files so that we can install cleanly. -->
@@ -245,6 +249,7 @@
         </copy>
     </target>
 
+
     <target name="artifact-build">
         <echo>Installing composer dependencies in the artifact...</echo>
         <exec dir="${artifact.directory}" command="composer install --no-interaction --no-dev" checkreturn="true" />
@@ -258,6 +263,7 @@
         <phingcall target="build" />
     </target>
 
+
     <target name="artifact-commit">
         <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
             <property name="build.dir" value="${build.dir}" />
@@ -266,6 +272,7 @@
             <property name="message" value="Drupal artifact build of ${artifact.git.commit_message}" />
         </phing>
     </target>
+
 
     <target name="artifact-optionalPush">
         <if>
