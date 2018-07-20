@@ -44,14 +44,6 @@
         <property name="artifact.gitignore_template" value="${phing.dir.artifact}/../conf/artifact-gitignore" />
         <property name="artifact.readme_template" value="${phing.dir.artifact}/../conf/artifact-README.md" />
 
-        <!-- Override the Drupal root so that it is within the artifact directory. -->
-        <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
-
-        <!-- Override the "artifact mode" so that files managed with the
-             <includeresource /> task are copied into the artifact instead of symlinked.
-             -->
-        <property name="build.artifact_mode" value="copy" override="true" />
-
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
         <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
@@ -260,7 +252,15 @@
         </delete>
 
         <echo>Running 'phing build' in the artifact...</echo>
-        <phingcall target="build" />
+        <!--
+            - Override the Drupal root so that it is within the artifact directory.
+            - Override the "artifact mode" so that files managed with the
+              <includeresource /> task are copied into the artifact instead of symlinked.
+            -->
+        <phing target="build" phingfile="${phing.file}" inheritAll="false" dir=".">
+            <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
+            <property name="build.artifact_mode" value="copy" override="true" />
+        </phing>
     </target>
 
 
