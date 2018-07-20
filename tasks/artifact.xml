@@ -256,7 +256,7 @@
 
         <echo>Deleting .git subdirectories added by Composer...</echo>
         <delete includeemptydirs="true">
-            <fileset dir="${artifact.directory}" defaultexcludes="false" includes="**/.git,**/.gitignore" />
+            <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".gitignore,.git/,.git/**" includes="**/.gitignore,**/.git,**/.git/**" />
         </delete>
 
         <echo>Running 'phing build' in the artifact...</echo>
