@@ -221,7 +221,7 @@
     <target name="artifact-updateCode">
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
-            <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*" />
+            <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*,**/.git,**/.git/**" />
         </delete>
 
         <!-- List all files that are checked in to git, then use the list to copy them all
