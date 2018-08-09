@@ -29,7 +29,9 @@ jobs:
           command: sudo docker-php-ext-install pdo_mysql gd
       - run:
           name: Configure PHP
-          command: echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
+          command: |
+            echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
       - run:
           name: PHP version
           command: php -r 'phpinfo(INFO_GENERAL | INFO_CREDITS | INFO_CONFIGURATION | INFO_MODULES);'
