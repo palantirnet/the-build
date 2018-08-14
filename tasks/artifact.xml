@@ -175,6 +175,7 @@
         </if>
 
         <!-- Wipe out any local customizations. -->
+        <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
@@ -306,6 +307,7 @@
 
 
     <target name="artifact-resetState">
+        <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
