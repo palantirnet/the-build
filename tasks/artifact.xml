@@ -148,6 +148,8 @@
             </else>
         </if>
 
+        <echo>Destination branch:   ${artifact.git.remote_branch}</echo>
+
         <if>
             <equals arg1="${ready_to_build}" arg2="n" />
             <then>
