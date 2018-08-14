@@ -223,7 +223,7 @@
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files" dir="${build.dir}" output="${tmpfile}" />
 
-        <copy todir="${artifact.directory}" overwrite="true" haltonerror="true">
+        <copy todir="${artifact.directory}" preservemode="false" mode="750" overwrite="true" haltonerror="true">
             <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
         <delete file="${tmpfile}" />
