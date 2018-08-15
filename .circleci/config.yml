@@ -4,8 +4,8 @@ jobs:
     working_directory: ~/@projectname@
     docker:
       - image: circleci/php:7.1-node-browsers
-      - image: circleci/mysql:5.5-ram
-        command: --max_allowed_packet=4M
+      - image: circleci/mysql:5.7-ram
+        command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: ''
