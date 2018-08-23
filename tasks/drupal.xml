@@ -37,7 +37,6 @@
     <property name="drupal.database.username" value="drupal" />
     <property name="drupal.database.password" value="drupal" />
     <property name="drupal.database.host" value="127.0.0.1" />
-    <property name="drupal.modules_enable" value="" />
     <property name="drupal.twig.debug" value="false" />
     <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
     <property name="build.drupal.settings" value="conf/drupal/settings.php" />
@@ -76,9 +75,6 @@
             <property name="prompt.drupal.profile" value="Drupal install profile" />
             <property name="default.drupal.profile" value="standard" />
 
-            <property name="prompt.drupal.modules_enable" value="Comma-separated list of modules to enable after install" />
-            <property name="default.drupal.modules_enable" value="" />
-
             <property name="prompt.drupal.database.database" value="Drupal database name" />
             <property name="default.drupal.database.database" value="drupal" />
 
@@ -101,7 +97,7 @@
             <!-- Generated hash salt -->
             <property name="default.drupal.hash_salt" value="${hash_salt}" />
 
-            <property name="update" value="drupal.site_name,drupal.profile,drupal.modules_enable,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
+            <property name="update" value="drupal.site_name,drupal.profile,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
             <property name="dump" value="drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt,drupal.root" />
         </phing>
     </target>
@@ -194,7 +190,6 @@
         <fail unless="drupal.site_name" />
         <fail unless="drupal.sites_subdir" />
         <fail unless="drupal.profile" />
-        <fail unless="drupal.modules_enable" />
 
         <phingcall target="validate-clean-conf" />
 
@@ -234,19 +229,8 @@
             <param>${drupal.profile}</param>
         </drush>
 
-        <foreach list="${drupal.modules_enable}" param="module" target="drupal-enable-module" />
-
         <!-- The public files directory, and everything in it, needs to be world writable. -->
         <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
-    </target>
-
-
-    <!-- Target: drupal-enable-module -->
-    <target name="drupal-enable-module">
-        <fail unless="module" />
-        <drush command="pm-enable" assume="yes">
-            <param>${module}</param>
-        </drush>
     </target>
 
 
