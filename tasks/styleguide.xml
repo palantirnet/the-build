@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<!--
+  @file styleguide.xml
+  Targets for managing the styleguide.
+
+  Copyright 2018 Palantir.net, Inc.
+  -->
+
+<project name="Styleguide" default="styleguide">
+    <!--
+      Include this file in your build.xml with:
+        <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+      -->
+
+
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
+    <fail unless="projectname" />
+
+
+    <!-- These properties will generally be set in the default build properties file. -->
+    <property name="styleguide.root" value="styleguide" />
+    <property name="styleguide.command" value="yarn default" />
+
+    <!-- This is resolved at runtime. -->
+    <resolvepath propertyName="styleguide.root.resolved" file="${styleguide.root}" dir="${build.dir}" />
+
+
+    <!-- Target: styleguide-configure -->
+    <target name="styleguide-configure" description="Configure the styleguide build.">
+        <phing phingfile="${phing.dir.styleguide}/configure.xml" inheritAll="false" dir="${build.dir}">
+            <property name="build.env" value="${build.env}" />
+            <property name="build.dir" value="${build.dir}" />
+
+            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
+            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
+            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
+
+            <!-- Prompts and defaults -->
+            <property name="prompt.styleguide.root" value="Style guide directory, relative to the project root" />
+            <property name="default.styleguide.root" value="${styleguide.root}" />
+
+            <property name="prompt.styleguide.command" value="Style guide build command" />
+            <property name="default.styleguide.command" value="${styleguide.command}" />
+
+            <property name="update" value="styleguide.root,styleguide.command" />
+            <property name="dump" value="" />
+        </phing>
+    </target>
+
+
+    <!-- Target: styleguide -->
+    <target name="styleguide" description="Install and build the style guide.">
+
+        <phingcall target="styleguide-install" />
+
+        <!-- Run the styleguide build command. -->
+        <echo>Running build command in ${styleguide.root}: ${styleguide.command}</echo>
+        <exec dir="${styleguide.root.resolved}" command="${styleguide.command}" passthru="true" checkreturn="true" />
+    </target>
+
+
+    <!-- Target: styleguide-install -->
+    <target name="styleguide-install" description="Install the style guide.">
+
+        <!-- Run composer install in the styleguide. -->
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}/composer.lock" type="file" />
+                <not><available file="${styleguide.root.resolved}/vendor/autoload.php" type="file" /></not>
+            </and>
+            <then>
+                <exec dir="${styleguide.root.resolved}" command="composer install --no-interaction" passthru="true" checkreturn="true" />
+            </then>
+        </if>
+
+        <!-- Run yarn install in the styleguide. -->
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
+                <not><available file="${styleguide.root.resolved}/node_modules/.yarn-integrity" type="file" /></not>
+            </and>
+            <then>
+                <exec dir="${styleguide.root.resolved}" command="yarn install" passthru="true" checkreturn="true" />
+            </then>
+        </if>
+
+        <!-- Run npm install in the styleguide, if there's no yarn.lock file. -->
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}/package.json" type="file" />
+                <not><available file="${styleguide.root.resolved}/yarn.lock" type="file" /></not>
+            </and>
+            <then>
+                <exec dir="${styleguide.root.resolved}" command="npm install" passthru="true" checkreturn="true" />
+            </then>
+        </if>
+    </target>
+
+
+</project>
