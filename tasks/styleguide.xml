@@ -85,18 +85,6 @@
                 <exec dir="${styleguide.root.resolved}" command="yarn install --non-interactive --no-progress --prefer-offline" passthru="true" checkreturn="true" />
             </then>
         </if>
-
-        <!-- Run npm install in the styleguide, if there's no yarn.lock file. -->
-        <!-- @todo is there a decent way to check whether npm install has run? -->
-        <if>
-            <and>
-                <available file="${styleguide.root.resolved}/package.json" type="file" />
-                <not><available file="${styleguide.root.resolved}/yarn.lock" type="file" /></not>
-            </and>
-            <then>
-                <exec dir="${styleguide.root.resolved}" command="npm install" passthru="true" checkreturn="true" />
-            </then>
-        </if>
     </target>
 
 
