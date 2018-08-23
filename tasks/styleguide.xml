@@ -87,6 +87,7 @@
         </if>
 
         <!-- Run npm install in the styleguide, if there's no yarn.lock file. -->
+        <!-- @todo is there a decent way to check whether npm install has run? -->
         <if>
             <and>
                 <available file="${styleguide.root.resolved}/package.json" type="file" />
