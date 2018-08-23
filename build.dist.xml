@@ -15,6 +15,7 @@
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
         <phingcall target="drupal-build" />
+        <phingcall target="styleguide" />
     </target>
 
 
