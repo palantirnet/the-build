@@ -61,6 +61,15 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 [More info](../tasks/drupal.xml#L16-L38)
 
+### Style Guide
+
+| Property | Default value | What is it? |
+|---|---|---|
+| `styleguide.root` | `styleguide` | Location of the style guide, relative to the project root. |
+| `styleguide.command` | `yarn default` | Command to compile the style guide assets, for use during the build and artifact steps. |
+
+[More info](../tasks/styleguide.xml#L22-L24)
+
 ### Code Review
 
 | Property | Default value | What is it? |

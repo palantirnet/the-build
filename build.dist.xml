@@ -9,12 +9,13 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
-
+    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
 
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
         <phingcall target="drupal-build" />
+        <phingcall target="styleguide" />
     </target>
 
 
