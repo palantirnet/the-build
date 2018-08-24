@@ -29,5 +29,12 @@ Manually review these files, then check them in to your project. At this point, 
 $> vendor/bin/phing build install migrate
 ```
 
+## Additional documentation
+
+* [Available properties](docs/properties.md)
+* [Building an artifact](docs/artifacts.md)
+* [Code review](docs/code_review.md)
+* [Custom tasks](docs/tasks.md)
+
 ----
 Copyright 2016, 2017 Palantir.net, Inc.
