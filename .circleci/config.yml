@@ -33,11 +33,6 @@ jobs:
       #      touch $BASH_ENV
       #      echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
       #      echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      #- run:
-      #    name: Install Node
-      #    command: |
-      #      nvm install "${NODE_VERSION}"
-      #      nvm alias default "${NODE_VERSION}"
       - run:
           name: Install PHP extensions
           command: sudo docker-php-ext-install pdo_mysql gd
