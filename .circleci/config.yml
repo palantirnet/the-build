@@ -25,14 +25,14 @@ jobs:
       - run:
           name: Install packages
           command: sudo apt-get install -y libpng-dev mysql-client
-      #- run:
-      #    name: Install nvm
-      #    command: |
-      #      set +e
-      #      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-      #      touch $BASH_ENV
-      #      echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-      #      echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run:
+          name: Install nvm
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            touch $BASH_ENV
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
       - run:
           name: Install PHP extensions
           command: sudo docker-php-ext-install pdo_mysql gd
