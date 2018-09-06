@@ -205,7 +205,7 @@
         <exec dir="${artifact.directory}" command="git branch | grep ${artifact.git.temporary_branch} &amp;&amp; git branch -D ${artifact.git.temporary_branch}" logoutput="true" />
         <exec dir="${artifact.directory}" command="git branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.temporary_branch}" checkreturn="true" />
-        <echo>Using on temporary branch '${artifact.git.temporary_branch}'.</echo>
+        <echo>Building on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
 
 
