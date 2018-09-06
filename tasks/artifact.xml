@@ -59,13 +59,9 @@
              artifact is built on a branch of the development repository. -->
         <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" />
         <!-- If the remote branch isn't configured, use a remote branch based on the name
-             of the current branch. -->
-        <if>
-            <not><equals arg1="${artifact.git.remote_branch}" arg2="" /></not>
-            <then>
-                <property name="artifact.git.remote_branch" value="${artifact.prefix}${artifact.git.branch}" />
-            </then>
-        </if>
+             of the current branch. This won't overwrite the property value if it is
+             already set. -->
+        <property name="artifact.git.remote_branch" value="${artifact.prefix}${artifact.git.branch}" />
 
 
         <phingcall target="artifact-safeToBuild" />
