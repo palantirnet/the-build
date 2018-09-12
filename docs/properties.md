@@ -21,7 +21,7 @@ Yields:
 
 Cool! This phing-ism is what powers our environment-specific property layering and loading:
 
-1. Properties are loaded from the phing call itself; for example, adding the flag `-Ddrupal.modules_enable=devel,kint` will set the `drupal.modules_enable` property to `devel,kint`
+1. Properties are loaded from the phing call itself; for example, adding the flag `-Dbuild.test_output=artifacts/tests` will set the `build.test_output` property to `artifacts/tests`
 1. Set the `build.env` property (if it's not already set with `-D`) from the `PALANTIR_ENVIRONMENT` environment variable; if you're using [the-vagrant](https://github.com/palantirnet/the-vagrant), this will be set to `vagrant`
 1. Load properties from your `conf/build.[environment].properties`
 1. Load properties from `conf/build.default.properties`
@@ -46,7 +46,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 |---|---|---|
 | `drupal.site_name` | `Drupal` | Human-readable name for your site. |
 | `drupal.profile` | `config_installer` | Install profile. |
-| `drupal.modules_enable` | | Comma-separated list of modules to enable after installing Drupal. |
 | `drupal.database.database` | `drupal` |  |
 | `drupal.database.username` | `root` |  |
 | `drupal.database.password` | `root` |  |
