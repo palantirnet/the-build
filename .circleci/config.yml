@@ -4,7 +4,8 @@ jobs:
     working_directory: ~/@projectname@
     docker:
       - image: circleci/php:7.1-node-browsers
-      - image: tkuchiki/delayed-mysql
+      - image: circleci/mysql:5.7-ram
+        command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: ''
@@ -13,6 +14,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circle
       - DRUPAL_ROOT: web
+      - NODE_VERSION: 8
 
     branches:
       ignore:
@@ -24,11 +26,21 @@ jobs:
           name: Install packages
           command: sudo apt-get install -y libpng-dev mysql-client
       - run:
+          name: Install nvm
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            touch $BASH_ENV
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run:
           name: Install PHP extensions
           command: sudo docker-php-ext-install pdo_mysql gd
       - run:
           name: Configure PHP
-          command: echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
+          command: |
+            echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
       - run:
           name: PHP version
           command: php -r 'phpinfo(INFO_GENERAL | INFO_CREDITS | INFO_CONFIGURATION | INFO_MODULES);'
