@@ -71,15 +71,55 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 [More info](code_review.md)
 
+### Artifacts
+
+For additional documentation on the artifact build process, see [docs/artifac
+
+| Property | Default value | What is it? |
+|---|---|---|
+| `artifact.git.remote` | **(required)** | Git repository for the artifact. This is typically an Acquia or Pantheon git URL. |
+| `artifact.git.remote_branch` | `${artifact.prefix}` plus the current branch name | Name of the remote branch to push the artifact to. For Acquia, the default is good because it shouldn't match a branch names on the development repository; on Pantheon, code must be on the `master` branch to be deployed to the `live` environment. |
+| `artifact.directory` | `artifacts/build` | The path of the working directory where the artifact should be built. |
+| `artifact.prefix` | `artifact-` | A string prefix to use for branch names. |
+| `artifact.gitignore_template` | `vendor/palantirnet/the-build/conf/artifact-gitignore` | Path to a template .gitignore file to use in the artifact. |
+| `artifact.readme_template` | `vendor/palantirnet/the-build/conf/artifact-gitignore` | Path to a template README file to use in the artifact. |
+| `artifact.git.remote_base_branch` | `master` | Name of a branch to use as the base, if the artifact.remote_branch does not yet exist on the artifact.git.remote repository. |
+| `artifact.git.remote_name` | `origin` | Name to use for the git remote on the artifact repository. |
+
+#### Runtime flags
+
+* `push` - Value should be `y` or `n`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
+
+#### Example: Pushing an artifact to a Pantheon environment
+
+1. Configure the artifact in the `conf/build.default.properties` file of your project:
+
+  ```
+  # Pantheon git URL
+  artifact.git.remote=ssh://codeserver.dev.*@codeserver.dev.*.drush.in:2222/~/repository.git
+
+  # All artifacts go to the master branch
+  artifact.git.remote_branch=master
+  ```
+2. Build the artifact by running this command:
+
+  ```
+  phing artifact
+  ```
+3. Build to a Pantheon multidev environment (multidev branch names must be 11 characters or shorter):
+
+  ```
+  phing artifact -Dartifact.git.remote_branch=TICKET-999
+  ```
+
+Alternatively, you may chose to not set the `artifact.git.remote_branch` property, and instead, and then merge the default artifact branch (generally `artifact-develop`) to `master` within the Pantheon UI.
+
 ### Acquia
 
 | Property | Default value | What is it? |
 |---|---|---|
 | `acquia.accountname` |  | Machine name of your Acquia site account. |
-| `acquia.repo` |  | Acquia git repository, like `ACCOUNT@svn-6185.devcloud.hosting.acquia.com:ACCOUNT.git` |
-| `acquia.branch` | `build` | Branch of the Acquia git repository where build artifacts should be committed. |
-| `acquia.tag_prefix` | `release-` | String to use as a prefix on build tags; the repository tag `1.0.0` becomes the build tag `release-1.0.0`. |
-| `acquia.dir` | `artifacts/acquia` | Relative path of where to keep the Acquia repository. |
+| `acquia.ssh` |  | Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or `staging-12345.prod.hosting.acquia.com` |
 
 [More info](../tasks/acquia.xml#L32-L59)
 

@@ -1,20 +1,6 @@
 # Building an Artifact
 
-```xml
-<import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
-
-<!--
-    Target: artifact
-    Wrapper for the "artifact-main" target to provide the correct build.env property
-    value for this project's deployments.
-    -->
-<target name="artifact" description="Build and deploy the application.">
-    <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
-        <property name="build.env" value="pantheon" />
-    </phing>
-</target>
-```
-
+This file describes a generalized artifact build process. This process is implemented in [tasks/artifact.xml](../tasks/artifact.xml), and usage is described in the [properties documentation](properties.md).
 
 ### Definitions
 

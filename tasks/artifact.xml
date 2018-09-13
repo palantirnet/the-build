@@ -12,20 +12,23 @@
 
     <!--
       Required configuration for building artifacts:
-        artifact.directory
         artifact.git.remote
 
       Optional configuration:
-        artifact.git.remote_branch - if not configured, uses the current branch with a prefix
-        artifact.prefix - if not configured, uses 'artifact-'
-        artifact.git.remote_base_branch - branch off of this base branch if the remote_branch does not exist
-        artifact.git.remote_name - 'origin'
-        artifact.gitignore_template - defaults to conf/artifact-gitignore within the-build
-        artifact.readme_template - defaults to conf/artifact-README.md within the-build
+        artifact.git.remote_branch
+        artifact.directory
+        artifact.prefix
+        artifact.gitignore_template
+        artifact.readme_template
+
+      Optional configuration, but generally this should not need to be modified:
+        artifact.git.remote_base_branch
+        artifact.git.remote_name
 
       Run time flags:
         push
 
+      For full documentation on these properties, see the docs/properties.md file.
       -->
 
 
@@ -33,11 +36,11 @@
       Target: build-artifact
       -->
     <target name="artifact-main" description="Build and deploy the application.">
-        <!-- These two properties MUST be provided. -->
-        <fail unless="artifact.directory" message="The directory where the artifact should be built must be configured in the 'artifact.directory' property." />
+        <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 
         <!-- Default property value(s). -->
+        <property name="artifact.directory" value="artifacts/build" />
         <property name="artifact.prefix" value="artifact-" />
         <property name="artifact.git.remote_base_branch" value="master" />
         <property name="artifact.git.remote_name" value="origin" />
