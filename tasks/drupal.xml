@@ -229,26 +229,8 @@
             <param>${drupal.profile}</param>
         </drush>
 
-        <!-- @todo Remove this conditional in release 2.0 -->
-        <if>
-            <not><equals arg1="${drupal.modules_enable}" arg2="" /></not>
-            <then>
-                <echo level="warning" msg="The 'drupal.modules_enable' property has been deprecated; please update your build to manage per-environment configuration with the Config Split module instead (https://www.drupal.org/project/config_split)" />
-            </then>
-        </if>
-
         <!-- The public files directory, and everything in it, needs to be world writable. -->
         <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
-    </target>
-
-
-    <!--
-        Target: drupal-enable-module
-
-        @todo Remove this target in release 2.0
-        -->
-    <target name="drupal-enable-module">
-        <echo level="warning" msg="The 'drupal-enable-module' target has been deprecated; please update your build to manage per-environment configuration with the Config Split module instead (https://www.drupal.org/project/config_split)" />
     </target>
 
 
