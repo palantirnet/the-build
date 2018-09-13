@@ -72,7 +72,7 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 ### Artifacts
 
-For additional documentation on the artifact build process, see [docs/artifac
+For additional documentation on the artifact build process, see [docs/artifacts.md](artifacts.md).
 
 | Property | Default value | What is it? |
 |---|---|---|
@@ -88,6 +88,24 @@ For additional documentation on the artifact build process, see [docs/artifac
 #### Runtime flags
 
 * `push` - Value should be `y` or `n`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
+
+#### Example: Pushing an artifact to an Acquia environment
+
+1. Configure the artifact in the `conf/build.default.properties` file of your project:
+
+  ```
+  # Acquia git URL
+  artifact.git.remote=example@svn-9999.devcloud.hosting.acquia.com:example.git
+
+  # The Acquia web root must be 'docroot'
+  # This must also be configured in your composer.json, and reflected in your repository
+  drupal.root=docroot
+  ```
+2. Build the artifact by running this command:
+
+  ```
+  phing artifact
+  ```
 
 #### Example: Pushing an artifact to a Pantheon environment
 
