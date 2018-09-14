@@ -9,6 +9,7 @@
     <!-- Make these commands available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
     <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/review.xml" />
 
 
 
@@ -39,10 +40,20 @@
 
     <!-- Target: code-review -->
     <target name="code-review" description="Run the automated code reviews.">
-        <!-- These are called directly rather than using <import> because they are single-purpose task files. -->
-        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/drupal_code_sniffer.xml" />
-        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phpmd.xml" />
-        <phing phingfile="${build.dir}/vendor/palantirnet/the-build/tasks/code_review/phplint.xml" />
+        <!-- Run PHP's built in linter ('php -l') -->
+        <phplint deprecatedAsError="true" haltonfailure="true">
+            <fileset dir="${drupal.root}" includesfile="${phplint.includesfile}" />
+        </phplint>
+
+        <!-- Run PHP Code Sniffer. -->
+        <property name="phpcs.command" value="phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+        <echo msg="$> ${phpcs.command}" />
+        <exec command="${phpcs.command}" logoutput="true" checkreturn="true" />
+
+        <!-- Run PHP Mess Detector. -->
+        <property name="phpmd.command" value="phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
+        <echo msg="$> ${phpmd.command}" />
+        <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
     </target>
 
 
