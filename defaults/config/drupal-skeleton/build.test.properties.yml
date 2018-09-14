@@ -1,0 +1,21 @@
+# These properties are for running the Drupal Skeleton on circle.
+build:
+  artifact_mode: symlink
+  test_output: /dev/null
+
+drupal:
+  site_name: drupal-skeleton
+  uri: http://drupal-skeleton.local
+  hash_salt: temporary
+  root: web
+  profile: standard
+  database:
+    database: circle_test
+    username: ubuntu
+    password: 
+    host: 127.0.0.1
+  settings:
+    file_public_path: sites/default/files
+    file_private_path: 
+  twig:
+    debug: false

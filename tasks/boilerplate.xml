@@ -35,8 +35,14 @@
         <not><isset property="status.defaults_loaded" /></not>
         <then>
             <!-- Load properties for this environment, then for the default environment. -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" />
-            <property file="${build.dir}/conf/build.default.properties" />
+            <if>
+                <available file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                <then>
+                    <property file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                </then>
+            </if>
+            <property file="${build.dir}/.the-build/build.default.properties.yml" />
+            <property file="${build.thebuild.dir}/defaults.properties.yml" />
 
             <property name="status.defaults_loaded" value="true" />
         </then>
@@ -47,39 +53,7 @@
         Default target: status
         -->
     <target name="status">
-        <if>
-            <not><available file="${build.dir}/conf/build.default.properties" /></not>
-            <then>
-                <echo>You should at least have a default properties file. Start with:
-                vendor/bin/phing configure -Dbuild.env=default</echo>
-            </then>
-            <else>
-                <echo>A-ok.</echo>
-                <echoproperties />
-            </else>
-        </if>
-    </target>
-
-
-    <!-- Target: configure -->
-    <target name="configure" description="Interactive configuration for Drupal project settings.">
-        <phing phingfile="${phing.dir.boilerplate}/configure.xml" inheritAll="false" dir="${build.dir}">
-            <property name="build.env" value="${build.env}" />
-            <property name="build.dir" value="${build.dir}" />
-
-            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
-            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
-
-            <!-- Prompts and defaults -->
-            <property name="prompt.build.artifact_mode" value="Artifact mode (copy,symlink)" />
-            <property name="default.build.artifact_mode" value="symlink" />
-
-            <property name="prompt.build.test_output" value="Test output directory (for example, use '/tmp/artifacts' on CircleCI)" />
-            <property name="default.build.test_output" value="/dev/null" />
-
-            <property name="update" value="build.artifact_mode,build.test_output" />
-        </phing>
+        <echo>Hello! I'm the-build.</echo>
     </target>
 
 

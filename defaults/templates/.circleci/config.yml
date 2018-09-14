@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/@projectname@
+    working_directory: ~/${projectname}
     docker:
       - image: circleci/php:7.1-node-browsers
       - image: circleci/mysql:5.7-ram
@@ -12,8 +12,8 @@ jobs:
           MYSQL_DATABASE: circle_test
 
     environment:
-      - PALANTIR_ENVIRONMENT: circle
-      - DRUPAL_ROOT: web
+      - PALANTIR_ENVIRONMENT: circleci
+      - DRUPAL_ROOT: ${drupal.root}
       - NODE_VERSION: 8
 
     branches:

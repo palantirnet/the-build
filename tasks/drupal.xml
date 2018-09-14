@@ -38,80 +38,21 @@
     <property name="drupal.database.password" value="drupal" />
     <property name="drupal.database.host" value="127.0.0.1" />
     <property name="drupal.twig.debug" value="false" />
-    <property name="drupal.config_sync_directory" value="../conf/drupal/config" /> <!-- pantheon = private/config -->
-    <property name="build.drupal.settings" value="conf/drupal/settings.php" />
+    <property name="build.drupal.settings" value=".the-build/drupal.settings.php" />
     <property name="build.drupal.settings_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/settings.php" />
-    <property name="build.drupal.services" value="conf/drupal/services.yml" />
+    <property name="build.drupal.services" value=".the-build/drupal.services.yml" />
     <property name="build.drupal.services_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/services.yml" />
 
     <!-- These properties will generally not change. -->
     <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
+    <property name="drupal.config_sync_directory" value="../config/sites/${drupal.sites_subdir}" /> <!-- pantheon = private/config -->
     <property name="drupal.admin_user" value="admin" />
 
     <!-- Configuration properties for the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
     <property name="drush.uri" refid="drupal.uri" />
     <property name="drush.root" value="${build.dir}/${drupal.root}" />
-    <property name="drush.config" value="${build.dir}/conf/drushrc.php" />
-
-
-    <!-- Target: drupal-configure -->
-    <target name="drupal-configure" description="Configure the Drupal build.">
-        <!-- Generate a hash salt -->
-        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-
-        <phing phingfile="${phing.dir.drupal}/configure.xml" inheritAll="false" dir="${build.dir}">
-            <property name="build.env" value="${build.env}" />
-            <property name="build.dir" value="${build.dir}" />
-
-            <!-- Load properties from the environment we're editing, with the prefix "default.*" -->
-            <property file="${build.dir}/conf/build.${build.env}.properties" prefix="default" />
-            <property file="${build.dir}/conf/build.default.properties" prefix="default" />
-
-            <!-- Prompts and defaults -->
-            <property name="prompt.drupal.site_name" value="Human-readable site name" />
-            <property name="default.drupal.site_name" value="${projectname}" />
-
-            <property name="prompt.drupal.profile" value="Drupal install profile" />
-            <property name="default.drupal.profile" value="standard" />
-
-            <property name="prompt.drupal.database.database" value="Drupal database name" />
-            <property name="default.drupal.database.database" value="drupal" />
-
-            <property name="prompt.drupal.database.username" value="Drupal database username" />
-            <property name="default.drupal.database.username" value="root" />
-
-            <property name="prompt.drupal.database.password" value="Drupal database password" />
-            <property name="default.drupal.database.password" value="root" />
-
-            <property name="prompt.drupal.database.host" value="Drupal database host" />
-            <property name="default.drupal.database.host" value="127.0.0.1" />
-
-            <!-- Just defaults -->
-            <property name="default.drupal.settings.file_public_path" value="sites/default/files" />
-            <property name="default.drupal.settings.file_private_path" value="" />
-            <property name="default.drupal.twig.debug" value="false" />
-            <property name="default.drupal.uri" value="http://${projectname}.local" />
-            <property name="default.drupal.root" value="web" />
-
-            <!-- Generated hash salt -->
-            <property name="default.drupal.hash_salt" value="${hash_salt}" />
-
-            <property name="update" value="drupal.site_name,drupal.profile,drupal.database.database,drupal.database.username,drupal.database.password,drupal.database.host" />
-            <property name="dump" value="drupal.settings.file_public_path,drupal.settings.file_private_path,drupal.twig.debug,drupal.uri,drupal.hash_salt,drupal.root" />
-        </phing>
-    </target>
-
-
-    <!-- Target: drush-prepare-drushrc -->
-    <target name="drush-prepare-drushrc" description="Create a drushrc file for Vagrant.">
-        <!-- Copy the drushrc template and sub in variables. -->
-        <copy file="${phing.dir.drupal}/../conf/drushrc.php" tofile="${build.dir}/conf/drushrc.php" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-    </target>
+    <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
 
 
     <target name="drupal-build" description="Prepare Drupal for installation.">
