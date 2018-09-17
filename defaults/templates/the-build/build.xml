@@ -32,8 +32,16 @@
 
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
-        <echo>Configure this target to run the tests.</echo>
-        <!-- You may want to include one or more of the commands from the 'code-review' target here. -->
+        <phingcall target="code-review" />
+        <phingcall target="behat" />
+    </target>
+
+
+    <!-- Target: behat -->
+    <target name="behat">
+        <property name="behat.command" value="behat ${behat.args}" />
+        <echo msg="$> ${behat.command}" />
+        <exec command="${behat.command}" logoutput="true" checkreturn="true" />
     </target>
 
 
