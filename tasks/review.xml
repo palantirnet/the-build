@@ -22,10 +22,10 @@
       These values are used in the build.dist.xml template:
         phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} -.-suffixes=${phpmd.suffixes}
       -->
-    <property name="phpmd.directories" value="${drupal.root}/modules/custom/,${drupal.root}/themes/custom/" />
+    <property name="phpmd.directories" value="${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/" />
     <property name="phpmd.format" value="text" />
     <property name="phpmd.rulesets" value="${build.thebuild.dir}/conf/phpmd.xml" />
-    <property name="phpmd.suffixes" value="php,inc,module,install,profile" />
+    <property name="phpmd.suffixes" value="php,inc,module,theme,profile,install,test" />
 
 
     <!--
@@ -34,7 +34,7 @@
         phpcs -.-standard=${phpcs.standard} -.-ignore=${phpcs.ignore} ${phpcs.directories}
       -->
     <property name="phpcs.standard" value="${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" />
-    <property name="phpcs.directories" value="${drupal.root}/modules/custom ${drupal.root}/themes/custom" />
+    <property name="phpcs.directories" value="${drupal.root}/modules/custom ${drupal.root}/themes/custom ${drupal.root}/profiles/custom" />
     <property name="phpcs.ignore" value="*.md" />
 
 
