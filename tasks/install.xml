@@ -44,11 +44,21 @@
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
         <property name="drupal.hash_salt" value="${hash_salt}" override="true" />
 
-        <!-- Prompt for the Drupal root directory. -->
-        <propertyprompt propertyName="drupal.root" defaultValue="${default.drupal.root}" promptText="Drupal root" promptCharacter=":" />
-
         <!-- Prompt for the Drupal URI. -->
         <propertyprompt propertyName="drupal.uri" defaultValue="${default.drupal.uri}" promptText="Drupal URI" promptCharacter=":" />
+
+        <!-- Prompt for the web host. -->
+        <input propertyName="build.host" validArgs="acquia,pantheon,platform,other" message="Hosting platform" promptChar=":" />
+
+        <!-- Set and prompt for additional properties based on the host. We're not going
+             very deep here at the moment because there are several elements of the setup
+             that can vary, especially around the host-specific settings.php files. -->
+        <switch value="${build.host}">
+            <case value="acquia">
+                <property name="drupal.root" value="docroot" />
+            </case>
+            <default />
+        </switch>
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
         <property file="${build.thebuild.dir}/defaults.properties.yml" />
