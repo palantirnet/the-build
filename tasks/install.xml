@@ -60,6 +60,35 @@
             </filterchain>
         </copy>
 
+        <!-- Move the drupal root, if it's not 'web'. -->
+        <if>
+            <not><equals arg1="${drupal.root}" arg2="web" /></not>
+            <then>
+                <if>
+                    <and>
+                        <available file="${build.dir}/web" type="dir" />
+                        <not><available file="${build.dir}/${drupal.root}" type="dir" /></not>
+                    </and>
+                    <then>
+                        <echo msg="Moving the web/ directory to ${drupal.root}/" />
+                        <move file="${build.dir}/web" tofile="${build.dir}/${drupal.root}" />
+                    </then>
+                </if>
+
+                <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
+                <reflexive>
+                    <fileset dir="${build.dir}" includes="composer.json" />
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern='"web/(core|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                        </replaceregexp>
+                    </filterchain>
+                </reflexive>
+
+                <echo msg="Updating your composer.lock hash." />
+                <exec command="composer update --lock" logoutput="true" />
+            </then>
+        </if>
 
         <!-- Copy templates into place.
              These copy commands use <expandproperties /> for property substitution.
