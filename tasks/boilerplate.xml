@@ -18,6 +18,7 @@
     <!-- Uses the project directory name as the projectname -->
     <property name="build.dir" value="${application.startdir}" />
     <basename property="projectname" file="${build.dir}" suffix="local" />
+    <resolvepath file="${phing.dir.boilerplate}/../" propertyName="build.thebuild.dir" />
 
     <!-- Uses an environment variable for the build.env, if available. -->
     <if>
@@ -40,7 +41,7 @@
             <property name="status.defaults_loaded" value="true" />
         </then>
     </if>
-    
+
 
     <!--
         Default target: status
