@@ -289,4 +289,52 @@ ${modified_files}
     </target>
 
 
+    <target name="drupal-first-install">
+        <drush command="site-install" assume="yes">
+            <option name="site-name">${projectname}</option>
+            <option name="account-name">${drupal.admin_user}</option>
+            <option name="account-pass">admin</option>
+            <param>standard</param>
+        </drush>
+
+        <drush command="config-delete" assume="yes">
+            <param>field.field.node.article.comment</param>
+        </drush>
+        <drush command="config-delete" assume="yes">
+            <param>field.storage.node.comment</param>
+        </drush>
+
+        <drush command="pm-uninstall" assume="yes">
+            <param>automated_cron</param>
+            <param>big_pipe</param>
+            <param>comment</param>
+            <param>contact</param>
+            <param>history</param>
+            <param>search</param>
+            <param>tour</param>
+        </drush>
+
+        <drush command="config-set" assume="yes">
+            <param>user.settings</param>
+            <param>register</param>
+            <param>admin_only</param>
+        </drush>
+        <drush command="config-set" assume="yes">
+            <param>system.date</param>
+            <param>country.default</param>
+            <param>US</param>
+        </drush>
+        <drush command="config-set" assume="yes">
+            <param>system.date</param>
+            <param>timezone.default</param>
+            <param>America/Chicago</param>
+        </drush>
+        <drush command="config-set" assume="yes">
+            <param>system.date</param>
+            <param>timezone.user.configurable</param>
+            <param>false</param>
+        </drush>
+
+        <drush command="config-export" assume="yes" />
+    </target>
 </project>
