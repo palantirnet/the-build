@@ -95,8 +95,8 @@
                     </filterchain>
                 </reflexive>
 
-                <echo msg="Updating your composer.lock hash." />
-                <exec command="composer update --lock" logoutput="true" />
+                <echo msg="Updating your composer.lock hash" />
+                <exec command="composer update --lock" dir="${application.startdir}" />
             </then>
         </if>
 
