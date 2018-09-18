@@ -48,7 +48,7 @@
         <propertyprompt propertyName="drupal.uri" defaultValue="${default.drupal.uri}" promptText="Drupal URI" promptCharacter=":" />
 
         <!-- Prompt for the web host. -->
-        <input propertyName="build.host" validArgs="acquia,pantheon,platform,other" message="Hosting platform" promptChar=":" />
+        <input propertyName="build.host" validArgs="acquia,pantheon,platformsh,other" message="Hosting platform" promptChar=":" />
 
         <!-- Set and prompt for additional properties based on the host. We're not going
              very deep here at the moment because there are several elements of the setup
@@ -121,13 +121,57 @@
         <!-- Copy the CircleCI properties. -->
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
 
-        <!-- Copy Drupal configuration templates (mostly used by the 'build' target). -->
-        <copy todir="${application.startdir}/.the-build">
-            <fileset dir="${phing.dir.install}/../defaults/templates" includes="drupal.*" />
+        <!-- Use a standard Drupal settings.php file. -->
+        <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.php" tofile="${application.startdir}/${drupal.root}/sites/default/settings.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
         </copy>
+
+        <!-- Use the default Drupal services.yml file. -->
+        <copy file="${application.startdir}/${drupal.root}/sites/default/default.services.yml" tofile="${application.startdir}/${drupal.root}/sites/default/services.yml" overwrite="true">
+            <filterchain>
+                <striplinecomments>
+                    <comment value="#" />
+                </striplinecomments>
+            </filterchain>
+        </copy>
+
+        <!-- Add host-specific settings.php and deployment files. -->
+        <switch value="${build.host}">
+            <case value="acquia">
+                <copy file="${phing.dir.install}/../defaults/config/settings.acquia.php" todir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.build-acquia.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${phing.dir.install}/../defaults/templates/the-build/build.acquia.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+
+            <case value="pantheon">
+                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+
+            <case value="platformsh">
+                <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+            <default />
+        </switch>
+
+        <!-- Copy Drupal configuration templates (used by the 'build' target). -->
+        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.services.build.yml" />
+        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.settings.build.php" />
 
         <!-- Copy Drush configuration. -->
         <copy file="${phing.dir.install}/../defaults/templates/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Configure the .gitignore for our settings.php structure. -->
+        <copy file="${phing.dir.install}/../defaults/templates/project.gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>

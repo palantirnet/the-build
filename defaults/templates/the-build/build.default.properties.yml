@@ -21,7 +21,7 @@ drupal:
     host: "${drupal.database.host}" 
 
   twig:
-    debug: false
+    debug: true
 
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
