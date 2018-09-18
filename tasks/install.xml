@@ -81,7 +81,7 @@
                     </and>
                     <then>
                         <echo msg="Moving the web/ directory to ${drupal.root}/" />
-                        <move file="${build.dir}/web" tofile="${build.dir}/${drupal.root}" />
+                        <exec command="mv web ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
                     </then>
                 </if>
 
