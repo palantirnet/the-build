@@ -141,6 +141,7 @@
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
+                        <phing dir="${application.startdir}" target="build" inheritAll="false" />
                         <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
                     </then>
                 </if>
