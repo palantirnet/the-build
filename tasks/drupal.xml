@@ -297,17 +297,9 @@ ${modified_files}
             <param>standard</param>
         </drush>
 
-        <drush command="config-delete" assume="yes">
-            <param>field.field.node.article.comment</param>
-        </drush>
-        <drush command="config-delete" assume="yes">
-            <param>field.storage.node.comment</param>
-        </drush>
-
         <drush command="pm-uninstall" assume="yes">
             <param>automated_cron</param>
             <param>big_pipe</param>
-            <param>comment</param>
             <param>contact</param>
             <param>history</param>
             <param>search</param>
