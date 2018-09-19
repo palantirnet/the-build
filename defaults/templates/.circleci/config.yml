@@ -37,12 +37,6 @@ jobs:
             echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
             echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
       - run:
-          name: PHP version
-          command: php -r 'phpinfo(INFO_GENERAL | INFO_CREDITS | INFO_CONFIGURATION | INFO_MODULES);'
-      - run:
-          name: Composer version
-          command: composer --version
-      - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
       - run:
@@ -77,6 +71,11 @@ jobs:
           paths:
             - ".git"
 
+      # Run code reviews before installing Drupal, so that tests fail earlier.
+      - run:
+          name: Run code reviews
+          command: vendor/bin/phing code-review
+
       - run:
           name: Wait for DB
           # Dockerize is preinstalled in circleci/* docker image
@@ -91,9 +90,6 @@ jobs:
       - run:
           name: Run any migrations
           command: vendor/bin/phing migrate
-      - run:
-          name: Run code reviews
-          command: vendor/bin/phing code-review
       - run:
           name: Run Behat tests
           command: |
