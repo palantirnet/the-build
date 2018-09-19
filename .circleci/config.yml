@@ -16,11 +16,6 @@ jobs:
       - DRUPAL_ROOT: web
       - NODE_VERSION: 8
 
-    branches:
-      ignore:
-        - gh-pages
-        - /.*(readme|documentation).*/
-
     steps:
       - run:
           name: Install packages
@@ -109,3 +104,14 @@ jobs:
           path: /tmp/artifacts
       - store_test_results:
           path: /tmp/artifacts
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+                - /.*(readme|documentation).*/
