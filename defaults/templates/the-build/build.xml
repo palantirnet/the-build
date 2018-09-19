@@ -39,7 +39,7 @@
 
     <!-- Target: behat -->
     <target name="behat">
-        <property name="behat.command" value="behat ${behat.args}" />
+        <property name="behat.command" value="vendor/bin/behat ${behat.args}" />
         <echo msg="$> ${behat.command}" />
         <exec command="${behat.command}" logoutput="true" checkreturn="true" />
     </target>
