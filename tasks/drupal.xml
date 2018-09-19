@@ -334,6 +334,20 @@ ${modified_files}
             <param>timezone.user.configurable</param>
             <param>false</param>
         </drush>
+        <drush command="config-delete" assume="yes">
+            <param>core.extension</param>
+            <param>module.standard</param>
+        </drush>
+        <drush command="config-set" assume="yes">
+            <param>core.extension</param>
+            <param>module.config_installer</param>
+            <param>1000</param>
+        </drush>
+        <drush command="config-set" assume="yes">
+            <param>core.extension</param>
+            <param>profile</param>
+            <param>config_installer</param>
+        </drush>
 
         <drush command="config-export" assume="yes" />
     </target>
