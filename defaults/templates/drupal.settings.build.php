@@ -18,7 +18,6 @@ $config_directories = array();
 $config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.config_sync_directory}';
 
 $settings['hash_salt'] = '${drupal.hash_salt}';
-$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
 $settings['container_yamls'][] = __DIR__ . '/services.build.yml';
 
 $settings['file_public_path'] = '${drupal.settings.file_public_path}';
