@@ -30,17 +30,11 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 ## Available properties
 ### Build
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `build.drupal.settings` | `conf/drupal/settings.php` | Source template for Drupal's `settings.php` file. |
-| `build.drupal.settings_dest` | `web/sites/default/settings.php` | Destination for the templated settings.php file. |
-| `build.drupal.services` | `conf/drupal/services.yml` | Source template for Drupal's `services.yml` file. |
-| `build.drupal.services_dest` | `web/sites/default/services.yml` | Destination for the templated `services.yml` file. |
-
+* [Configuration options under the 'build' property](../defaults.properties.yml)
 
 ### Drupal
 
-* [Configuration options](../defaults.properties.yml)
+* [Configuration options under the 'drupal' property](../defaults.properties.yml)
 
 ### Code Review
 
@@ -76,7 +70,7 @@ Use [PHP Mess Detector](https://phpmd.org/) to check for general PHP best practi
 ### Artifacts
 
 * [Artifact build process](artifacts.md)
-* [Configuration options](../defaults.properties.yml)
+* [Configuration options under the 'artifact'](../defaults.properties.yml)
 
 #### Minimum configuration
 

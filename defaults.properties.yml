@@ -1,10 +1,4 @@
-build:
-  drupal:
-    settings: .the-build/drupal.settings.build.php
-    settings_dest: "${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php"
-    services: .the-build/drupal.services.build.yml
-    services_dest: "${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml"
-
+# Drupal configuration used by tasks/drupal.xml
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
   # configuration in your `composer.json`. Use caution when changing this value.
@@ -53,6 +47,23 @@ drupal:
   twig:
     # Whether to enable twig debugging.
     debug: false
+
+# Build configuration used by tasks/drupal.xml
+build:
+  drupal:
+    # Source template for Drupal's `settings.php` file. This may vary per build
+    # environment.
+    settings: .the-build/drupal.settings.build.php
+
+    # Destination for the templated settings.php file.
+    settings_dest: "${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php"
+
+    # Source template for Drupal's `services.yml` file. This may vary per build
+    # environment.
+    services: .the-build/drupal.services.build.yml
+
+    # Destination for the templated `services.yml` file.
+    services_dest: "${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml"
 
 # Configuration for tasks/artifact.xml
 artifact:
