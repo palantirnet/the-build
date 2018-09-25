@@ -3,7 +3,7 @@
     <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
 
-    <import file="vendor/palantirnet/the-build/tasks/boilerplate.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
 
 
     <!-- Make these commands available by default. -->

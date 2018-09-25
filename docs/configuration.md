@@ -36,7 +36,7 @@ Cool! This phing-ism is what allows us to do environment-specific property layer
   ```
   phing build -Dbuild.env=circleci
   ```
-1. Set the `build.dir`, `projectname`, `build.thebuild.dir`, and `build.env` core properties in `tasks/boilerplate.xml`
+1. Set the `build.dir`, `projectname`, `build.thebuild.dir`, and `build.env` core properties in `tasks/the-build.xml`
 1. Load properties from the project's `.the-build/build.[environment].properties.yml`
 1. Load properties from the project's `.the-build/build.default.properties.yml`
 1. Load default property values from the-build's own `defaults.properties.yml` file
@@ -64,7 +64,7 @@ There are four core properties that are always available in the-build:
 | `build.thebuild.dir` | Path to `the-build` code. Used to find and load default properties and templates. |
 | `build.env` | The build environment. Used for loading environment-specific properties files, and set from the `PALANTIR_ENVIRONMENT` environment variable. |
 
-These properties are provided by the-build's `boilerplate.xml` init process, and do not need to be set or overridden in your local build configuration.
+These properties are provided by the init process in `the-build.xml`, and do not need to be set or overridden in your local build configuration.
 
 ## Available properties
 
