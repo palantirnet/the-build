@@ -142,29 +142,23 @@ Alternatively, you may chose to not set the `artifact.git.remote_branch` propert
 
 ### Acquia
 
-* [Configuration options](../defaults.properties.yml)
+* [Configuration options under the 'acquia' property](../defaults.properties.yml)
 
-### DB Loading
+### Database loading
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `db.load.export_pattern` | `artifacts/*` | Pattern to match gzipped database dump files. |
-| `db.load.mysql_command` | `drush sqlc` | Command with which to load stuff into Drupal. |
-| `db.load.file` |  | Load a specific file rather than one matching the `export_pattern`. |
+* [Configuration options under the 'db' property](../defaults.properties.yml)
+* [tasks/lib/db.xml](../tasks/lib/db.xml)
 
 Example usage:
 
 ```
     <import file="vendor/palantirnet/the-build/tasks/lib/db.xml" />
+    <property name="db.load.export_prefix" value="artifacts/backups/prod-*.sql.gz" />
 
     <target name="load">
-        <phingcall target="load-db">
-            <property name="db.load.export_prefix" value="artifacts/prod-*" />
-        </phingcall>
+        <phingcall target="load-db" />
     </target>
 ```
-
-[More info](../tasks/lib/db.xml)
 
 ----
 Copyright 2016 Palantir.net, Inc.

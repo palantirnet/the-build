@@ -102,3 +102,21 @@ acquia:
 
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
+
+# Configuration for tasks/lib/db.xml
+db:
+  load:
+    # Pattern to match gzipped database dump files.
+    export_pattern: artifacts/backups/*.sql.gz
+
+    # Command to extract text contents of the backup file.
+    contents_command: gunzip -c
+
+    # Command to load database contents into Drupal.
+    mysql_command: drush sqlc
+
+    # Load a specific file rather than one matching the `export_pattern`. This can be used
+    # if your build relies on a seed database that is checked in to the repository.
+    # Otherwise, you may occasionally want to set this value at run time:
+    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
+    #file:
