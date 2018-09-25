@@ -42,24 +42,7 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 ### Drupal
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `drupal.site_name` | `Drupal` | Human-readable name for your site. |
-| `drupal.profile` | `config_installer` | Install profile. |
-| `drupal.database.database` | `drupal` |  |
-| `drupal.database.username` | `root` |  |
-| `drupal.database.password` | `root` |  |
-| `drupal.database.host` | `127.0.0.1` |  |
-| `drupal.settings.file_public_path` | `sites/default/files` | Relative path to public files. |
-| `drupal.settings.file_private_path` | `sites/default/private` | Relative path to private files. |
-| `drupal.twig.debug` | | Whether to enable twig debugging. |
-| `drupal.uri` | `http://drupal.local` | Your site's URI; the default may be the URI of your local development environment. |
-| `drupal.hash_salt` | `temporary` | Salt for Drupal's password hashing. A unique salt is generated when you install `the-build`. |
-| `drupal.root` | `web` | Relative path to the Drupal web root. This is co-dependent with the composer installer configuration in your `composer.json`. Changing this will probably cause problems. |
-| `drupal.sites_subdir` | `default` | Name of the sites subdirectory where the `settings.php` file should live. |
-| `drupal.admin_user` | `admin` | Drupal admin username, if you feel inclined to change it. |
-
-[More info](../tasks/drupal.xml#L16-L38)
+* [Configuration options](../defaults.properties.yml)
 
 ### Code Review
 

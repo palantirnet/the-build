@@ -4,51 +4,25 @@
   @file drupal.xml
   Targets for managing Drupal.
 
-  Copyright 2016 Palantir.net, Inc.
+  Include this file in your build.xml with:
+    <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+
+  @see defaults.properties.yml
+
+  Copyright 2016, 2018 Palantir.net, Inc.
   -->
 
 <project name="Drupal" default="drupal-build">
-    <!--
-      Include this file in your build.xml with:
-        <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
-      -->
-
-
-    <taskdef name="drush" classname="Drush\Task" />
-
 
     <fail unless="build.dir" />
     <fail unless="build.env" />
     <fail unless="projectname" />
 
+    <fail unless="drupal.root" />
 
-    <!-- These properties will generally be set in the default build properties file. -->
-    <property name="drupal.root" value="web" />
-    <property name="drupal.site_name" value="${projectname}" />
-    <property name="drupal.profile" value="standard" />
-    <property name="drupal.hash_salt" value="temporary" />
 
-    <property name="drupal.settings.file_public_path" value="sites/default/files" />
-    <property name="drupal.settings.file_private_path" value="" />
-
-    <!-- These properties will probably change per-environment. -->
-    <property name="drupal.uri" value="http://${projectname}.local" />
-    <property name="drupal.database.database" value="default" />
-    <property name="drupal.database.username" value="drupal" />
-    <property name="drupal.database.password" value="drupal" />
-    <property name="drupal.database.host" value="127.0.0.1" />
-    <property name="drupal.twig.debug" value="false" />
-    <property name="build.drupal.settings" value=".the-build/drupal.settings.build.php" />
-    <property name="build.drupal.settings_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php" />
-    <property name="build.drupal.services" value=".the-build/drupal.services.build.yml" />
-    <property name="build.drupal.services_dest" value="${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml" />
-
-    <!-- These properties will generally not change. -->
-    <property name="drupal.sites_subdir" value="default" /> <!-- Directory within 'sites' dir in the drupal root -->
-    <property name="drupal.config_sync_directory" value="../config/sites/${drupal.sites_subdir}" /> <!-- pantheon = private/config -->
-    <property name="drupal.admin_user" value="admin" />
-
-    <!-- Configuration properties for the 'drush' Phing task. -->
+    <!-- Include and configure the 'drush' Phing task. -->
+    <taskdef name="drush" classname="Drush\Task" />
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
     <property name="drush.uri" refid="drupal.uri" />
     <property name="drush.root" value="${build.dir}/${drupal.root}" />
@@ -61,10 +35,12 @@
         <phingcall target="drupal-prepare-services" />
     </target>
 
+
     <!-- Target: drupal-prepare-filesystem -->
     <target name="drupal-prepare-filesystem">
         <fail unless="drupal.root" />
         <fail unless="drupal.sites_subdir" />
+        <fail unless="drupal.settings.file_public_path" />
 
         <!-- Create the Drupal modules, themes, profiles, and sites directories. -->
         <foreach target="create-placeholder" param="placeholder_for">
@@ -131,6 +107,7 @@
         <fail unless="drupal.site_name" />
         <fail unless="drupal.sites_subdir" />
         <fail unless="drupal.profile" />
+        <fail unless="drupal.admin_user" />
 
         <phingcall target="validate-clean-conf" />
 
@@ -182,6 +159,8 @@
         installed site to prod.
         -->
     <target name="drupal-dump-db" description="Generate a database dump.">
+        <fail unless="drupal.admin_user" />
+
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
@@ -290,6 +269,8 @@ ${modified_files}
 
 
     <target name="drupal-first-install">
+        <fail unless="drupal.admin_user" />
+
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.admin_user}</option>
@@ -343,4 +324,6 @@ ${modified_files}
 
         <drush command="config-export" assume="yes" />
     </target>
+
+
 </project>

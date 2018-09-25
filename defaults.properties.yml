@@ -1,13 +1,44 @@
 build:
   artifact_mode: symlink
   test_output: /dev/null
+  drupal:
+    settings: .the-build/drupal.settings.build.php
+    settings_dest: "${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php"
+    services: .the-build/drupal.services.build.yml
+    services_dest: "${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml"
 
 drupal:
+  # Relative path to the Drupal web root. This is co-dependent with the composer installer
+  # configuration in your `composer.json`. Use caution when changing this value.
   root: web
+
+  # Human-readable name for your site.
+  site_name: "${projectname}"
+
+  # Your site's URI; the default should be the URI of your local development environment.
   uri: "https://${projectname}.local"
+
+  # Salt for Drupal's password hashing. A unique salt is generated when you install
+  # `the-build`.
   hash_salt: temporary
+
+  # Drupal install profile to use for the drupal-install target.
   profile: config_installer
 
+  # Name of the sites subdirectory where the `settings.php` file should live.
+  sites_subdir: default
+
+  # Path to the Drupal config directory, relative to the Drupal root.
+  config_sync_directory: "../config/sites/${drupal.sites_subdir}"
+
+  # Drupal admin username, if you feel inclined to change it.
+  admin_user: admin
+
+  # Whether to allow running the drupal-install target when there are local changes to the
+  # exported Drupal config.
+  allow_dirty_config: no
+
+  # Database connection for Drupal.
   database:
     database: drupal
     username: root
@@ -15,10 +46,14 @@ drupal:
     host: 127.0.0.1
 
   settings:
+    # Path to the Drupal public files directory, relative to the Drupal root.
     file_public_path: sites/default/files
+
+    # Path to the Drupal private files directory, relative to the Drupal root.
     file_private_path: ""
 
   twig:
+    # Whether to enable twig debugging.
     debug: false
 
 # Configuration for tasks/artifact.xml
