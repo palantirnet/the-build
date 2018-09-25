@@ -23,7 +23,8 @@
     <basename property="projectname" file="${build.dir}" suffix="local" />
 
     <!-- Provide the path to the-build's code for loading templates and defaults -->
-    <resolvepath file="${phing.dir.the-build}/../" propertyName="build.thebuild.dir" />
+    <!-- Phing maps the project name "the-build" to "the_build". Should we use the_build instead to avoid this confusion? -->
+    <resolvepath file="${phing.dir.the_build}/../" propertyName="build.thebuild.dir" />
 
     <!-- Use the PALANTIR_ENVIRONMENT env variable to set the build environment. -->
     <if>
