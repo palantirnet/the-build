@@ -1,34 +1,22 @@
 <?php
 
-$databases = array();
+/**
+ * @file
+ * Drupal settings file template for use on Acquia environments.
+ */
 
-$settings['cache']['default'] = 'cache.backend.database';
+$settings['trusted_host_patterns'][] = "^{$_ENV['AH_SITE_ENVIRONMENT']}dev.prod.acquia-sites.com";
+$settings['trusted_host_patterns'][] = "^{$_ENV['AH_SITE_ENVIRONMENT']}stg.prod.acquia-sites.com";
 
-$settings['hash_salt'] = '${drupal.hash_salt}';
-$settings['update_free_access'] = FALSE;
-$settings['container_yamls'][] = __DIR__ . '/services.yml';
-
-$settings['trusted_host_patterns'] = array(
-  '^${acquia.accountname}dev.prod.acquia-sites.com',
-  '^${acquia.accountname}stg.prod.acquia-sites.com',
-);
-
-$settings['file_public_path'] = 'files';
+$settings['file_public_path'] = '${drupal.settings.file_public_path}';
 $settings['file_private_path'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
+$config['system.file']['path']['temporary'] = $_ENV['TEMP'];
 
-// Configure the tmp directory.
-$config['system.file']['path']['temporary'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/tmp";
-
-// Include the Acquia database connection and other config.
-if (file_exists('/var/www/site-php')) {
-  require '/var/www/site-php/${acquia.accountname}/${acquia.accountname}-settings.inc';
-}
-
-// Use our own config sync directory.
-$config_directories = array();
+$config_directories = [];
 $config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.config_sync_directory}';
 
-//// Add an htaccess prompt on dev.
+
+//// Add an htaccess prompt on dev and staging environments.
 //// @see https://docs.acquia.com/articles/password-protect-your-non-production-environments-acquia-hosting#phpfpm
 
 // Make sure Drush keeps working.

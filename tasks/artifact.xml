@@ -44,8 +44,8 @@
         <property name="artifact.prefix" value="artifact-" />
         <property name="artifact.git.remote_base_branch" value="master" />
         <property name="artifact.git.remote_name" value="origin" />
-        <property name="artifact.gitignore_template" value="${phing.dir.artifact}/../conf/artifact-gitignore" />
-        <property name="artifact.readme_template" value="${phing.dir.artifact}/../conf/artifact-README.md" />
+        <property name="artifact.gitignore_template" value="${build.thebuild.dir}/defaults/templates/artifact.gitignore" />
+        <property name="artifact.readme_template" value="${build.thebuild.dir}/defaults/templates/artifact.README.md" />
 
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->

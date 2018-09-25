@@ -2,68 +2,198 @@
 
 <!--
   @file install.xml
-  Target for installing the-build templates into a project.
+  Targets for installing the-build templates into a project.
 
-  Copyright 2016 Palantir.net, Inc.
+  Copyright 2016, 2017, 2018 Palantir.net, Inc.
   -->
 
 <project name="install" default="install">
-    <!--
-        This can be used to install the build template into a project.
-      -->
 
 
     <property name="build.dir" value="${application.startdir}" />
     <property name="build.env" value="default" />
     <basename property="projectname" file="${build.dir}" suffix="local" />
+    <resolvepath file="${phing.dir.install}/../" propertyName="build.thebuild.dir" />
 
 
     <!-- Target: install -->
     <target name="install" description="Install the Phing build template into your project.">
-        <!-- Copy the build file template. -->
-        <copy file="${phing.dir.install}/../build.dist.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+
+        <!-- Copy the build file template.
+             This doesn't do any property substitution except for the "project name",
+             which is the name of the install directory.
+             -->
+        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
-                    <token key="projectname" value="${projectname}"/>
+                    <token key="projectname" value="${projectname}" />
                 </replacetokens>
             </filterchain>
         </copy>
 
-        <!-- Copy the behat template. -->
-        <copy file="${phing.dir.install}/../behat.dist.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
+
+        <!-- Configuration prompts.
+             This creates the initial project properties file.
+             -->
+        <echo message="Configure the default environment..." />
+
+        <property file="${build.thebuild.dir}/defaults.properties.yml" prefix="default" />
+        <mkdir dir="${application.startdir}/.the-build" />
+
+        <!-- Generate a hash salt for Drupal. -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+        <property name="drupal.hash_salt" value="${hash_salt}" override="true" />
+
+        <!-- Prompt for the Drupal URI. -->
+        <propertyprompt propertyName="drupal.uri" defaultValue="${default.drupal.uri}" promptText="Drupal URI" promptCharacter=":" />
+
+        <!-- Prompt for the web host. -->
+        <input propertyName="build.host" validArgs="acquia,pantheon,platformsh,other" message="Hosting platform" promptChar=":" />
+
+        <!-- Set and prompt for additional properties based on the host. We're not going
+             very deep here at the moment because there are several elements of the setup
+             that can vary, especially around the host-specific settings.php files. -->
+        <switch value="${build.host}">
+            <case value="acquia">
+                <property name="drupal.root" value="docroot" />
+            </case>
+            <default />
+        </switch>
+
+        <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
+        <property file="${build.thebuild.dir}/defaults.properties.yml" />
+
+        <!-- Create the default properties file. -->
+        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.default.properties.yml" tofile="${application.startdir}/.the-build/build.default.properties.yml" overwrite="true">
             <filterchain>
-                <replacetokens>
-                    <token key="projectname" value="${projectname}"/>
-                </replacetokens>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Move the drupal root, if it's not drupal.root.old -->
+        <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
+        <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+
+        <if>
+            <not><equals arg1="${drupal.root}" arg2="${drupal.root.old}" /></not>
+            <then>
+                <if>
+                    <and>
+                        <available file="${build.dir}/${drupal.root.old}" type="dir" />
+                        <not><available file="${build.dir}/${drupal.root}" type="dir" /></not>
+                    </and>
+                    <then>
+                        <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+                        <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                    </then>
+                </if>
+
+                <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
+                <reflexive>
+                    <fileset dir="${build.dir}" includes="composer.json" />
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern='"${drupal.root.old}/(core|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                        </replaceregexp>
+                    </filterchain>
+                </reflexive>
+
+                <echo msg="Updating your composer.lock hash" />
+                <exec command="composer update --lock" dir="${application.startdir}" />
+            </then>
+        </if>
+
+        <!-- Copy templates into place.
+             These copy commands use <expandproperties /> for property substitution.
+             -->
+        <!-- Copy the behat template. -->
+        <copy file="${phing.dir.install}/../defaults/templates/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
+            <filterchain>
+                <expandproperties />
             </filterchain>
         </copy>
 
         <!-- Copy the CircleCI configuration -->
         <copy todir="${application.startdir}/" overwrite="true">
-            <fileset dir="${phing.dir.install}/../" includes=".circleci/" />
+            <fileset dir="${phing.dir.install}/../defaults/templates" includes=".circleci/" />
             <filterchain>
-                <replacetokens>
-                    <token key="projectname" value="${projectname}"/>
-                </replacetokens>
+                <expandproperties />
             </filterchain>
         </copy>
 
         <!-- Copy the CircleCI properties. -->
-        <copy file="${phing.dir.install}/../conf/build.circle.dist.properties" tofile="${application.startdir}/conf/build.circle.properties" overwrite="true" />
+        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
 
-        <!-- Copy the build configuration templates. -->
-        <mkdir dir="${application.startdir}/conf" />
-        <copy tofile="${application.startdir}/conf/apache.circle.conf" file="${phing.dir.install}/../conf/apache.circle.conf" overwrite="true" />
-        <copy todir="${application.startdir}/conf/drupal">
-            <fileset dir="${phing.dir.install}/../conf/drupal" />
+        <!-- Use a standard Drupal settings.php file. -->
+        <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.php" tofile="${application.startdir}/${drupal.root}/sites/default/settings.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
         </copy>
 
-        <echo message="Configure the default environment..." />
-        <phing target="configure" phingfile="${phing.dir.install}/boilerplate.xml" />
-        <phing target="drupal-configure" phingfile="${phing.dir.install}/drupal.xml" />
-        <phing target="drush-prepare-drushrc" phingfile="${phing.dir.install}/drupal.xml" />
+        <!-- Use the default Drupal services.yml file. -->
+        <copy file="${application.startdir}/${drupal.root}/sites/default/default.services.yml" tofile="${application.startdir}/${drupal.root}/sites/default/services.yml" overwrite="true">
+            <filterchain>
+                <striplinecomments>
+                    <comment value="#" />
+                </striplinecomments>
+            </filterchain>
+        </copy>
 
-        <echo message="To configure properties for more environments, run: vendor/bin/phing configure -Dbuild.env=your_environment" />
+        <!-- Add host-specific settings.php and deployment files. -->
+        <switch value="${build.host}">
+            <case value="acquia">
+                <copy file="${phing.dir.install}/../defaults/config/settings.acquia.php" todir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.build-acquia.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${phing.dir.install}/../defaults/templates/the-build/build.acquia.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+
+            <case value="pantheon">
+                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+
+            <case value="platformsh">
+                <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${application.startdir}/${drupal.root}/sites/default" />
+                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+            </case>
+            <default />
+        </switch>
+
+        <!-- Copy Drupal configuration templates (used by the 'build' target). -->
+        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.services.build.yml" />
+        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.settings.build.php" />
+
+        <!-- Copy Drush configuration. -->
+        <copy file="${phing.dir.install}/../defaults/templates/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Configure the .gitignore for our settings.php structure. -->
+        <copy file="${phing.dir.install}/../defaults/templates/project.gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- If we're using the-vagrant, offer to install Drupal. -->
+        <if>
+            <equals arg1="${env.PALANTIR_ENVIRONMENT}" arg2="vagrant" />
+            <then>
+                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
+                <if>
+                    <equals arg1="${install_now}" arg2="y" />
+                    <then>
+                        <phing dir="${application.startdir}" target="build" inheritAll="false" />
+                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+                    </then>
+                </if>
+            </then>
+        </if>
     </target>
 
 </project>

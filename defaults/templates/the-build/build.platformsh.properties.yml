@@ -1,0 +1,6 @@
+# @file
+# Configuration properties specific to the Platform.sh deployment.
+build:
+  drupal:
+    settings: .the-build/drupal.settings.build-platformsh.php
+    services_dest: artifacts/dev/null

@@ -24,7 +24,7 @@
       -->
     <property name="phpmd.directories" value="${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/" />
     <property name="phpmd.format" value="text" />
-    <property name="phpmd.rulesets" value="${build.thebuild.dir}/conf/phpmd.xml" />
+    <property name="phpmd.rulesets" value="${build.thebuild.dir}/defaults/config/phpmd.xml" />
     <property name="phpmd.suffixes" value="php,inc,module,theme,profile,install,test" />
 
 
@@ -42,7 +42,7 @@
       PHP linter configuration.
       This value is used by the <phplint> task in the build.dist.xml template.
       -->
-    <property name="phplint.includesfile" value="${build.thebuild.dir}/conf/phplint.txt" />
+    <property name="phplint.includesfile" value="${build.thebuild.dir}/defaults/config/phplint.txt" />
 
 
     <!--

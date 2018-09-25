@@ -1,0 +1,13 @@
+# @file
+# Configuration properties specific to the CircleCI environment.
+drupal:
+  database:
+    database: circle_test
+    username: root
+    password: ""
+    host: 127.0.0.1
+  twig:
+    debug: false
+
+behat:
+  args: "--profile=circle --suite=default --strict --format=junit --out=/tmp/artifacts --tags=~@skipci"

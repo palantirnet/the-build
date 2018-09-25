@@ -1,0 +1,30 @@
+build:
+  artifact_mode: symlink
+  test_output: /dev/null
+
+drupal:
+  root: web
+  uri: "https://${projectname}.local"
+  hash_salt: temporary
+  profile: config_installer
+
+  database:
+    database: drupal
+    username: root
+    password: root
+    host: 127.0.0.1
+
+  settings:
+    file_public_path: sites/default/files
+    file_private_path: ""
+
+  twig:
+    debug: false
+
+artifact:
+  directory: artifacts/build
+  git:
+    # The following property is commented out, because this value should only be set in
+    # per-project properties files.
+    # remote:
+      

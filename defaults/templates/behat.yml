@@ -17,12 +17,12 @@ default:
       selenium2:
         wd_host: "http://127.0.0.1:8643/wd/hub"
       javascript_session: selenium2
-      base_url: http://@projectname@.local
+      base_url: http://${projectname}.local
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: 'drupal'
       drupal:
-        drupal_root: 'web'
+        drupal_root: '${drupal.root}'
       text:
         username_field: 'name'
         password_field: 'pass'
@@ -33,4 +33,4 @@ default:
 circle:
   extensions:
     Behat\MinkExtension:
-      base_url: http://@projectname@.local:8000
+      base_url: http://${projectname}.local:8000

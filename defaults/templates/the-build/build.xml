@@ -12,7 +12,6 @@
     <import file="vendor/palantirnet/the-build/tasks/review.xml" />
 
 
-
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
         <phingcall target="drupal-build" />
@@ -33,8 +32,16 @@
 
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
-        <echo>Configure this target to run the tests.</echo>
-        <!-- You may want to include one or more of the commands from the 'code-review' target here. -->
+        <phingcall target="code-review" />
+        <phingcall target="behat" />
+    </target>
+
+
+    <!-- Target: behat -->
+    <target name="behat">
+        <property name="behat.command" value="vendor/bin/behat ${behat.args}" />
+        <echo msg="$> ${behat.command}" />
+        <exec command="${behat.command}" logoutput="true" checkreturn="true" />
     </target>
 
 
@@ -46,12 +53,12 @@
         </phplint>
 
         <!-- Run PHP Code Sniffer. -->
-        <property name="phpcs.command" value="phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+        <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
         <echo msg="$> ${phpcs.command}" />
         <exec command="${phpcs.command}" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
-        <property name="phpmd.command" value="phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
+        <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
         <echo msg="$> ${phpmd.command}" />
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
     </target>

@@ -1,0 +1,6 @@
+# See sites/default/default.services.yml for details.
+parameters:
+  twig.config:
+    debug: ${drupal.twig.debug}
+    auto_reload: null
+    cache: true
