@@ -1,5 +1,4 @@
 build:
-  artifact_mode: symlink
   test_output: /dev/null
   drupal:
     settings: .the-build/drupal.settings.build.php

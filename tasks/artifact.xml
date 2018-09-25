@@ -243,7 +243,7 @@
             -->
         <phing target="build" phingfile="${phing.file}" inheritAll="false" dir=".">
             <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
-            <property name="build.artifact_mode" value="copy" override="true" />
+            <property name="includeresource.mode" value="copy" override="true" />
         </phing>
     </target>
 

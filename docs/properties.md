@@ -32,7 +32,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 | Property | Default value | What is it? |
 |---|---|---|
-| `build.artifact_mode` | `symlink` | Whether to `symlink` or `copy` assets like CSS, JS, and other code during the build. |
 | `build.test_output` | `/dev/null` | Where to output reports from tests. On Circle, try `${env.CIRCLE_TEST_REPORTS}`. |
 | `build.drupal.settings` | `conf/drupal/settings.php` | Source template for Drupal's `settings.php` file. |
 | `build.drupal.settings_dest` | `web/sites/default/settings.php` | Destination for the templated settings.php file. |

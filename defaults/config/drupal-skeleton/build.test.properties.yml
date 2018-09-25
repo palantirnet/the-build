@@ -1,6 +1,5 @@
 # These properties are for running the Drupal Skeleton on circle.
 build:
-  artifact_mode: symlink
   test_output: /dev/null
 
 drupal:
