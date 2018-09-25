@@ -171,7 +171,7 @@ phpcs:
 
   # Comma-separated list of patterns for files and directories to exclude from the
   # PHP_CodeSniffer review.
-  ignore: *.md
+  ignore: "*.md"
 
 
 # Configuration for using PHP Mess Detector to check for general PHP best practices,
