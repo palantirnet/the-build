@@ -21,7 +21,7 @@ Yields:
 
 Cool! This phing-ism is what powers our environment-specific property layering and loading:
 
-1. Properties are loaded from the phing call itself; for example, adding the flag `-Dbuild.test_output=artifacts/tests` will set the `build.test_output` property to `artifacts/tests`
+1. Properties are loaded from the phing call itself; for example, adding the flag `-Dbuild.env=circleci` will set the `build.env` property to `circleci`
 1. Set the `build.env` property (if it's not already set with `-D`) from the `PALANTIR_ENVIRONMENT` environment variable; if you're using [the-vagrant](https://github.com/palantirnet/the-vagrant), this will be set to `vagrant`
 1. Load properties from your `conf/build.[environment].properties`
 1. Load properties from `conf/build.default.properties`
@@ -32,7 +32,6 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 | Property | Default value | What is it? |
 |---|---|---|
-| `build.test_output` | `/dev/null` | Where to output reports from tests. On Circle, try `${env.CIRCLE_TEST_REPORTS}`. |
 | `build.drupal.settings` | `conf/drupal/settings.php` | Source template for Drupal's `settings.php` file. |
 | `build.drupal.settings_dest` | `web/sites/default/settings.php` | Destination for the templated settings.php file. |
 | `build.drupal.services` | `conf/drupal/services.yml` | Source template for Drupal's `services.yml` file. |

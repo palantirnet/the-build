@@ -1,5 +1,4 @@
 build:
-  test_output: /dev/null
   drupal:
     settings: .the-build/drupal.settings.build.php
     settings_dest: "${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php"
