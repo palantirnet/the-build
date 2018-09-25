@@ -57,19 +57,4 @@
     </target>
 
 
-    <!-- Target: check-deploy-env -->
-    <target name="check-deploy-env">
-        <if>
-            <or>
-                <equals arg1="${build.env}" arg2="vagrant" />
-                <equals arg1="${build.env}" arg2="default" />
-            </or>
-            <then>
-                <echo level="error">Make sure you're running the deployment with a deploy environment!</echo>
-                <fail message="Use a different build.env." />
-            </then>
-        </if>
-    </target>
-
-
 </project>
