@@ -131,3 +131,50 @@ db:
     # Otherwise, you may occasionally want to set this value at run time:
     #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
     #file:
+
+
+# Configuration to use the PHP interpreter's built in linter to check for syntax errors
+# and deprecated code. This property is used by the <phplint> task in the build.dist.xml
+# template.
+phplint:
+  # Path to a file where each line is a pattern matching files to lint.
+  includesfile: "${build.thebuild.dir}/defaults/config/phplint.txt"
+
+
+# Configuration for using PHP_CodeSniffer to review code according to the Drupal coding
+# standards.
+#
+# @see https://www.drupal.org/docs/develop/standards
+# @see https://github.com/squizlabs/PHP_CodeSniffer
+# @see https://www.drupal.org/project/coder
+#
+# These values are used in the build.dist.xml template:
+#   $> phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}
+phpcs:
+  # Path to a PHP_CodeSniffer standard file.
+  standard: "${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"
+
+  # Space-separated list of directories to review.
+  directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom ${drupal.root}/profiles/custom"
+
+  # Comma-separated list of patterns for files and directories to exclude from the
+  # PHP_CodeSniffer review.
+  ignore: *.md
+
+
+# Configuration for using PHP Mess Detector to check for general PHP best practices,
+# unused variables, and to analyze complexity.
+#
+# @see https://phpmd.org/
+#
+# These values are used in the build.dist.xml template:
+#   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}
+phpmd:
+  # Comma-separated list of directories to review.
+  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/"
+  # Output format for phpmd.
+  format: text
+  # Comma-separated list of ruleset paths or names.
+  rulesets: "${build.thebuild.dir}/defaults/config/phpmd.xml"
+  # File extensions to review.
+  suffixes: php,inc,module,theme,profile,install,test

@@ -42,30 +42,19 @@ Cool! This phing-ism is what powers our environment-specific property layering a
 
 Use the PHP interpreter's built in linter to check for syntax errors and deprecated code.
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `phplint.includesfile`    | `${build.thebuild.dir}/conf/phplint.txt` | Path to a file where each line is a pattern matching files to lint. |
+* [Configuration options under the 'phplint' property](../defaults.properties.yml)
 
 #### PHP_CodeSniffer
 
 Use [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) to review code according to the [Drupal coding standards](https://www.drupal.org/docs/develop/standards).
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `phpcs.standard`    | `${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml` | Path to a PHP_CodeSniffer standard file. |
-| `phpcs.directories` | `${drupal.root}/modules/custom ${drupal.root}/themes/custom` | Space-separated list of directories to review. |
-| `phpcs.ignore`      | `*.md` | Comma-separated list of patterns for files and directories to exclude from the PHP_CodeSniffer review. |
+* [Configuration options under the 'phpcs' property](../defaults.properties.yml)
 
 #### PHPmd
 
 Use [PHP Mess Detector](https://phpmd.org/) to check for general PHP best practices, unused variables, and complexity.
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `phpmd.rulesets`    | `${build.thebuild.dir}/conf/phpmd.xml` | Comma-separated list of ruleset paths or names. |
-| `phpmd.directories` | `${drupal.root}/modules/custom/,${drupal.root}/themes/custom/` | Directories to review. |
-| `phpmd.suffixes`    | `php,inc,module,install,profile` | File extensions to review. |
-| `phpmd.format`      | `text` | Output format for phpmd. |
+* [Configuration options under the 'phpmd' property](../defaults.properties.yml)
 
 ### Artifacts
 
