@@ -1,3 +1,15 @@
+# @file
+# This file contains the full set of default properties for targets in the-build.
+#
+# Properties may be overridden for individual projects by copying them to the project's
+# own property files:
+#   - .the-build/build.default.properties.yml
+#   - .the-build/build.circleci.properties.yml
+#   - .the-build/build.acquia.properties.yml
+#   - etc.
+#
+# @copyright 2018 Palantir.net, Inc.
+
 # Drupal configuration used by tasks/drupal.xml
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
