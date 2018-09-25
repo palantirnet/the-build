@@ -161,12 +161,7 @@ Alternatively, you may chose to not set the `artifact.git.remote_branch` propert
 
 ### Acquia
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `acquia.accountname` |  | Machine name of your Acquia site account. |
-| `acquia.ssh` |  | Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or `staging-12345.prod.hosting.acquia.com` |
-
-[More info](../tasks/acquia.xml#L32-L59)
+* [Configuration options](../defaults.properties.yml)
 
 ### DB Loading
 

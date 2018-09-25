@@ -57,3 +57,15 @@ artifact:
     # Name to use for the git remote on the artifact repository.
     remote_name: origin
 
+# Configuration for tasks/acquia.xml
+acquia:
+
+  # Machine name of your Acquia site account.
+  #accountname:
+
+  # Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or
+  # `staging-12345.prod.hosting.acquia.com`
+  #ssh:
+
+  # Directory for storing downloaded database backups.
+  backups: artifacts/backups

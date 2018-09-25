@@ -4,47 +4,41 @@
   @file acquia.xml
   Targets for working with Acquia.
 
-  Copyright 2016 Palantir.net, Inc.
+  Include this file in your build.xml with:
+  <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+
+  @see defaults.properties.yml
+
+  Copyright 2016, 2018 Palantir.net, Inc.
   -->
 
 <project name="acquia" default="acquia-status">
-    <!--
-        Include this file in your build.xml with:
-        <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
-      -->
 
 
     <fail unless="projectname" />
     <fail unless="build.dir" />
     <fail unless="build.env" />
 
+    <fail unless="acquia.accountname" />
+    <fail unless="acquia.ssh" />
+    <fail unless="acquia.backups" />
+
 
     <!-- Default task: acquia-status -->
     <target name="acquia-status">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="db.backups" />
-        
         <echo>Properties for running 'acquia-dbdl-prod' and 'acquia-dbdl-test' targets are present.
     </target>
 
 
     <!-- Download production databases from Acquia -->
     <target name="acquia-dbdl-prod">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="db.backups" />
-
-        <filesync sourcedir="${acquia.accountname}.prod@${acquia.ssh}:/mnt/files/${acquia.accountname}.prod/backups/" destinationdir="${db.backups}" />
+        <filesync sourcedir="${acquia.accountname}.prod@${acquia.ssh}:/mnt/files/${acquia.accountname}.prod/backups/" destinationdir="${acquia.backups}" />
     </target>
+
 
     <!-- Download staging databases from Acquia -->
     <target name="acquia-dbdl-test">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="db.backups" />
-
-        <filesync sourcedir="${acquia.accountname}.test@${acquia.ssh}:/mnt/files/${acquia.accountname}.test/backups/" destinationdir="${db.backups}" />
+        <filesync sourcedir="${acquia.accountname}.test@${acquia.ssh}:/mnt/files/${acquia.accountname}.test/backups/" destinationdir="${acquia.backups}" />
     </target>
 
 
