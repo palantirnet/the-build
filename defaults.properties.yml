@@ -21,10 +21,39 @@ drupal:
   twig:
     debug: false
 
+# Configuration for tasks/artifact.xml
 artifact:
+  # The path of the working directory where the artifact should be built.
   directory: artifacts/build
+
+  # A string prefix to use for branch names.
+  prefix: artifact-
+
+  # Path to a template .gitignore file to use in the artifact.
+  gitignore_template: "${build.thebuild.dir}/defaults/templates/artifact.gitignore"
+
+  # Path to a template README file to use in the artifact.
+  readme_template: "${build.thebuild.dir}/defaults/templates/artifact.README.md"
+
   git:
-    # The following property is commented out, because this value should only be set in
-    # per-project properties files.
-    # remote:
-      
+    # Git repository for the artifact. This is typically an Acquia or Pantheon git URL.
+    # This property is commented out, because the value should only be set in per-project
+    # properties files.
+    #remote:
+
+    # Name of the remote branch to push the artifact to.
+    # The remote_branch property is generally set dynamically, to 'artifact.prefix' plus
+    # the current branch name. However, it may be overridden either in your project
+    # properties or in a run-time flag (-Dartifact.git.remote_branch=foo) in order to
+    # build to a static destination branch, or a branch name that matches other
+    # constraints (like Pantheon's 11 character limit for multidev environment branch
+    # names).
+    #remote_branch:
+
+    # Name of a branch to use as the base, if the artifact.remote_branch does not yet
+    # exist on the artifact.git.remote repository.
+    remote_base_branch: master
+
+    # Name to use for the git remote on the artifact repository.
+    remote_name: origin
+

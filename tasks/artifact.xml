@@ -4,32 +4,13 @@
   @file artifact.xml
   Targets for managing Drupal code artifacts.
 
+  @see docs/properties.md
+  @see defaults.properties.yml
+
   Copyright 2018 Palantir.net, Inc.
   -->
 
 <project name="artifact" default="artifact-main">
-
-
-    <!--
-      Required configuration for building artifacts:
-        artifact.git.remote
-
-      Optional configuration:
-        artifact.git.remote_branch
-        artifact.directory
-        artifact.prefix
-        artifact.gitignore_template
-        artifact.readme_template
-
-      Optional configuration, but generally this should not need to be modified:
-        artifact.git.remote_base_branch
-        artifact.git.remote_name
-
-      Run time flags:
-        push
-
-      For full documentation on these properties, see the docs/properties.md file.
-      -->
 
 
     <!--
@@ -39,13 +20,13 @@
         <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 
-        <!-- Default property value(s). -->
-        <property name="artifact.directory" value="artifacts/build" />
-        <property name="artifact.prefix" value="artifact-" />
-        <property name="artifact.git.remote_base_branch" value="master" />
-        <property name="artifact.git.remote_name" value="origin" />
-        <property name="artifact.gitignore_template" value="${build.thebuild.dir}/defaults/templates/artifact.gitignore" />
-        <property name="artifact.readme_template" value="${build.thebuild.dir}/defaults/templates/artifact.README.md" />
+        <!-- Defaults are set in defaults.properties.yml -->
+        <fail unless="artifact.directory" />
+        <fail unless="artifact.prefix" />
+        <fail unless="artifact.git.remote_base_branch" />
+        <fail unless="artifact.git.remote_name" />
+        <fail unless="artifact.gitignore_template" />
+        <fail unless="artifact.readme_template" />
 
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
@@ -56,11 +37,12 @@
 
         <!-- Create a temporary branch name based on the commit for building the artifact,
              to avoid branch conflicts. -->
-        <property name="artifact.git.temporary_branch" value="artifact-${artifact.git.commit}" />
+        <property name="artifact.git.temporary_branch" value="artifact-${artifact.git.commit}" override="true" />
         <!-- Prefix the repository tag so that we're not using the exact same tag on the
              artifact and on the repository, to avoid confusion, especially when the
              artifact is built on a branch of the development repository. -->
-        <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" />
+        <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" override="true" />
+
         <!-- If the remote branch isn't configured, use a remote branch based on the name
              of the current branch. This won't overwrite the property value if it is
              already set. -->

@@ -94,22 +94,28 @@ Use [PHP Mess Detector](https://phpmd.org/) to check for general PHP best practi
 
 ### Artifacts
 
-For additional documentation on the artifact build process, see [docs/artifacts.md](artifacts.md).
+* [Artifact build process](artifacts.md)
+* [Configuration options](../defaults.properties.yml)
 
-| Property | Default value | What is it? |
-|---|---|---|
-| `artifact.git.remote` | **(required)** | Git repository for the artifact. This is typically an Acquia or Pantheon git URL. |
-| `artifact.git.remote_branch` | `${artifact.prefix}` plus the current branch name | Name of the remote branch to push the artifact to. For Acquia, the default is good because it shouldn't match a branch names on the development repository; on Pantheon, code must be on the `master` branch to be deployed to the `live` environment. |
-| `artifact.directory` | `artifacts/build` | The path of the working directory where the artifact should be built. |
-| `artifact.prefix` | `artifact-` | A string prefix to use for branch names. |
-| `artifact.gitignore_template` | `vendor/palantirnet/the-build/conf/artifact-gitignore` | Path to a template .gitignore file to use in the artifact. |
-| `artifact.readme_template` | `vendor/palantirnet/the-build/conf/artifact-gitignore` | Path to a template README file to use in the artifact. |
-| `artifact.git.remote_base_branch` | `master` | Name of a branch to use as the base, if the artifact.remote_branch does not yet exist on the artifact.git.remote repository. |
-| `artifact.git.remote_name` | `origin` | Name to use for the git remote on the artifact repository. |
+#### Minimum configuration
+
+In order to use the artifact build, you must set the `artifact.git.remote` property in your project's  file to the git repository for the artifact. This is typically an Acquia or Pantheon git URL:
+
+```
+artifact:
+  git:
+    remote: example@svn-9999.devcloud.hosting.acquia.com:example.git
+```
+
+All artifact configuration should be in your project's base properties file, `.the-build/build.default.properties.yml`.
 
 #### Runtime flags
 
 * `push` - Value should be `y` or `n`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
+
+```
+$> phing artifact -Dpush=y
+```
 
 #### Example: Pushing an artifact to an Acquia environment
 
@@ -126,7 +132,7 @@ For additional documentation on the artifact build process, see [docs/artifacts.
 2. Build the artifact by running this command:
 
   ```
-  phing artifact
+  $> phing artifact
   ```
 
 #### Example: Pushing an artifact to a Pantheon environment
@@ -143,12 +149,12 @@ For additional documentation on the artifact build process, see [docs/artifacts.
 2. Build the artifact by running this command:
 
   ```
-  phing artifact
+  $> phing artifact
   ```
 3. Build to a Pantheon multidev environment (multidev branch names must be 11 characters or shorter):
 
   ```
-  phing artifact -Dartifact.git.remote_branch=TICKET-999
+  $> phing artifact -Dartifact.git.remote_branch=TICKET-999
   ```
 
 Alternatively, you may chose to not set the `artifact.git.remote_branch` property, and instead, and then merge the default artifact branch (generally `artifact-develop`) to `master` within the Pantheon UI.
