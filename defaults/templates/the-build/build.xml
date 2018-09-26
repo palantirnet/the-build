@@ -46,9 +46,16 @@
     </target>
 
 
-    <!-- Target: install -->
-    <target name="install" description="Install the application.">
-        <phingcall target="drupal-install" />
+    <!-- Target: install
+         Running this target will also run the build target.
+         -->
+    <target name="install" depends="build,validate-clean-conf" description="Install the application.">
+        <drush command="site-install" assume="yes">
+            <option name="site-name">${drupal.site_name}</option>
+            <option name="account-name">${drupal.admin_user}</option>
+            <option name="account-pass">admin</option>
+            <param>${drupal.profile}</param>
+        </drush>
     </target>
 
 

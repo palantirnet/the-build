@@ -29,58 +29,6 @@
     <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
 
 
-    <!-- Target: drupal-install -->
-    <target name="drupal-install" description="Install Drupal.">
-        <fail unless="drupal.settings.file_public_path" />
-        <fail unless="drupal.root" />
-        <fail unless="drupal.site_name" />
-        <fail unless="drupal.sites_subdir" />
-        <fail unless="drupal.profile" />
-        <fail unless="drupal.admin_user" />
-
-        <phingcall target="validate-clean-conf" />
-
-        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
-
-        <!-- The sites subdirectory should be writable; Drupal will change the
-             permissions on this directory after install. -->
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}" mode="777" />
-
-        <!-- Make settings.php writable -->
-        <chmod file="${build.dir}/${drupal.root}/sites/${drupal.sites_subdir}/settings.php" mode="777" />
-
-        <!-- Delete and re-create the public files directory -->
-        <delete file="${drupal.settings.file_public_path.resolved}" />
-        <delete dir="${drupal.settings.file_public_path.resolved}" />
-        <mkdir dir="${drupal.settings.file_public_path.resolved}" mode="775" />
-
-        <if>
-            <and>
-                <isset property="drupal.settings.file_private_path"/>
-                <not>
-                    <equals arg1="${drupal.settings.file_private_path}" arg2="" trim="true" />
-                </not>
-            </and>
-            <then>
-                <resolvepath propertyName="drupal.settings.file_private_path.resolved" file="${drupal.root}/${drupal.settings.file_private_path}" />
-                <delete file="${drupal.settings.file_private_path.resolved}" />
-                <delete dir="${drupal.settings.file_private_path.resolved}" />
-                <mkdir dir="${drupal.settings.file_private_path.resolved}" mode="777" />
-            </then>
-        </if>
-
-        <drush command="site-install" assume="yes">
-            <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">${drupal.admin_user}</option>
-            <option name="account-pass">admin</option>
-            <param>${drupal.profile}</param>
-        </drush>
-
-        <!-- The public files directory, and everything in it, needs to be world writable. -->
-        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" checkreturn="true" />
-    </target>
-
-
     <!--
         Target: drupal-dump-db
 
