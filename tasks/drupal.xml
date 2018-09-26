@@ -29,46 +29,6 @@
     <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
 
 
-    <target name="drupal-build" description="Prepare Drupal for installation.">
-        <fail unless="drupal.root" />
-        <fail unless="drupal.create_dirs" />
-        <fail unless="drupal.sites_subdir" />
-        <fail unless="drupal.settings.file_public_path" />
-        <fail unless="drupal.settings.file_private_path" />
-        <fail unless="build.drupal.settings" />
-        <fail unless="build.drupal.settings_dest" />
-        <fail unless="build.drupal.services" />
-        <fail unless="build.drupal.services_dest" />
-
-        <!-- Create the Drupal custom code directories. -->
-        <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
-
-        <!-- Set permissions on the sites subdirectory. -->
-        <mkdir dir="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
-
-        <!-- Create the public files directory and make it world writable. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_public_path}" mode="666" />
-
-        <!-- Create the private files directory and make it private. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_private_path}" mode="660" />
-
-        <!-- Copy the settings.build.php and services.build.php templates into place. -->
-        <copy todir="${build.dir}" overwrite="true" mode="544">
-            <!-- Copy the template files -->
-            <filelist dir="${build.dir}" files="${build.drupal.settings},${build.drupal.services}" />
-            <!-- Map templates to their destinations -->
-            <mapper type="firstmatch">
-                <mapper type="glob" from="${build.drupal.settings}" to="${build.drupal.settings_dest}" />
-                <mapper type="glob" from="${build.drupal.services}" to="${build.drupal.services_dest}" />
-            </mapper>
-            <!-- Substitute property values -->
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-    </target>
-
-
     <!-- Target: drupal-install -->
     <target name="drupal-install" description="Install Drupal.">
         <fail unless="drupal.settings.file_public_path" />
