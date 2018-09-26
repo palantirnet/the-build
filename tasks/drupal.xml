@@ -75,43 +75,51 @@
 
 
     <!--
-        Target: validate-clean-conf
+        Target: drupal-validate-clean-config
 
-        This will validate that the conf directory is clean, because you can
-        have build problems if it isn't.
+        Validate that the Drupal config directory doesn't have local modifications,
+        to ensure consistent installation.
     -->
-    <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
-      <property name="validate_clean_conf.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
+    <target name="drupal-validate-clean-config" description="Validate clean drupal config directory.">
+      <!-- Assembling this property at run time. -->
+      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
 
-        <!-- Check for un-committed changes to the Drupal config directory,
-             because these can cause unexpected behavior during installation. -->
-        <exec command="git status --porcelain ${validate_clean_conf.dir}" outputProperty="modified_files" />
+        <!-- Use git to list local (not yet committed) changes to the config directory. -->
+        <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
 
         <if>
             <and>
+                <!-- Git output will be empty if there are no local changes. -->
                 <not><equals arg1="${modified_files}" arg2="" /></not>
-                <!-- Only the value "yes" prevents a failure. -->
-                <not><equals arg1="${drupal.allow_dirty_config}" arg2="yes" /></not>
+                <!-- Bypass this check with a truthy value. -->
+                <not><equals arg1="${drupal.validate_clean_config.bypass}" arg2="true" /></not>
             </and>
             <then>
                 <!-- Whitespace is intentional -->
                 <echo>Aborting install; your Drupal config directory is not clean. You may either:
 
-            Re-run your phing command with the flag:
-              -Ddrupal.allow_dirty_config=yes
+            Ignore this problem and re-run your phing command with the flag:
+              -Ddrupal.validate_clean_config.bypass=yes
+
+              - OR -
+
+            Check in your local changes:
+              git add ${drupal.validate_clean_config.dir}
+              git commit
+
 
               - OR -
 
             Clean up your config directory (destructive):
-              git clean -f ${validate_clean_conf.dir} &amp;&amp; git checkout -- ${validate_clean_conf.dir}
+              git clean -f ${drupal.validate_clean_config.dir} &amp;&amp; git checkout -- ${drupal.validate_clean_config.dir}
                 </echo>
-                <fail message="Dirty config directory." />
+                <fail message="There are local changes in your Drupal config directory." />
             </then>
             <elseif>
                 <not><equals arg1="${modified_files}" arg2="" /></not>
                 <then>
                     <!-- Whitespace is intentional -->
-                    <echo>Continuing install with dirty Drupal config directory. Changes:
+                    <echo>Continuing install with these local changes in your Drupal config directory:
 
 ${modified_files}
                     </echo>
@@ -121,6 +129,11 @@ ${modified_files}
     </target>
 
 
+    <!-- Target: drupal-first-install
+
+         Scripted install and of Drupal for use when installing the-build, allowing the
+         installation process to create the initial Drupal config.
+         -->
     <target name="drupal-first-install">
         <fail unless="drupal.admin_user" />
 

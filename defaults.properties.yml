@@ -38,10 +38,6 @@ drupal:
   # Drupal admin username, if you feel inclined to change it.
   admin_user: admin
 
-  # Whether to allow running the drupal-install target when there are local changes to the
-  # exported Drupal config.
-  allow_dirty_config: no
-
   # Comma-separated list of directories that should be present for Drupal development.
   create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom"
 
@@ -62,6 +58,12 @@ drupal:
   twig:
     # Whether to enable twig debugging.
     debug: false
+
+  # Whether to prevent Drupal install when there are local (non-committed) changes to the
+  # exported Drupal config.
+  validate_clean_config:
+    # Use 'true' or 'yes' to bypass.
+    bypass: false
 
 # Build configuration used by tasks/drupal.xml
 build:

@@ -49,7 +49,7 @@
     <!-- Target: install
          Running this target will also run the build target.
          -->
-    <target name="install" depends="build,validate-clean-conf" description="Install the application.">
+    <target name="install" depends="build,drupal-validate-clean-config" description="Install the application.">
         <drush command="site-install" assume="yes">
             <option name="site-name">${drupal.site_name}</option>
             <option name="account-name">${drupal.admin_user}</option>
