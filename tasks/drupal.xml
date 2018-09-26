@@ -24,8 +24,10 @@
     <!--
         Target: drupal-dump-db
 
-        Dumb wrapper to help consistently dump the database when pushing an
-        installed site to prod.
+        Generate a consistent database dump with:
+          - A real admin password
+          - The site in maintenance mode
+          - Structure only for cache, search, and log tables
         -->
     <target name="drupal-dump-db" description="Generate a database dump.">
         <fail unless="drupal.admin_user" />
@@ -53,7 +55,7 @@
 
         <!-- dump the database -->
         <drush command="sql-dump">
-            <option name="structure-tables-key" value="common" />
+            <option name="structure-tables-list" value="cache,cache_*,history,search_*,sessions,watchdog" />
             <option name="gzip" />
             <option name="result-file" value="${build.dir}/artifacts/db-${build_commit_ref}.sql" />
         </drush>
