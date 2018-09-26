@@ -65,6 +65,14 @@
     </if>
 
 
+    <!-- Define and configure the 'drush' Phing task. -->
+    <taskdef name="drush" classname="Drush\Task" />
+    <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
+    <property name="drush.uri" refid="drupal.uri" />
+    <property name="drush.root" value="${build.dir}/${drupal.root}" />
+    <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
+
+
     <!--
         Default target: status
         This target is included only because the <project> tag requires it.
