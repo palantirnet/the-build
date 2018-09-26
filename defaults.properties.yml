@@ -42,6 +42,9 @@ drupal:
   # exported Drupal config.
   allow_dirty_config: no
 
+  # Comma-separated list of directories that should be present for Drupal development.
+  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom"
+
   # Database connection for Drupal.
   database:
     database: drupal
@@ -54,7 +57,7 @@ drupal:
     file_public_path: sites/default/files
 
     # Path to the Drupal private files directory, relative to the Drupal root.
-    file_private_path: ""
+    file_private_path: "../artifacts/private/${drupal.sites_subdir}"
 
   twig:
     # Whether to enable twig debugging.

@@ -74,4 +74,13 @@
     </target>
 
 
+    <!--
+        Target: mkdir
+        Utility target to allow creating a list of directories with <foreach />.
+        -->
+    <target name="mkdir">
+        <mkdir dir="${dir}" />
+    </target>
+
+
 </project>

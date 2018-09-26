@@ -30,73 +30,42 @@
 
 
     <target name="drupal-build" description="Prepare Drupal for installation.">
-        <phingcall target="drupal-prepare-filesystem" />
-        <phingcall target="drupal-prepare-settings" />
-        <phingcall target="drupal-prepare-services" />
-    </target>
-
-
-    <!-- Target: drupal-prepare-filesystem -->
-    <target name="drupal-prepare-filesystem">
         <fail unless="drupal.root" />
+        <fail unless="drupal.create_dirs" />
         <fail unless="drupal.sites_subdir" />
         <fail unless="drupal.settings.file_public_path" />
-
-        <!-- Create the Drupal modules, themes, profiles, and sites directories. -->
-        <foreach target="create-placeholder" param="placeholder_for">
-            <filelist dir="${build.dir}" files="${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,${drupal.root}/sites/${drupal.sites_subdir}" />
-        </foreach>
-
-        <!-- The site directory needs to have some perms. -->
-        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
-
-        <!-- The public files directory, and everything in it, needs to be world writable. -->
-        <resolvepath propertyName="drupal.settings.file_public_path.resolved" file="${drupal.root}/${drupal.settings.file_public_path}" />
-        <exec command="chmod -R 777 ${drupal.settings.file_public_path.resolved}" />
-    </target>
-
-
-    <!-- Target: drupal-prepare-settings -->
-    <target name="drupal-prepare-settings">
+        <fail unless="drupal.settings.file_private_path" />
         <fail unless="build.drupal.settings" />
         <fail unless="build.drupal.settings_dest" />
-
-        <copy file="${build.dir}/${build.drupal.settings}" tofile="${build.dir}/${build.drupal.settings_dest}" overwrite="true" mode="555">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-    </target>
-
-
-    <!-- Target: drupal-prepare-services -->
-    <target name="drupal-prepare-services">
         <fail unless="build.drupal.services" />
         <fail unless="build.drupal.services_dest" />
 
-        <copy file="${build.dir}/${build.drupal.services}" tofile="${build.dir}/${build.drupal.services_dest}" overwrite="true" mode="644">
+        <!-- Create the Drupal custom code directories. -->
+        <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
+
+        <!-- Set permissions on the sites subdirectory. -->
+        <mkdir dir="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+
+        <!-- Create the public files directory and make it world writable. -->
+        <mkdir dir="${drupal.root}/${drupal.settings.file_public_path}" mode="666" />
+
+        <!-- Create the private files directory and make it private. -->
+        <mkdir dir="${drupal.root}/${drupal.settings.file_private_path}" mode="660" />
+
+        <!-- Copy the settings.build.php and services.build.php templates into place. -->
+        <copy todir="${build.dir}" overwrite="true" mode="544">
+            <!-- Copy the template files -->
+            <filelist dir="${build.dir}" files="${build.drupal.settings},${build.drupal.services}" />
+            <!-- Map templates to their destinations -->
+            <mapper type="firstmatch">
+                <mapper type="glob" from="${build.drupal.settings}" to="${build.drupal.settings_dest}" />
+                <mapper type="glob" from="${build.drupal.services}" to="${build.drupal.services_dest}" />
+            </mapper>
+            <!-- Substitute property values -->
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
-    </target>
-
-
-    <!-- Target: create-placeholder -->
-    <target name="create-placeholder">
-        <fail unless="placeholder_for" message="The 'placeholder_for' property is required." />
-        <resolvepath propertyName="placeholder_for.resolved" file="${placeholder_for}" dir="${build.dir}" />
-
-        <if>
-            <not><available file="${placeholder_for.resolved}" type="dir" /></not>
-            <then>
-                <mkdir dir="${placeholder_for.resolved}" />
-                <touch file="${placeholder_for.resolved}/.gitkeep" />
-            </then>
-            <else>
-                <echo>${placeholder_for} already exists.</echo>
-            </else>
-        </if>
     </target>
 
 
