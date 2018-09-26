@@ -159,9 +159,11 @@
         have build problems if it isn't.
     -->
     <target name="validate-clean-conf" description="Validate clean drupal conf directory.">
+      <property name="validate_clean_conf.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
+
         <!-- Check for un-committed changes to the Drupal config directory,
              because these can cause unexpected behavior during installation. -->
-        <exec command="git status --porcelain ${build.dir}/conf/drupal/config/" outputProperty="modified_files" />
+        <exec command="git status --porcelain ${validate_clean_conf.dir}" outputProperty="modified_files" />
 
         <if>
             <and>
@@ -179,7 +181,7 @@
               - OR -
 
             Clean up your config directory (destructive):
-              git clean -f conf/drupal/config &amp;&amp; git checkout -- conf/drupal/config
+              git clean -f ${validate_clean_conf.dir} &amp;&amp; git checkout -- ${validate_clean_conf.dir}
                 </echo>
                 <fail message="Dirty config directory." />
             </then>
