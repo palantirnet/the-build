@@ -125,6 +125,7 @@
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
 
         <!-- Use a standard Drupal settings.php file. -->
+        <chmod mode="750" file="${application.startdir}/${drupal.root}/sites/default/" />
         <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.php" tofile="${application.startdir}/${drupal.root}/sites/default/settings.php" overwrite="true">
             <filterchain>
                 <expandproperties />
