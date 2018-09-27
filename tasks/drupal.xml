@@ -22,6 +22,61 @@
 
 
     <!--
+        Target: drupal-validate-clean-config
+
+        Validate that the Drupal config directory doesn't have local modifications,
+        to ensure consistent installation.
+    -->
+    <target name="drupal-validate-clean-config" description="Validate clean drupal config directory.">
+      <!-- Assembling this property at run time. -->
+      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
+
+        <!-- Use git to list local (not yet committed) changes to the config directory. -->
+        <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
+
+        <if>
+            <and>
+                <!-- Git output will be empty if there are no local changes. -->
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <!-- Bypass this check with a truthy value. -->
+                <not><equals arg1="${drupal.validate_clean_config.bypass}" arg2="true" /></not>
+            </and>
+            <then>
+                <!-- Whitespace is intentional -->
+                <echo>Aborting install; your Drupal config directory is not clean. You may either:
+
+            Ignore this problem and re-run your phing command with the flag:
+              -Ddrupal.validate_clean_config.bypass=yes
+
+              - OR -
+
+            Check in your local changes:
+              git add ${drupal.validate_clean_config.dir}
+              git commit
+
+
+              - OR -
+
+            Clean up your config directory (destructive):
+              git clean -f ${drupal.validate_clean_config.dir} &amp;&amp; git checkout -- ${drupal.validate_clean_config.dir}
+                </echo>
+                <fail message="There are local changes in your Drupal config directory." />
+            </then>
+            <elseif>
+                <not><equals arg1="${modified_files}" arg2="" /></not>
+                <then>
+                    <!-- Whitespace is intentional -->
+                    <echo>Continuing install with these local changes in your Drupal config directory:
+
+${modified_files}
+                    </echo>
+                </then>
+            </elseif>
+        </if>
+    </target>
+
+
+    <!--
         Target: drupal-dump-db
 
         Generate a consistent database dump with:
@@ -74,58 +129,43 @@
     </target>
 
 
-    <!--
-        Target: drupal-validate-clean-config
+    <!-- Target: load-db -->
+    <target name="drupal-load-db" description="Load a database export.">
+        <fail unless="db.load.export_pattern" />
+        <fail unless="db.load.contents_command" />
+        <fail unless="db.load.mysql_command" />
 
-        Validate that the Drupal config directory doesn't have local modifications,
-        to ensure consistent installation.
-    -->
-    <target name="drupal-validate-clean-config" description="Validate clean drupal config directory.">
-      <!-- Assembling this property at run time. -->
-      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
 
-        <!-- Use git to list local (not yet committed) changes to the config directory. -->
-        <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
+        <!-- Use the last listed file that matches the db.load.export_pattern property -->
+        <exec dir="${build.dir}" command="ls ${db.load.export_pattern} | tail -1" outputProperty="db.load.discovered_file" />
+        <!-- ... but respect db.load.file if it was already set. -->
+        <property name="db.load.file" value="${db.load.discovered_file}" />
 
+
+        <!-- Validate that we've found a file to load -->
         <if>
-            <and>
-                <!-- Git output will be empty if there are no local changes. -->
-                <not><equals arg1="${modified_files}" arg2="" /></not>
-                <!-- Bypass this check with a truthy value. -->
-                <not><equals arg1="${drupal.validate_clean_config.bypass}" arg2="true" /></not>
-            </and>
-            <then>
-                <!-- Whitespace is intentional -->
-                <echo>Aborting install; your Drupal config directory is not clean. You may either:
+          <equals arg1="${db.load.file}" arg2="" />
+          <then>
+              <echo>Missing database export at '${db.load.export_pattern}'
 
-            Ignore this problem and re-run your phing command with the flag:
-              -Ddrupal.validate_clean_config.bypass=yes
+Please download a database export to:
+  ${db.load.export_pattern}
 
-              - OR -
+Alternatively, you can specify the export file prefix; for example:
+  phing [YOUR-TARGET] -Ddb.load.export_pattern=artifacts/prod-*
 
-            Check in your local changes:
-              git add ${drupal.validate_clean_config.dir}
-              git commit
-
-
-              - OR -
-
-            Clean up your config directory (destructive):
-              git clean -f ${drupal.validate_clean_config.dir} &amp;&amp; git checkout -- ${drupal.validate_clean_config.dir}
-                </echo>
-                <fail message="There are local changes in your Drupal config directory." />
-            </then>
-            <elseif>
-                <not><equals arg1="${modified_files}" arg2="" /></not>
-                <then>
-                    <!-- Whitespace is intentional -->
-                    <echo>Continuing install with these local changes in your Drupal config directory:
-
-${modified_files}
-                    </echo>
-                </then>
-            </elseif>
+Or, you can specify the export file directly:
+  phing [YOUR-TARGET] -Ddb.load.file=artifacts/my_db.sql.gz
+              </echo>
+              <fail message="Missing database export." />
+          </then>
         </if>
+
+
+        <!-- Load the contents of the file into Drupal -->
+        <property name="db.command" value="${build.dir}" command="${db.load.contents_command} ${db.load.file} | ${db.load.mysql_command}" />
+        <echo>$> ${db.command}</echo>
+        <exec dir="${build.dir}" command="${db.command}" checkreturn="true" logoutput="true" />
     </target>
 
 
