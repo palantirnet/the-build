@@ -129,43 +129,40 @@ ${modified_files}
     </target>
 
 
-    <!-- Target: load-db -->
+    <!-- Target: drupal-load-db -->
     <target name="drupal-load-db" description="Load a database export.">
-        <fail unless="db.load.export_pattern" />
-        <fail unless="db.load.contents_command" />
-        <fail unless="db.load.mysql_command" />
+        <fail unless="drupal.load_db.export_pattern" />
+        <fail unless="drupal.load_db.contents_command" />
+        <fail unless="drupal.load_db.mysql_command" />
 
-
-        <!-- Use the last listed file that matches the db.load.export_pattern property -->
-        <exec dir="${build.dir}" command="ls ${db.load.export_pattern} | tail -1" outputProperty="db.load.discovered_file" />
-        <!-- ... but respect db.load.file if it was already set. -->
-        <property name="db.load.file" value="${db.load.discovered_file}" />
-
+        <!-- Use the last listed file that matches the drupal.load_db.export_pattern property -->
+        <exec dir="${build.dir}" command="ls ${drupal.load_db.export_pattern} | tail -1" outputProperty="drupal.load_db.discovered_file" />
+        <!-- ... but respect drupal.load_db.file if it was already set. -->
+        <property name="drupal.load_db.file" value="${drupal.load_db.discovered_file}" />
 
         <!-- Validate that we've found a file to load -->
         <if>
-          <equals arg1="${db.load.file}" arg2="" />
+          <equals arg1="${drupal.load_db.file}" arg2="" />
           <then>
-              <echo>Missing database export at '${db.load.export_pattern}'
+              <echo>Missing database export at '${drupal.load_db.export_pattern}'
 
 Please download a database export to:
-  ${db.load.export_pattern}
+  ${drupal.load_db.export_pattern}
 
 Alternatively, you can specify the export file prefix; for example:
-  phing [YOUR-TARGET] -Ddb.load.export_pattern=artifacts/prod-*
+  phing [YOUR-TARGET] -Ddrupal.load_db.export_pattern=artifacts/prod-*
 
 Or, you can specify the export file directly:
-  phing [YOUR-TARGET] -Ddb.load.file=artifacts/my_db.sql.gz
+  phing [YOUR-TARGET] -Ddrupal.load_db.file=artifacts/my_db.sql.gz
               </echo>
               <fail message="Missing database export." />
           </then>
         </if>
 
-
         <!-- Load the contents of the file into Drupal -->
-        <property name="db.command" value="${build.dir}" command="${db.load.contents_command} ${db.load.file} | ${db.load.mysql_command}" />
-        <echo>$> ${db.command}</echo>
-        <exec dir="${build.dir}" command="${db.command}" checkreturn="true" logoutput="true" />
+        <property name="drupal.load_db.command" value="${build.dir}" command="${drupal.load_db.contents_command} ${drupal.load_db.file} | ${drupal.load_db.mysql_command}" />
+        <echo>$> ${drupal.load_db.command}</echo>
+        <exec dir="${build.dir}" command="${drupal.load_db.command}" checkreturn="true" logoutput="true" />
     </target>
 
 

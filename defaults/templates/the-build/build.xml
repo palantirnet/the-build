@@ -79,6 +79,13 @@
     </target>
 
 
+    <!-- Target: load -->
+    <target name="load" description="Load a database dump.">
+        <phingcall target="drupal-load-db" />
+        <drush command="cache-rebuild" />
+    </target>
+
+
     <!-- Target: test -->
     <target name="test" description="Run all the tests.">
         <phingcall target="code-review" />
