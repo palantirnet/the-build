@@ -10,7 +10,7 @@
   Copyright 2016, 2017, 2018 Palantir.net, Inc.
   -->
 
-<project name="the-build" default="status">
+<project name="the-build" default="the-build">
 
     <!-- Provide the <includeresource /> task. -->
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
@@ -74,10 +74,10 @@
 
 
     <!--
-        Default target: status
+        Default target: the-build
         This target is included only because the <project> tag requires it.
         -->
-    <target name="status">
+    <target name="the-build">
         <echo>Hello! I'm the-build.</echo>
     </target>
 
