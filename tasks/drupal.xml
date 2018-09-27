@@ -135,10 +135,16 @@ ${modified_files}
         <fail unless="drupal.load_db.contents_command" />
         <fail unless="drupal.load_db.mysql_command" />
 
-        <!-- Use the last listed file that matches the drupal.load_db.export_pattern property -->
-        <exec dir="${build.dir}" command="ls ${drupal.load_db.export_pattern} | tail -1" outputProperty="drupal.load_db.discovered_file" />
-        <!-- ... but respect drupal.load_db.file if it was already set. -->
-        <property name="drupal.load_db.file" value="${drupal.load_db.discovered_file}" />
+        <!-- If no database file is set, look for one based on the 'export_pattern'. -->
+        <if>
+            <not><isset property="drupal.load_db.file" /></not>
+            <then>
+                <!-- Use the last listed file that matches the drupal.load_db.export_pattern property -->
+                <exec dir="${build.dir}" command="ls ${drupal.load_db.export_pattern} | tail -1" outputProperty="drupal.load_db.discovered_file" />
+                <!-- ... but respect drupal.load_db.file if it was already set. -->
+                <property name="drupal.load_db.file" value="${drupal.load_db.discovered_file}" />
+            </then>
+        </if>
 
         <!-- Validate that we've found a file to load -->
         <if>
@@ -160,7 +166,7 @@ Or, you can specify the export file directly:
         </if>
 
         <!-- Load the contents of the file into Drupal -->
-        <property name="drupal.load_db.command" value="${build.dir}" command="${drupal.load_db.contents_command} ${drupal.load_db.file} | ${drupal.load_db.mysql_command}" />
+        <property name="drupal.load_db.command" value="${drupal.load_db.contents_command} ${drupal.load_db.file} | ${drupal.load_db.mysql_command}" />
         <echo>$> ${drupal.load_db.command}</echo>
         <exec dir="${build.dir}" command="${drupal.load_db.command}" checkreturn="true" logoutput="true" />
     </target>
