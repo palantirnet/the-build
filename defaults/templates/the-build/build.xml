@@ -1,14 +1,28 @@
+<?xml version="1.0"?>
+
+<!--
+  @file build.xml
+  Build targets for this project. This file should be customized for your project.
+
+  For a full list of targets, try:
+    phing -l
+
+  @see https://github.com/palantirnet/the-build
+  -->
+
 <project name="@projectname@" default="build">
-    <!-- Run with: vendor/bin/phing -Dbuild.env=vagrant -->
-    <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
-
+    <!-- Add property loading and tasks from palantirnet/the-build. -->
     <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
 
 
-    <!-- Make these commands available by default. -->
+    <!-- Make these additional targets available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+
+
+    <!-- Additional optional targets. -->
     <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
 
 
     <!-- Default target: build -->
