@@ -36,11 +36,14 @@ class IncludeResourceTask extends \Task {
   /**
    * Init tasks.
    *
-   * Inherits the mode from the project's build.artifact_mode property. This
+   * Inherits the mode from the project's includeresource.mode property. This
    * can be overridden by setting the "mode" attribute.
    */
   public function init() {
-    $this->setMode($this->getProject()->getProperty('build.artifact_mode'));
+    $mode = $this->getProject()->getProperty('includeresource.mode');
+    if (!is_null($mode)) {
+      $this->setMode($mode);
+    }
   }
 
 

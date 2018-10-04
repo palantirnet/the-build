@@ -4,32 +4,13 @@
   @file artifact.xml
   Targets for managing Drupal code artifacts.
 
+  @see docs/artifacts.md
+  @see defaults.properties.yml
+
   Copyright 2018 Palantir.net, Inc.
   -->
 
 <project name="artifact" default="artifact-main">
-
-
-    <!--
-      Required configuration for building artifacts:
-        artifact.git.remote
-
-      Optional configuration:
-        artifact.git.remote_branch
-        artifact.directory
-        artifact.prefix
-        artifact.gitignore_template
-        artifact.readme_template
-
-      Optional configuration, but generally this should not need to be modified:
-        artifact.git.remote_base_branch
-        artifact.git.remote_name
-
-      Run time flags:
-        push
-
-      For full documentation on these properties, see the docs/properties.md file.
-      -->
 
 
     <!--
@@ -39,13 +20,13 @@
         <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 
-        <!-- Default property value(s). -->
-        <property name="artifact.directory" value="artifacts/build" />
-        <property name="artifact.prefix" value="artifact-" />
-        <property name="artifact.git.remote_base_branch" value="master" />
-        <property name="artifact.git.remote_name" value="origin" />
-        <property name="artifact.gitignore_template" value="${build.thebuild.dir}/defaults/templates/artifact.gitignore" />
-        <property name="artifact.readme_template" value="${build.thebuild.dir}/defaults/templates/artifact.README.md" />
+        <!-- Defaults are set in defaults.properties.yml -->
+        <fail unless="artifact.directory" />
+        <fail unless="artifact.prefix" />
+        <fail unless="artifact.git.remote_base_branch" />
+        <fail unless="artifact.git.remote_name" />
+        <fail unless="artifact.gitignore_template" />
+        <fail unless="artifact.readme_template" />
 
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
@@ -56,11 +37,12 @@
 
         <!-- Create a temporary branch name based on the commit for building the artifact,
              to avoid branch conflicts. -->
-        <property name="artifact.git.temporary_branch" value="artifact-${artifact.git.commit}" />
+        <property name="artifact.git.temporary_branch" value="artifact-${artifact.git.commit}" override="true" />
         <!-- Prefix the repository tag so that we're not using the exact same tag on the
              artifact and on the repository, to avoid confusion, especially when the
              artifact is built on a branch of the development repository. -->
-        <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" />
+        <property name="artifact.git.artifact_tag" value="${artifact.prefix}${artifact.git.tag}" override="true" />
+
         <!-- If the remote branch isn't configured, use a remote branch based on the name
              of the current branch. This won't overwrite the property value if it is
              already set. -->
@@ -174,8 +156,8 @@
         </if>
 
         <!-- Wipe out any local customizations. -->
-        <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git reset --hard" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
     </target>
@@ -261,18 +243,25 @@
             -->
         <phing target="build" phingfile="${phing.file}" inheritAll="false" dir=".">
             <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
-            <property name="build.artifact_mode" value="copy" override="true" />
+            <property name="includeresource.mode" value="copy" override="true" />
         </phing>
     </target>
 
 
     <target name="artifact-commit">
-        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="build.dir" value="${build.dir}" />
-            <property name="repo.dir" value="${artifact.directory}" />
-            <property name="tag_prefix" value="${artifact.prefix}" />
-            <property name="message" value="Drupal artifact build of ${artifact.git.commit_message}" />
-        </phing>
+        <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+        <exec command="git add --all" dir="${artifact.directory}" />
+
+        <!-- Commit all changes to the artifact repository. -->
+        <gitcommit repository="${artifact.directory}" message="Drupal artifact build of ${artifact.git.commit_message}" allFiles="true" />
+
+        <!-- If this is a build of a tag, tag the artifact. -->
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <gittag repository="${artifact.directory}" name="${artifact.git.artifact_tag}" annotate="true" message="Drupal artifact build of tag ${artifact.git.tag}." />
+            </then>
+        </if>
     </target>
 
 

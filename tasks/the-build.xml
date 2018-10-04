@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<!--
+  @file the-build.xml
+  Contains the-build's environment-specific property loading.
+
+  This file is included in the build.dist.xml template with:
+    <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
+
+  Copyright 2016, 2017, 2018 Palantir.net, Inc.
+  -->
+
+<project name="the-build" default="status">
+
+    <!-- Provide the <includeresource /> task. -->
+    <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
+
+
+    <!-- Alias the build directory to the Phing start directory. -->
+    <property name="build.dir" value="${application.startdir}" />
+
+    <!-- Use the project directory name as the project name -->
+    <basename property="projectname" file="${build.dir}" suffix="local" />
+
+    <!-- Provide the path to the-build's code for loading templates and defaults -->
+    <!-- Phing maps the project name "the-build" to "the_build". -->
+    <resolvepath file="${phing.dir.the_build}/../" propertyName="build.thebuild.dir" />
+
+    <!-- Use the PALANTIR_ENVIRONMENT env variable to set the build environment. -->
+    <if>
+        <isset property="env.PALANTIR_ENVIRONMENT" />
+        <then>
+            <property name="build.env" refid="env.PALANTIR_ENVIRONMENT" />
+        </then>
+    </if>
+
+    <!-- Provide a default build environment. -->
+    <property name="build.env" value="default" />
+
+
+    <!-- Load build properties from the project environment, the project defaults, and
+         finally from the-build's own defaults.
+         -->
+    <if>
+        <not><isset property="build.defaults_loaded" /></not>
+        <then>
+            <!-- Load the project's environment-specific properties. -->
+            <if>
+                <available file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                <then>
+                    <property file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                </then>
+            </if>
+
+            <!-- Load the project's defaults. This may be loaded twice, but that
+                 should not be a problem. -->
+            <property file="${build.dir}/.the-build/build.default.properties.yml" />
+
+            <!-- Load the-build's global defaults. -->
+            <property file="${build.thebuild.dir}/defaults.properties.yml" />
+
+            <!-- Prevent the-build from reloading properties. -->
+            <property name="build.defaults_loaded" value="true" />
+        </then>
+    </if>
+
+
+    <!--
+        Default target: status
+        This target is included only because the <project> tag requires it.
+        -->
+    <target name="status">
+        <echo>Hello! I'm the-build.</echo>
+    </target>
+
+
+</project>

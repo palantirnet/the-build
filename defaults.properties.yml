@@ -1,13 +1,48 @@
-build:
-  artifact_mode: symlink
-  test_output: /dev/null
+# @file
+# This file contains the full set of default properties for targets in the-build.
+#
+# Properties may be overridden for individual projects by copying them to the project's
+# own property files:
+#   - .the-build/build.default.properties.yml
+#   - .the-build/build.circleci.properties.yml
+#   - .the-build/build.acquia.properties.yml
+#   - etc.
+#
+# @copyright 2018 Palantir.net, Inc.
 
+# Drupal configuration used by tasks/drupal.xml
 drupal:
+  # Relative path to the Drupal web root. This is co-dependent with the composer installer
+  # configuration in your `composer.json`. Use caution when changing this value.
   root: web
+
+  # Human-readable name for your site.
+  site_name: "${projectname}"
+
+  # Your site's URI; the default should be the URI of your local development environment.
   uri: "https://${projectname}.local"
+
+  # Salt for Drupal's password hashing. A unique salt is generated when you install
+  # `the-build`.
   hash_salt: temporary
+
+  # Drupal install profile to use for the drupal-install target.
   profile: config_installer
 
+  # Name of the sites subdirectory where the `settings.php` file should live.
+  sites_subdir: default
+
+  # Path to the Drupal config directory, relative to the Drupal root.
+  config_sync_directory: "../config/sites/${drupal.sites_subdir}"
+
+  # Drupal admin username, if you feel inclined to change it.
+  admin_user: admin
+
+  # Whether to allow running the drupal-install target when there are local changes to the
+  # exported Drupal config.
+  allow_dirty_config: no
+
+  # Database connection for Drupal.
   database:
     database: drupal
     username: root
@@ -15,16 +50,143 @@ drupal:
     host: 127.0.0.1
 
   settings:
+    # Path to the Drupal public files directory, relative to the Drupal root.
     file_public_path: sites/default/files
+
+    # Path to the Drupal private files directory, relative to the Drupal root.
     file_private_path: ""
 
   twig:
+    # Whether to enable twig debugging.
     debug: false
 
+# Build configuration used by tasks/drupal.xml
+build:
+  drupal:
+    # Source template for Drupal's `settings.php` file. This may vary per build
+    # environment.
+    settings: .the-build/drupal.settings.build.php
+
+    # Destination for the templated settings.php file.
+    settings_dest: "${drupal.root}/sites/${drupal.sites_subdir}/settings.build.php"
+
+    # Source template for Drupal's `services.yml` file. This may vary per build
+    # environment.
+    services: .the-build/drupal.services.build.yml
+
+    # Destination for the templated `services.yml` file.
+    services_dest: "${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml"
+
+# Configuration for tasks/artifact.xml
 artifact:
+  # The path of the working directory where the artifact should be built.
   directory: artifacts/build
+
+  # A string prefix to use for branch names.
+  prefix: artifact-
+
+  # Path to a template .gitignore file to use in the artifact.
+  gitignore_template: "${build.thebuild.dir}/defaults/templates/artifact.gitignore"
+
+  # Path to a template README file to use in the artifact.
+  readme_template: "${build.thebuild.dir}/defaults/templates/artifact.README.md"
+
   git:
-    # The following property is commented out, because this value should only be set in
-    # per-project properties files.
-    # remote:
-      
+    # Git repository for the artifact. This is typically an Acquia or Pantheon git URL.
+    # This property is commented out, because the value should only be set in per-project
+    # properties files.
+    #remote:
+
+    # Name of the remote branch to push the artifact to.
+    # The remote_branch property is generally set dynamically, to 'artifact.prefix' plus
+    # the current branch name. However, it may be overridden either in your project
+    # properties or in a run-time flag (-Dartifact.git.remote_branch=foo) in order to
+    # build to a static destination branch, or a branch name that matches other
+    # constraints (like Pantheon's 11 character limit for multidev environment branch
+    # names).
+    #remote_branch:
+
+    # Name of a branch to use as the base, if the artifact.remote_branch does not yet
+    # exist on the artifact.git.remote repository.
+    remote_base_branch: master
+
+    # Name to use for the git remote on the artifact repository.
+    remote_name: origin
+
+# Configuration for tasks/acquia.xml
+acquia:
+
+  # Machine name of your Acquia site account.
+  #accountname:
+
+  # Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or
+  # `staging-12345.prod.hosting.acquia.com`
+  #ssh:
+
+  # Directory for storing downloaded database backups.
+  backups: artifacts/backups
+
+# Configuration for tasks/lib/db.xml
+db:
+  load:
+    # Pattern to match gzipped database dump files.
+    export_pattern: artifacts/backups/*.sql.gz
+
+    # Command to extract text contents of the backup file.
+    contents_command: gunzip -c
+
+    # Command to load database contents into Drupal.
+    mysql_command: drush sqlc
+
+    # Load a specific file rather than one matching the `export_pattern`. This can be used
+    # if your build relies on a seed database that is checked in to the repository.
+    # Otherwise, you may occasionally want to set this value at run time:
+    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
+    #file:
+
+
+# Configuration to use the PHP interpreter's built in linter to check for syntax errors
+# and deprecated code. This property is used by the <phplint> task in the build.dist.xml
+# template.
+phplint:
+  # Path to a file where each line is a pattern matching files to lint.
+  includesfile: "${build.thebuild.dir}/defaults/config/phplint.txt"
+
+
+# Configuration for using PHP_CodeSniffer to review code according to the Drupal coding
+# standards.
+#
+# @see https://www.drupal.org/docs/develop/standards
+# @see https://github.com/squizlabs/PHP_CodeSniffer
+# @see https://www.drupal.org/project/coder
+#
+# These values are used in the build.dist.xml template:
+#   $> phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}
+phpcs:
+  # Path to a PHP_CodeSniffer standard file.
+  standard: "${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"
+
+  # Space-separated list of directories to review.
+  directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom ${drupal.root}/profiles/custom"
+
+  # Comma-separated list of patterns for files and directories to exclude from the
+  # PHP_CodeSniffer review.
+  ignore: "*.md"
+
+
+# Configuration for using PHP Mess Detector to check for general PHP best practices,
+# unused variables, and to analyze complexity.
+#
+# @see https://phpmd.org/
+#
+# These values are used in the build.dist.xml template:
+#   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}
+phpmd:
+  # Comma-separated list of directories to review.
+  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/"
+  # Output format for phpmd.
+  format: text
+  # Comma-separated list of ruleset paths or names.
+  rulesets: "${build.thebuild.dir}/defaults/config/phpmd.xml"
+  # File extensions to review.
+  suffixes: php,inc,module,theme,profile,install,test

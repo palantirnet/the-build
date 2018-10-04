@@ -1,6 +1,74 @@
 # Building an Artifact
 
-This file describes a generalized artifact build process. This process is implemented in [tasks/artifact.xml](../tasks/artifact.xml), and usage is described in the [properties documentation](properties.md).
+You can find the full set of configuration options for artifacts under the 'artifact' property in the [defaults.properties.yml](../defaults.properties.yml) file.
+
+## Basic configuration
+
+In order to use the artifact build, you must set the `artifact.git.remote` property in your project's  file to the git repository for the artifact. This is typically an Acquia or Pantheon git URL:
+
+```
+artifact:
+  git:
+    remote: example@svn-9999.devcloud.hosting.acquia.com:example.git
+```
+
+All artifact configuration should be in your project's base properties file, `.the-build/build.default.properties.yml`.
+
+## Runtime flags
+
+* `push` - Value should be `y` or `n`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
+
+```
+$> phing artifact -Dpush=y
+```
+
+## Examples
+
+#### Example: Pushing an artifact to an Acquia environment
+
+1. Configure the artifact in the `conf/build.default.properties` file of your project:
+
+  ```
+  # Acquia git URL
+  artifact.git.remote=example@svn-9999.devcloud.hosting.acquia.com:example.git
+
+  # The Acquia web root must be 'docroot'
+  # This must also be configured in your composer.json, and reflected in your repository
+  drupal.root=docroot
+  ```
+2. Build the artifact by running this command:
+
+  ```
+  $> phing artifact
+  ```
+
+#### Example: Pushing an artifact to a Pantheon environment
+
+1. Configure the artifact in the `conf/build.default.properties` file of your project:
+
+  ```
+  # Pantheon git URL
+  artifact.git.remote=ssh://codeserver.dev.*@codeserver.dev.*.drush.in:2222/~/repository.git
+
+  # All artifacts go to the master branch
+  artifact.git.remote_branch=master
+  ```
+2. Build the artifact by running this command:
+
+  ```
+  $> phing artifact
+  ```
+3. Build to a Pantheon multidev environment (multidev branch names must be 11 characters or shorter):
+
+  ```
+  $> phing artifact -Dartifact.git.remote_branch=TICKET-999
+  ```
+
+Alternatively, you may chose to not set the `artifact.git.remote_branch` property, and instead, and then merge the default artifact branch (generally `artifact-develop`) to `master` within the Pantheon UI.
+
+## Concepts
+
+This section describes a generalized artifact build process. This is the process implemented in [tasks/artifact.xml](../tasks/artifact.xml), and usage is described above.
 
 ### Definitions
 
@@ -13,6 +81,12 @@ This file describes a generalized artifact build process. This process is implem
 
 * For *Acquia* and *Pantheon*, the artifact is checked into the host's git repository
 * For *Platform.sh*, the artifact is built and managed by Platform.sh
+
+When hosting a site on Platform.sh, you do not need to use the-build's artifact process, since the artifact build process is fully managed by Platform.sh. Instead, you can run just the build target as part of Platform.sh's build hook:
+
+```
+vendor/bin/phing build -Dbuild.env=platformsh
+```
 
 ### Artifact creation tools
 
@@ -54,3 +128,6 @@ Safeguards:
 
 * Artifact builds shouldn't change the current working directory
 * Users should be able to review manual builds before pushing changes
+
+----
+Copyright 2018 Palantir.net, Inc.
