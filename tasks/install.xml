@@ -192,7 +192,7 @@
                 <phing dir="${application.startdir}" target="drupal-has-database-connection" inheritAll="false" haltonfailure="true" />
 
                 <!-- This code will run only when a database connection is available. -->
-                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
+                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now " promptChar="?" />
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>

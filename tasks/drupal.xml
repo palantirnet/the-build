@@ -207,7 +207,7 @@ Or, you can specify the export file directly:
                 <echo>No exported Drupal config available to install from.</echo>
 
                 <!-- Prompt before installing. -->
-                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
+                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now " promptChar="?" />
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
@@ -289,6 +289,19 @@ Or, you can specify the export file directly:
         </drush>
 
         <drush command="config-export" assume="yes" />
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+             Drupal has been installed using the standard profile, with the following changes:
+             - Disabled the automated_cron, big_pipe, contact, history, search, and tour modules
+             - Disabled anonymous user registration
+             - Set the default country to "US"
+             - Set the default timezone to "America/Chicago"
+             - Disabled user-configurable timezones
+             - Replaced the standard profile with config_installer
+
+             Your config has been exported to ${drupal.root}/${drupal.config_sync_directory}</echo>
     </target>
 
 
