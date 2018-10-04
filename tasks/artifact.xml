@@ -249,12 +249,19 @@
 
 
     <target name="artifact-commit">
-        <phing target="commit" phingfile="vendor/palantirnet/the-build/tasks/lib/repositories.xml" inheritAll="false" dir=".">
-            <property name="build.dir" value="${build.dir}" />
-            <property name="repo.dir" value="${artifact.directory}" />
-            <property name="tag_prefix" value="${artifact.prefix}" />
-            <property name="message" value="Drupal artifact build of ${artifact.git.commit_message}" />
-        </phing>
+        <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+        <exec command="git add --all" dir="${artifact.directory}" />
+
+        <!-- Commit all changes to the artifact repository. -->
+        <gitcommit repository="${artifact.directory}" message="Drupal artifact build of ${artifact.git.commit_message}" allFiles="true" />
+
+        <!-- If this is a build of a tag, tag the artifact. -->
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <gittag repository="${artifact.directory}" name="${artifact.git.artifact_tag}" annotate="true" message="Drupal artifact build of tag ${artifact.git.tag}." />
+            </then>
+        </if>
     </target>
 
 
