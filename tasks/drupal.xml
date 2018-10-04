@@ -180,17 +180,17 @@ Or, you can specify the export file directly:
          Check for a Drupal database connection.
          -->
     <target name="drupal-has-database-connection">
-        <drush command="status" returnProperty="drupal.database.status">
-            <param>db-status</param>
-            <option name="format" value="list" />
-        </drush>
-
-        <if>
-            <not><equals arg1="${drupal.database.status}" arg2="Connected" /></not>
-            <then>
+        <trycatch>
+            <try>
+                <drush command="sql-query">
+                    <param>SELECT 1</param>
+                </drush>
+                <echo msg="Drupal database connection available." />
+            </try>
+            <catch>
                 <fail msg="Drupal database connection not available." />
-            </then>
-        </if>
+            </catch>
+        </trycatch>
     </target>
 
 
