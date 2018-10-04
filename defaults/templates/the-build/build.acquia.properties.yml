@@ -3,4 +3,4 @@
 build:
   drupal:
     settings: .the-build/drupal.settings.build-acquia.php
-    services_dest: /dev/null
+    services_dest: artifacts/dev/null
