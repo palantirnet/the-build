@@ -4,7 +4,7 @@
   @file artifact.xml
   Targets for managing Drupal code artifacts.
 
-  @see docs/properties.md
+  @see docs/artifacts.md
   @see defaults.properties.yml
 
   Copyright 2018 Palantir.net, Inc.
