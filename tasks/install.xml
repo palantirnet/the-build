@@ -181,20 +181,31 @@
             </filterchain>
         </copy>
 
-        <!-- If we're using the-vagrant, offer to install Drupal. -->
-        <if>
-            <equals arg1="${env.PALANTIR_ENVIRONMENT}" arg2="vagrant" />
-            <then>
+        <!-- Run the first build. -->
+        <phing dir="${application.startdir}" target="build" inheritAll="false" />
+
+        <!-- If Drupal has a database connection available, offer to install Drupal. -->
+        <trycatch>
+            <try>
+                <!-- The 'haltonfailure' attribute seems to have the opposite behavior
+                     from what is described in the Phing documentation. -->
+                <phing dir="${application.startdir}" target="drupal-has-database-connection" inheritAll="false" haltonfailure="true" />
+
+                <!-- This code will run only when a database connection is available. -->
                 <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
-                        <phing dir="${application.startdir}" target="build" inheritAll="false" />
                         <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
                     </then>
                 </if>
-            </then>
-        </if>
+            </try>
+            <catch>
+                <!-- Drupal will be installed later, if not manually then by the 'install'
+                     target in the default build.xml. -->
+            </catch>
+        </trycatch>
     </target>
+
 
 </project>

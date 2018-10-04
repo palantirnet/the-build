@@ -72,6 +72,9 @@ ${modified_files}
                     </echo>
                 </then>
             </elseif>
+            <else>
+                <echo>Ready to install: no local changes to your Drupal config directory.</echo>
+            </else>
         </if>
     </target>
 
@@ -172,10 +175,50 @@ Or, you can specify the export file directly:
     </target>
 
 
+    <!-- Target: drupal-has-database-connection
+
+         Check for a Drupal database connection.
+         -->
+    <target name="drupal-has-database-connection">
+        <drush command="status" returnProperty="drupal.database.status">
+            <param>db-status</param>
+            <option name="format" value="list" />
+        </drush>
+
+        <if>
+            <not><equals arg1="${drupal.database.status}" arg2="Connected" /></not>
+            <then>
+                <fail msg="Drupal database connection not available." />
+            </then>
+        </if>
+    </target>
+
+
+    <!-- Target: drupal-install-if-no-config
+
+         Check for Drupal config, and if it's not present, offer to install Drupal.
+         -->
+    <target name="drupal-install-if-no-config">
+        <if>
+            <not><available file="${drupal.root}/${drupal.config_sync_directory}/core.extension.yml" /></not>
+            <then>
+                <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+            </then>
+            <else>
+                <echo msg="Drupal config present." />
+            </else>
+        </if>
+    </target>
+
+
     <!-- Target: drupal-first-install
 
          Scripted install and of Drupal for use when installing the-build, allowing the
          installation process to create the initial Drupal config.
+
+         Technically this depends on the 'drupal-has-database-connection' target, but both
+         of the places where this is called from code already have separate dependencies
+         on that target.
          -->
     <target name="drupal-first-install">
         <fail unless="drupal.admin_user" />
