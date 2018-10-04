@@ -200,12 +200,26 @@ Or, you can specify the export file directly:
          -->
     <target name="drupal-install-if-no-config">
         <if>
+            <!-- Check for the core.extension.yml config file, which is present in any
+                 complete exported Drupal configuration. -->
             <not><available file="${drupal.root}/${drupal.config_sync_directory}/core.extension.yml" /></not>
             <then>
-                <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+                <echo>No exported Drupal config available to install from.</echo>
+
+                <!-- Prompt before installing. -->
+                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
+                <if>
+                    <equals arg1="${install_now}" arg2="y" />
+                    <then>
+                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+                    </then>
+                    <else>
+                        <fail msg="Install cancelled." />
+                    </else>
+                </if>
             </then>
             <else>
-                <echo msg="Drupal config present." />
+                <echo msg="Nothing to do." />
             </else>
         </if>
     </target>
