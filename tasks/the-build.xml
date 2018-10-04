@@ -87,6 +87,7 @@
         Utility target to allow creating a list of directories with <foreach />.
         -->
     <target name="mkdir">
+        <echo msg="${dir}" />
         <mkdir dir="${dir}" />
     </target>
 
