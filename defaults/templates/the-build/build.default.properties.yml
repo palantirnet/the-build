@@ -11,17 +11,20 @@
 # @see .the-build/drupal.settings.php
 drupal:
   root: "${drupal.root}"
-  hash_salt: "${drupal.hash_salt}"
-  profile: "${drupal.profile}"
-
-  database:
-    database: "${drupal.database.database}"
-    username: "${drupal.database.username}"
-    password: "${drupal.database.password}"
-    host: "${drupal.database.host}" 
 
   twig:
     debug: true
+
+  sites:
+    default:
+      hash_salt: "${drupal.hash_salt}"
+      profile: "${drupal.profile}"
+
+      database:
+        database: "${drupal.database.database}"
+        username: "${drupal.database.username}"
+        password: "${drupal.database.password}"
+        host: "${drupal.database.host}"
 
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare

@@ -16,44 +16,8 @@ drupal:
   # configuration in your `composer.json`. Use caution when changing this value.
   root: web
 
-  # Human-readable name for your site.
-  site_name: "${projectname}"
-
-  # Your site's URI; the default should be the URI of your local development environment.
-  uri: "https://${projectname}.local"
-
-  # Salt for Drupal's password hashing. A unique salt is generated when you install
-  # `the-build`.
-  hash_salt: temporary
-
-  # Drupal install profile to use for the drupal-install target.
-  profile: config_installer
-
-  # Name of the sites subdirectory where the `settings.php` file should live.
-  sites_subdir: default
-
-  # Path to the Drupal config directory, relative to the Drupal root.
-  config_sync_directory: "../config/sites/${drupal.sites_subdir}"
-
-  # Drupal admin username, if you feel inclined to change it.
-  admin_user: admin
-
   # Comma-separated list of directories that should be present for Drupal development.
   create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom"
-
-  # Database connection for Drupal.
-  database:
-    database: drupal
-    username: root
-    password: root
-    host: 127.0.0.1
-
-  settings:
-    # Path to the Drupal public files directory, relative to the Drupal root.
-    file_public_path: sites/default/files
-
-    # Path to the Drupal private files directory, relative to the Drupal root.
-    file_private_path: "../artifacts/private/${drupal.sites_subdir}"
 
   twig:
     # Whether to enable twig debugging.
@@ -64,6 +28,45 @@ drupal:
   validate_clean_config:
     # Use 'true' or 'yes' to bypass.
     bypass: false
+
+  sites:
+    default:
+      # Name of the sites subdirectory where the `settings.php` file should live.
+      sites_subdir: default
+
+      # Human-readable name for your site.
+      site_name: "${projectname}"
+
+      # Your site's URI; the default should be the URI of your local development environment.
+      uri: "https://${projectname}.local"
+
+      # Salt for Drupal's password hashing. A unique salt is generated when you install
+      # `the-build`.
+      hash_salt: temporary
+
+      # Drupal install profile to use for the drupal-install target.
+      profile: config_installer
+
+      # Path to the Drupal config directory, relative to the Drupal root.
+      config_sync_directory: "../config/sites/${drupal.sites_subdir}"
+
+      # Drupal admin username, if you feel inclined to change it.
+      admin_user: admin
+
+      # Database connection for Drupal.
+      database:
+        database: drupal
+        username: root
+        password: root
+        host: 127.0.0.1
+
+      settings:
+        # Path to the Drupal public files directory, relative to the Drupal root.
+        file_public_path: sites/default/files
+
+        # Path to the Drupal private files directory, relative to the Drupal root.
+        file_private_path: "../artifacts/private/${drupal.sites_subdir}"
+
 
   # Configuration for the database loading utility.
   load_db:

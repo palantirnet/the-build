@@ -4,3 +4,7 @@ build:
   drupal:
     settings: .the-build/drupal.settings.build-pantheon.php
     services_dest: artifacts/dev/null
+
+drupal:
+  twig:
+    debug: false
