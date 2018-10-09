@@ -203,8 +203,21 @@
             <catch>
                 <!-- Drupal will be installed later, if not manually then by the 'install'
                      target in the default build.xml. -->
+                <echo>Skipping Drupal installation, since the database is not available.
+
+            From within a development environment, you can run `phing install` to install Drupal.
+                </echo>
             </catch>
         </trycatch>
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+            Successfully installed the-build. Next, you may want to run:
+
+              $> phing install
+              $> phing test
+              $> phing -l</echo>
     </target>
 
 
