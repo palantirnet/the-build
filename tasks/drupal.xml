@@ -27,7 +27,7 @@
         Validate that the Drupal config directory doesn't have local modifications,
         to ensure consistent installation.
     -->
-    <target name="drupal-validate-clean-config" description="Validate clean drupal config directory.">
+    <target name="drupal-validate-clean-config">
       <!-- Assembling this property at run time. -->
       <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
 

@@ -90,14 +90,11 @@
 
 
     <!-- Target: test -->
-    <target name="test" description="Run all the tests.">
-        <phingcall target="code-review" />
-        <phingcall target="behat" />
-    </target>
+    <target name="test" description="Run all the tests." depends="code-review,behat" />
 
 
     <!-- Target: behat -->
-    <target name="behat">
+    <target name="behat" description="Run the Behat tests.">
         <property name="behat.command" value="vendor/bin/behat ${behat.args}" />
         <echo msg="$> ${behat.command}" />
         <exec command="${behat.command}" logoutput="true" checkreturn="true" />
