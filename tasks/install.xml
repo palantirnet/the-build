@@ -19,19 +19,6 @@
     <!-- Target: install -->
     <target name="install" description="Install the Phing build template into your project.">
 
-        <!-- Copy the build file template.
-             This doesn't do any property substitution except for the "project name",
-             which is the name of the install directory.
-             -->
-        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
-            <filterchain>
-                <replacetokens>
-                    <token key="projectname" value="${projectname}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-
         <!-- Configuration prompts.
              This creates the initial project properties file.
              -->
@@ -62,6 +49,25 @@
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
         <property file="${build.thebuild.dir}/defaults.properties.yml" />
+
+
+        <!-- Copy the build file template.
+
+             This doesn't do any property substitution except for the "projectname",
+             which is the name of the install directory, and the "host", set by prompt
+             above.
+
+             We can't do general property substitution here because this is a phing
+             project file that uses phing variables.
+             -->
+        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}" />
+                    <token key="host" value="${build.host}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
 
         <!-- Create the default properties file. -->
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.default.properties.yml" tofile="${application.startdir}/.the-build/build.default.properties.yml" overwrite="true">

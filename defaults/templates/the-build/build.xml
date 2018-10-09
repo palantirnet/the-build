@@ -126,7 +126,7 @@
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
-            <property name="build.env" value="acquia" />
+            <property name="build.env" value="@host@" />
         </phing>
     </target>
 
