@@ -14,6 +14,7 @@
 namespace TheBuild;
 
 use BuildException;
+use StringHelper;
 
 
 class ForeachKeyTask extends \Task {
@@ -70,24 +71,30 @@ class ForeachKeyTask extends \Task {
     $this->callee->setInheritAll(true);
     $this->callee->setInheritRefs(true);
 
+    // Extract matching keys from the properties array.
+    $keys = [];
     $project = $this->getProject();
     foreach ($project->getProperties() as $name => $value) {
       if (strpos($name, $this->prefix) === 0) {
-        $property_children = substr($name, strlen($this->fromPrefix));
+        $property_children = substr($name, strlen($this->prefix));
         list($key, $property_grandchildren) = explode('.', $property_children, 2);
-
-        $prop = $this->callee->createProperty();
-        $prop->setOverride(true);
-        $prop->setName($this->keyParam);
-        $prop->setValue($key);
-
-        $prop = $this->callee->createProperty();
-        $prop->setOverride(true);
-        $prop->setName($this->prefixParam);
-        $prop->setValue($this->prefix);
-
-        $this->callee->main();
+        $keys[$key] = $this->prefix;
       }
+    }
+
+    // Iterate over each extracted key.
+    foreach ($keys as $key => $prefix) {
+      $prop = $this->callee->createProperty();
+      $prop->setOverride(true);
+      $prop->setName($this->keyParam);
+      $prop->setValue($key);
+
+      $prop = $this->callee->createProperty();
+      $prop->setOverride(true);
+      $prop->setName($this->prefixParam);
+      $prop->setValue($prefix);
+
+      $this->callee->main();
     }
   }
 

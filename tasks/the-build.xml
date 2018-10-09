@@ -15,6 +15,11 @@
     <!-- Provide the <includeresource /> task. -->
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
 
+    <!-- Provide the <foreachkey /> task. -->
+    <taskdef name="foreachkey" classname="TheBuild\ForeachKeyTask" />
+
+    <!-- Provide the <copyproperties /> task. -->
+    <taskdef name="copyproperties" classname="TheBuild\CopyPropertiesTask" />
 
     <!-- Alias the build directory to the Phing start directory. -->
     <property name="build.dir" value="${application.startdir}" />

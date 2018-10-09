@@ -14,6 +14,7 @@
 namespace TheBuild;
 
 use BuildException;
+use StringHelper;
 
 
 class CopyPropertiesTask extends \Task {
