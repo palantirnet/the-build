@@ -6,4 +6,4 @@
  */
 
 $config_directories = [];
-$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.config_sync_directory}';
+$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';

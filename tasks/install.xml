@@ -29,10 +29,10 @@
 
         <!-- Generate a hash salt for Drupal. -->
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-        <property name="drupal.hash_salt" value="${hash_salt}" override="true" />
+        <property name="drupal.sites.default.hash_salt" value="${hash_salt}" override="true" />
 
         <!-- Prompt for the Drupal URI. -->
-        <propertyprompt propertyName="drupal.uri" defaultValue="${default.drupal.uri}" promptText="Drupal URI" promptCharacter=":" />
+        <propertyprompt propertyName="drupal.sites.default.uri" defaultValue="${default.drupal.sites.default.uri}" promptText="Drupal URI" promptCharacter=":" />
 
         <!-- Prompt for the web host. -->
         <input propertyName="build.host" validArgs="acquia,pantheon,platformsh,other" message="Hosting platform" promptChar=":" />

@@ -31,16 +31,16 @@
         <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
 
         <!-- Set permissions on the sites subdirectory. -->
-        <mkdir dir="${drupal.root}/sites/${drupal.sites_subdir}" />
-        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+        <mkdir dir="${drupal.root}/sites/${drupal.site.sites_subdir}" />
+        <chmod file="${drupal.root}/sites/${drupal.site.sites_subdir}" mode="750" />
 
         <!-- Create the public files directory and make it world writable. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_public_path}" />
-        <chmod file="${drupal.root}/${drupal.settings.file_public_path}" mode="744" />
+        <mkdir dir="${drupal.root}/${drupal.site.settings.file_public_path}" />
+        <chmod file="${drupal.root}/${drupal.site.settings.file_public_path}" mode="744" />
 
         <!-- Create the private files directory and make it private. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_private_path}" />
-        <chmod file="${drupal.root}/${drupal.settings.file_private_path}" mode="640" />
+        <mkdir dir="${drupal.root}/${drupal.site.settings.file_private_path}" />
+        <chmod file="${drupal.root}/${drupal.site.settings.file_private_path}" mode="640" />
 
         <!-- Copy the settings.build.php and services.build.php templates into place. -->
         <copy todir="${build.dir}" overwrite="true" mode="544">
@@ -68,10 +68,10 @@
          -->
     <target name="install" depends="build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
         <drush command="site-install" assume="yes">
-            <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">${drupal.admin_user}</option>
+            <option name="site-name">${drupal.site.site_name}</option>
+            <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>${drupal.profile}</param>
+            <param>${drupal.site.profile}</param>
         </drush>
     </target>
 

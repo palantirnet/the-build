@@ -12,7 +12,6 @@ if (!empty($output)) {
 
   # Configure Drush for the current project.
   $options['root'] = "{$repo}/${drupal.root}";
-  $options['uri'] = "${drupal.uri}";
 }
 
 /**

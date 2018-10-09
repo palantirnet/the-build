@@ -29,7 +29,7 @@
     -->
     <target name="drupal-validate-clean-config">
       <!-- Assembling this property at run time. -->
-      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
+      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
         <!-- Use git to list local (not yet committed) changes to the config directory. -->
         <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
@@ -88,13 +88,13 @@ ${modified_files}
           - Structure only for cache, search, and log tables
         -->
     <target name="drupal-dump-db" description="Generate a database dump.">
-        <fail unless="drupal.admin_user" />
+        <fail unless="drupal.site.admin_user" />
 
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
            <option name="password" value="${pass}" />
-           <param>${drupal.admin_user}</param>
+           <param>${drupal.site.admin_user}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
@@ -121,7 +121,7 @@ ${modified_files}
         <!-- now we can go back to the worst password ever -->
         <drush command="user-password">
            <option name="password" value="admin" />
-           <param>${drupal.admin_user}</param>
+           <param>${drupal.site.admin_user}</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
@@ -134,44 +134,44 @@ ${modified_files}
 
     <!-- Target: drupal-load-db -->
     <target name="drupal-load-db" description="Load a database export.">
-        <fail unless="drupal.load_db.export_pattern" />
-        <fail unless="drupal.load_db.contents_command" />
-        <fail unless="drupal.load_db.mysql_command" />
+        <fail unless="drupal.site.load_db.export_pattern" />
+        <fail unless="drupal.site.load_db.contents_command" />
+        <fail unless="drupal.site.load_db.mysql_command" />
 
         <!-- If no database file is set, look for one based on the 'export_pattern'. -->
         <if>
-            <not><isset property="drupal.load_db.file" /></not>
+            <not><isset property="drupal.site.load_db.file" /></not>
             <then>
-                <!-- Use the last listed file that matches the drupal.load_db.export_pattern property -->
-                <exec dir="${build.dir}" command="ls ${drupal.load_db.export_pattern} | tail -1" outputProperty="drupal.load_db.discovered_file" />
-                <!-- ... but respect drupal.load_db.file if it was already set. -->
-                <property name="drupal.load_db.file" value="${drupal.load_db.discovered_file}" />
+                <!-- Use the last listed file that matches the drupal.site.load_db.export_pattern property -->
+                <exec dir="${build.dir}" command="ls ${drupal.site.load_db.export_pattern} | tail -1" outputProperty="drupal.site.load_db.discovered_file" />
+                <!-- ... but respect drupal.site.load_db.file if it was already set. -->
+                <property name="drupal.site.load_db.file" value="${drupal.site.load_db.discovered_file}" />
             </then>
         </if>
 
         <!-- Validate that we've found a file to load -->
         <if>
-          <equals arg1="${drupal.load_db.file}" arg2="" />
+          <equals arg1="${drupal.site.load_db.file}" arg2="" />
           <then>
-              <echo>Missing database export at '${drupal.load_db.export_pattern}'
+              <echo>Missing database export at '${drupal.site.load_db.export_pattern}'
 
 Please download a database export to:
-  ${drupal.load_db.export_pattern}
+  ${drupal.site.load_db.export_pattern}
 
 Alternatively, you can specify the export file prefix; for example:
-  phing [YOUR-TARGET] -Ddrupal.load_db.export_pattern=artifacts/prod-*
+  phing [YOUR-TARGET] -Ddrupal.site.load_db.export_pattern=artifacts/prod-*
 
 Or, you can specify the export file directly:
-  phing [YOUR-TARGET] -Ddrupal.load_db.file=artifacts/my_db.sql.gz
+  phing [YOUR-TARGET] -Ddrupal.site.load_db.file=artifacts/my_db.sql.gz
               </echo>
               <fail message="Missing database export." />
           </then>
         </if>
 
         <!-- Load the contents of the file into Drupal -->
-        <property name="drupal.load_db.command" value="${drupal.load_db.contents_command} ${drupal.load_db.file} | ${drupal.load_db.mysql_command}" />
-        <echo>$> ${drupal.load_db.command}</echo>
-        <exec dir="${build.dir}" command="${drupal.load_db.command}" checkreturn="true" logoutput="true" />
+        <property name="drupal.site.load_db.command" value="${drupal.site.load_db.contents_command} ${drupal.site.load_db.file} | ${drupal.site.load_db.mysql_command}" />
+        <echo>$> ${drupal.site.load_db.command}</echo>
+        <exec dir="${build.dir}" command="${drupal.site.load_db.command}" checkreturn="true" logoutput="true" />
     </target>
 
 
@@ -202,7 +202,7 @@ Or, you can specify the export file directly:
         <if>
             <!-- Check for the core.extension.yml config file, which is present in any
                  complete exported Drupal configuration. -->
-            <not><available file="${drupal.root}/${drupal.config_sync_directory}/core.extension.yml" /></not>
+            <not><available file="${drupal.root}/${drupal.site.config_sync_directory}/core.extension.yml" /></not>
             <then>
                 <echo>No exported Drupal config available to install from.</echo>
 
@@ -235,11 +235,11 @@ Or, you can specify the export file directly:
          on that target.
          -->
     <target name="drupal-first-install">
-        <fail unless="drupal.admin_user" />
+        <fail unless="drupal.site.admin_user" />
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
-            <option name="account-name">${drupal.admin_user}</option>
+            <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>standard</param>
         </drush>
@@ -301,7 +301,7 @@ Or, you can specify the export file directly:
              - Disabled user-configurable timezones
              - Replaced the standard profile with config_installer
 
-             Your config has been exported to ${drupal.root}/${drupal.config_sync_directory}</echo>
+             Your config has been exported to ${drupal.root}/${drupal.site.config_sync_directory}</echo>
     </target>
 
 

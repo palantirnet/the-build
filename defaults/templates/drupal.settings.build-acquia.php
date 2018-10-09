@@ -8,12 +8,12 @@
 $settings['trusted_host_patterns'][] = "^{$_ENV['AH_SITE_ENVIRONMENT']}dev.prod.acquia-sites.com";
 $settings['trusted_host_patterns'][] = "^{$_ENV['AH_SITE_ENVIRONMENT']}stg.prod.acquia-sites.com";
 
-$settings['file_public_path'] = '${drupal.settings.file_public_path}';
+$settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
 $config['system.file']['path']['temporary'] = $_ENV['TEMP'];
 
 $config_directories = [];
-$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.config_sync_directory}';
+$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
 
 
 //// Add an htaccess prompt on dev and staging environments.
