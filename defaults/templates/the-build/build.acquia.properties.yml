@@ -1,10 +1,10 @@
 # @file
 # Configuration properties specific to the Acquia deployment.
-build:
-  drupal:
-    settings: .the-build/drupal.settings.build-acquia.php
-    services_dest: artifacts/dev/null
-
 drupal:
   twig:
     debug: false
+  sites:
+    default:
+      build:
+        settings: .the-build/drupal.settings.build-acquia.php
+        services_dest: artifacts/dev/null

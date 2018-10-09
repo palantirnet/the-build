@@ -45,11 +45,11 @@
         <!-- Copy the settings.build.php and services.build.php templates into place. -->
         <copy todir="${build.dir}" overwrite="true" mode="544">
             <!-- Copy the template files -->
-            <filelist dir="${build.dir}" files="${build.drupal.settings},${build.drupal.services}" />
+            <filelist dir="${build.dir}" files="${drupal.site.build.settings_template},${drupal.site.build.services_template}" />
             <!-- Map templates to their destinations -->
             <mapper type="firstmatch">
-                <mapper type="glob" from="${build.drupal.settings}" to="${build.drupal.settings_dest}" />
-                <mapper type="glob" from="${build.drupal.services}" to="${build.drupal.services_dest}" />
+                <mapper type="glob" from="${drupal.site.build.settings_template}" to="${drupal.site.build.settings_dest}" />
+                <mapper type="glob" from="${drupal.site.build.services_template}" to="${drupal.site.build.services_dest}" />
             </mapper>
             <!-- Substitute property values -->
             <filterchain>

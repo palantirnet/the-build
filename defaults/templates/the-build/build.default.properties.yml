@@ -17,14 +17,14 @@ drupal:
 
   sites:
     default:
-      hash_salt: "${drupal.site.hash_salt}"
-      profile: "${drupal.site.profile}"
+      hash_salt: "${drupal.sites.default.hash_salt}"
+      profile: "${drupal.sites.default.profile}"
 
       database:
-        database: "${drupal.site.database.database}"
-        username: "${drupal.site.database.username}"
-        password: "${drupal.site.database.password}"
-        host: "${drupal.site.database.host}"
+        database: "${drupal.sites.default.database.database}"
+        username: "${drupal.sites.default.database.username}"
+        password: "${drupal.site.default.database.password}"
+        host: "${drupal.sites.default.database.host}"
 
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare

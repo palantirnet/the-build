@@ -48,7 +48,7 @@ drupal:
       profile: config_installer
 
       # Path to the Drupal config directory, relative to the Drupal root.
-      config_sync_directory: "../config/sites/${drupal.site.sites_subdir}"
+      config_sync_directory: "../config/sites/default"
 
       # Drupal admin username, if you feel inclined to change it.
       admin_user: admin
@@ -65,7 +65,23 @@ drupal:
         file_public_path: sites/default/files
 
         # Path to the Drupal private files directory, relative to the Drupal root.
-        file_private_path: "../artifacts/private/${drupal.site.sites_subdir}"
+        file_private_path: "../artifacts/private/default"
+
+      # Configuration used by the default 'build' target.
+      build:
+        # Source template for Drupal's `settings.php` file. This may vary per build
+        # environment.
+        settings_template: .the-build/drupal.settings.build.php
+
+        # Destination for the templated settings.php file.
+        settings_dest: ${drupal.root}/sites/default/settings.build.php
+
+        # Source template for Drupal's `services.yml` file. This may vary per build
+        # environment.
+        services_template: .the-build/drupal.services.build.yml
+
+        # Destination for the templated `services.yml` file.
+        services_dest: ${drupal.root}/sites/default/services.build.yml
 
 
   # Configuration for the database loading utility.
@@ -86,24 +102,6 @@ drupal:
     # Otherwise, you may occasionally want to set this value at run time:
     #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
     #file:
-
-
-# Build configuration used by tasks/drupal.xml
-build:
-  drupal:
-    # Source template for Drupal's `settings.php` file. This may vary per build
-    # environment.
-    settings: .the-build/drupal.settings.build.php
-
-    # Destination for the templated settings.php file.
-    settings_dest: "${drupal.root}/sites/${drupal.site.sites_subdir}/settings.build.php"
-
-    # Source template for Drupal's `services.yml` file. This may vary per build
-    # environment.
-    services: .the-build/drupal.services.build.yml
-
-    # Destination for the templated `services.yml` file.
-    services_dest: "${drupal.root}/sites/${drupal.site.sites_subdir}/services.build.yml"
 
 
 # Configuration for tasks/artifact.xml
