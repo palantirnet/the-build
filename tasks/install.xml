@@ -159,6 +159,7 @@
                 <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/pantheon.yml" todir="${application.startdir}" overwrite="true" />
             </case>
 
             <case value="platformsh">
