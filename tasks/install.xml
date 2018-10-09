@@ -166,6 +166,10 @@
                 <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
+                <copy todir="${application.startdir}/.platform" overwrite="true">
+                    <fileset dir="${build.thebuild.dir}/defaults/templates/.platform" />
+                </copy>
             </case>
             <default />
         </switch>

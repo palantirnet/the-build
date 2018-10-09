@@ -1,0 +1,92 @@
+# See:
+# - https://docs.platform.sh/user_guide/reference/platform-app-yaml.html
+# - https://github.com/platformsh/platformsh-example-drupal8/blob/master/.platform.app.yaml
+
+name: 'app'
+type: 'php:7.2'
+
+relationships:
+    database: 'mysqldb:mysql'
+
+disk: 2048
+
+mounts:
+    '/web/sites/default/files': 'shared:files/files'
+    '/tmp': 'shared:files/tmp'
+    '/private': 'shared:files/private'
+    '/.drush': 'shared:files/.drush'
+    '/drush-backups': 'shared:files/drush-backups'
+
+build:
+    flavor: composer
+
+hooks:
+    build: |
+      set -e
+      vendor/bin/phing build -Dbuild.env=platformsh
+      curl -sS https://platform.sh/cli/installer | php
+
+    deploy: |
+      set -e
+      cd web
+      drush -y cache-rebuild
+      drush -y updatedb
+      drush -y config-import
+      drush -y entup
+
+web:
+    locations:
+        '/':
+            root: 'web'
+            expires: 5m
+            passthru: '/index.php'
+            allow: false
+            rules:
+                # Allow access to common static files.
+                '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf)$':
+                    allow: true
+                '^/robots\.txt$':
+                    allow: true
+                '^/sitemap\.xml$':
+                    allow: true
+
+                # Deny direct access to configuration files.
+                '^/sites/sites\.php$':
+                    scripts: false
+                '^/sites/[^/]+/settings.*?\.php$':
+                    scripts: false
+
+        '/sites/default/files':
+            # Allow access to all files in the public files directory.
+            allow: true
+            expires: 5m
+            passthru: '/index.php'
+            root: 'web/sites/default/files'
+            scripts: false
+            rules:
+                # Provide a longer TTL (2 weeks) for aggregated CSS and JS files.
+                '^/sites/default/files/(css|js)':
+                    expires: 2w
+
+crons:
+    drupal:
+        spec: '*/20 * * * *'
+        cmd: 'cd web ; drush core-cron'
+    # Create a snapshot of master environment 8AM UTC / 12AM PST
+    snapshot:
+        spec: '0 8 * * *'
+        # --yes to skip interaction
+        # --no-wait to tell cron to not block on the snapshot being created
+        cmd: |
+            if [ "$PLATFORM_BRANCH" = master ]; then
+                platform snapshot:create --yes --no-wait
+            fi
+
+# Variables set across Platform environments.
+variables:
+    # Set php.ini variables.
+    php:
+        # Maximum allowed size for uploaded files.
+        upload_max_filesize: 100M
+        # Maximum size of POST data that PHP will accept (including uploads).
+        post_max_size: 105M
