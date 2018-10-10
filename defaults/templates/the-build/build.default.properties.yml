@@ -26,6 +26,17 @@ drupal:
         password: "${drupal.site.default.database.password}"
         host: "${drupal.sites.default.database.host}"
 
+    # Add more multisites here.
+    #second:
+    #  uri: "http://second.local"
+    #  hash_salt: "temporary"
+    #  profile: "config_installer"
+    #  database:
+    #    database: "second"
+    #    username: "drupal"
+    #    password: "drupal"
+    #    host: "${drupal.sites.default.database.host}"
+
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
 # these values to the defaults in build.circleci.properties.yml.

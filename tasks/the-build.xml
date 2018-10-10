@@ -69,7 +69,21 @@
         </then>
     </if>
 
+
     <!-- Set our current site. -->
+    <!-- @todo:
+           - get a list of property keys within 'drupal.sites.'
+           - if there's just one key, copy the properties
+           - if there's more than one key, prompt to select
+           - use a runtime flag like -Dbuild.site=foo
+           - maybe also allow setting the default with an environment variable? or some
+             other way to work on one site at a time without the flag?
+          - provide validation and defaults for sites; this might have to be replicated in
+            the install process, since that relies on default values for some of the
+            drupal config
+          - set some values at run time based on the site subdirectory/site key name?
+          - watch out for site names with . in them - those won't be iterable as keys
+         -->
     <copyproperties fromPrefix="drupal.sites.default" toPrefix="drupal.site" override="true" />
 
 

@@ -132,7 +132,9 @@ ${modified_files}
     </target>
 
 
-    <!-- Target: drupal-load-db -->
+    <!-- Target: drupal-load-db
+         @todo make this more user-friendly, ESPECIALLY now that drupal site properties are nested like this!
+         -->
     <target name="drupal-load-db" description="Load a database export.">
         <fail unless="drupal.site.load_db.export_pattern" />
         <fail unless="drupal.site.load_db.contents_command" />
