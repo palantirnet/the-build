@@ -44,19 +44,14 @@ class CopyPropertiesTask extends \Task {
 
 
   /**
-   * Use either Project::setProperty() or Project::setNewProperty() based on
-   * whether we're overriding values or not.
-   */
-  public function init() {
-    parent::init();
-    $this->propertyMethod = $this->override ? 'setProperty' : 'setNewProperty';
-  }
-
-  /**
    * Copy properties.
    */
   public function main() {
     $this->validate();
+
+    // Use either Project::setProperty() or Project::setNewProperty() based on
+    // whether we're overriding values or not.
+    $this->propertyMethod = $this->override ? 'setProperty' : 'setNewProperty';
 
     $project = $this->getProject();
     foreach ($project->getProperties() as $name => $value) {
