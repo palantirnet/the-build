@@ -49,6 +49,8 @@
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
         <property file="${build.thebuild.dir}/defaults.properties.yml" />
+        <!-- Copy defaults to fill in the sites array. -->
+        <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.sites.default" override="false" />
 
 
         <!-- Copy the build file template.

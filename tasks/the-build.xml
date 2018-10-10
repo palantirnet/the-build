@@ -84,6 +84,9 @@
           - set some values at run time based on the site subdirectory/site key name?
           - watch out for site names with . in them - those won't be iterable as keys
          -->
+    <!-- Copy defaults in first. -->
+    <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
+    <!-- Override defaults with any site-specific values. -->
     <copyproperties fromPrefix="drupal.sites.default" toPrefix="drupal.site" override="true" />
 
 

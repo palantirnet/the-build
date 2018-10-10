@@ -31,8 +31,8 @@
         <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
 
         <!-- Set permissions on the sites subdirectory. -->
-        <mkdir dir="${drupal.root}/sites/${drupal.site.sites_subdir}" />
-        <chmod file="${drupal.root}/sites/${drupal.site.sites_subdir}" mode="750" />
+        <mkdir dir="${drupal.root}/sites/${drupal.site.dir}" />
+        <chmod file="${drupal.root}/sites/${drupal.site.dir}" mode="750" />
 
         <!-- Create the public files directory and make it world writable. -->
         <mkdir dir="${drupal.root}/${drupal.site.settings.file_public_path}" />
@@ -68,7 +68,7 @@
          -->
     <target name="install" depends="build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
         <drush command="site-install" assume="yes">
-            <option name="site-name">${drupal.site.site_name}</option>
+            <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>${drupal.site.profile}</param>

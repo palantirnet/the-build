@@ -30,16 +30,47 @@ drupal:
     bypass: false
 
   sites:
+    # Configuration values for a Drupal site build. The values in this section
+    # must be customized for each Drupal multisite installation that you add.
+    #
+    # This site configuration will not be complete without copying in values
+    # from drupal.sites._defaults.
+    #
+    # To add a Drupal multisite installation, copy these default values into
+    # your project's .the-build/build.default.properties.yml file and change
+    # the 'default' key to the name of your new multisite.
     default:
       # Name of the sites subdirectory where the `settings.php` file should live.
-      sites_subdir: default
-
-      # Human-readable name for your site.
-      site_name: "${projectname}"
+      dir: default
 
       # Your site's URI; the default should be the URI of your local development environment.
       uri: "https://${projectname}.local"
 
+      # Path to the Drupal config directory, relative to the Drupal root.
+      config_sync_directory: "../config/sites/default"
+
+      # Database connection for Drupal.
+      database:
+        database: drupal
+
+      settings:
+        # Path to the Drupal public files directory, relative to the Drupal root.
+        file_public_path: sites/default/files
+
+        # Path to the Drupal private files directory, relative to the Drupal root.
+        file_private_path: "../artifacts/private/default"
+
+      # Configuration used by the default 'build' target.
+      build:
+        # Destination for the templated settings.php file.
+        settings_dest: ${drupal.root}/sites/default/settings.build.php
+
+        # Destination for the templated `services.yml` file.
+        services_dest: ${drupal.root}/sites/default/services.build.yml
+
+    # These values are used to fill in defaults for Drupal multisites that might
+    # not have everything defined.
+    _defaults:
       # Salt for Drupal's password hashing. A unique salt is generated when you install
       # `the-build`.
       hash_salt: temporary
