@@ -38,38 +38,51 @@ drupal:
     #
     # To add a Drupal multisite installation, copy these default values into
     # your project's .the-build/build.default.properties.yml file and change
-    # the 'default' key to the name of your new multisite.
+    # the 'default' key to the name of your new multisite. The key must not
+    # contain '.' characters, but the 'dir' property may.
     default:
-      # Name of the sites subdirectory where the `settings.php` file should live.
+      # REQUIRED: Name of the sites subdirectory where the `settings.php` file
+      # should live.
       dir: default
 
-      # Your site's URI; the default should be the URI of your local development environment.
+      # REQUIRED: Your site's URI; the default should be the URI of your local
+      # development environment.
       uri: "https://${projectname}.local"
 
-      # Path to the Drupal config directory, relative to the Drupal root.
-      config_sync_directory: "../config/sites/default"
-
-      # Database connection for Drupal.
-      database:
-        database: drupal
-
-      settings:
-        # Path to the Drupal public files directory, relative to the Drupal root.
-        file_public_path: sites/default/files
-
-        # Path to the Drupal private files directory, relative to the Drupal root.
-        file_private_path: "../artifacts/private/default"
-
-      # Configuration used by the default 'build' target.
-      build:
-        # Destination for the templated settings.php file.
-        settings_dest: ${drupal.root}/sites/default/settings.build.php
-
-        # Destination for the templated `services.yml` file.
-        services_dest: ${drupal.root}/sites/default/services.build.yml
+      # Customizing the following values is OPTIONAL. If these values are not
+      # explicitly configured, they will be set in the-build.xml based on the
+      # 'dir' value configured above.
+      #
+      # NOTE: Properties may use other properties in their values, which are
+      # expanded when the property file is loaded. We can not use that behavior
+      # here because these values must reference a variable path: the 'default'
+      # key in the 'drupal.sites.*' properties.
+      #
+      # # Path to the Drupal config directory, relative to the Drupal root.
+      # config_sync_directory: "../config/sites/default"
+      #
+      # # Database connection for Drupal.
+      # database:
+      #   database: drupal
+      #
+      # settings:
+      #   # Path to the Drupal public files directory, relative to the Drupal root.
+      #   file_public_path: sites/default/files
+      #
+      #   # Path to the Drupal private files directory, relative to the Drupal root.
+      #   file_private_path: "../artifacts/private/default"
+      #
+      # # Configuration used by the default 'build' target.
+      # build:
+      #   # Destination for the templated settings.php file.
+      #   settings_dest: ${drupal.root}/sites/default/settings.build.php
+      #
+      #   # Destination for the templated `services.yml` file.
+      #   services_dest: ${drupal.root}/sites/default/services.build.yml
 
     # These values are used to fill in defaults for Drupal multisites that might
-    # not have everything defined.
+    # not have everything defined. These may be set for specific multisites, or
+    # you may choose to override the defaults.
     _defaults:
       # Salt for Drupal's password hashing. A unique salt is generated when you install
       # `the-build`.
@@ -78,25 +91,16 @@ drupal:
       # Drupal install profile to use for the drupal-install target.
       profile: config_installer
 
-      # Path to the Drupal config directory, relative to the Drupal root.
-      config_sync_directory: "../config/sites/default"
-
       # Drupal admin username, if you feel inclined to change it.
       admin_user: admin
 
       # Database connection for Drupal.
       database:
-        database: drupal
+        # This value is required, but a default is set in the-build.xml.
+        # database: drupal
         username: root
         password: root
         host: 127.0.0.1
-
-      settings:
-        # Path to the Drupal public files directory, relative to the Drupal root.
-        file_public_path: sites/default/files
-
-        # Path to the Drupal private files directory, relative to the Drupal root.
-        file_private_path: "../artifacts/private/default"
 
       # Configuration used by the default 'build' target.
       build:
@@ -104,15 +108,9 @@ drupal:
         # environment.
         settings_template: .the-build/drupal.settings.build.php
 
-        # Destination for the templated settings.php file.
-        settings_dest: ${drupal.root}/sites/default/settings.build.php
-
         # Source template for Drupal's `services.yml` file. This may vary per build
         # environment.
         services_template: .the-build/drupal.services.build.yml
-
-        # Destination for the templated `services.yml` file.
-        services_dest: ${drupal.root}/sites/default/services.build.yml
 
 
   # Configuration for the database loading utility.
