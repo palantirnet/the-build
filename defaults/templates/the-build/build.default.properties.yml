@@ -25,7 +25,7 @@ drupal:
       database:
         database: "drupal"
         username: "${drupal.sites.default.database.username}"
-        password: "${drupal.site.default.database.password}"
+        password: "${drupal.sites.default.database.password}"
         host: "${drupal.sites.default.database.host}"
 
     # Add more multisites here.
