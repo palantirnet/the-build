@@ -12,6 +12,9 @@
 
 <project name="the-build" default="the-build">
 
+    <!-- Provide the <drush /> task. -->
+    <taskdef name="drush" classname="Drush\Task" />
+
     <!-- Provide the <includeresource /> task. -->
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
 
@@ -43,6 +46,9 @@
         </then>
     </if>
 
+    <!-- Provide a default build environment. -->
+    <property name="build.env" value="default" />
+
     <!-- Use the THE_BUILD_SITE env variable to set the default site. -->
     <if>
         <isset property="env.THE_BUILD_SITE" />
@@ -50,9 +56,6 @@
             <property name="build.site" refid="env.THE_BUILD_SITE" />
         </then>
     </if>
-
-    <!-- Provide a default build environment. -->
-    <property name="build.env" value="default" />
 
 
     <!-- Load build properties from the project environment, the project defaults, and
@@ -76,43 +79,14 @@
             <!-- Load the-build's global defaults. -->
             <property file="${build.thebuild.dir}/defaults.properties.yml" />
 
-
-            <!-- Set our current site. -->
-            <!--
-                 @todo
-                 The downside of this approach is that the user is prompted for a site even when a site is not required for the target that
-                 they're trying to run, like 'artifact' or 'code-review'. This prompt only appears if there is more than one Drupal multisite
-                 set up, and those two targets are less frequently run, but it's still confusing and annoyinng when it happens!
-                 -->
-            <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
-            <!-- Copy defaults in first. -->
-            <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
-            <!-- Override defaults with any site-specific values. -->
-            <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
-
-
-            <!-- Validate that required Drupal site properties are present. -->
-            <fail unless="drupal.site.dir" msg="The 'drupal.sites.${build.site}.dir' property must be set in order to run build tasks." />
-            <fail unless="drupal.site.uri" msg="The 'drupal.sites.${build.site}.uri' property must be set in order to run build tasks." />
-            <!-- Fill in defaults for Drupal site properties. -->
-            <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />
-            <property name="drupal.site.database.database" value="${drupal.site.dir}" />
-            <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
-            <property name="drupal.site.settings.file_private_path" value="../artifacts/private/${drupal.site.dir}" />
-            <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />
-            <property name="drupal.site.build.services_dest" value="${drupal.root}/sites/${drupal.site.dir}/services.build.yml" />
-
-
             <!-- Prevent the-build from reloading properties. -->
             <property name="build.defaults_loaded" value="true" />
         </then>
     </if>
 
 
-    <!-- Define and configure the 'drush' Phing task. -->
-    <taskdef name="drush" classname="Drush\Task" />
+    <!-- Configure the 'drush' Phing task. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
-    <property name="drush.uri" refid="drupal.site.uri" />
     <property name="drush.root" value="${build.dir}/${drupal.root}" />
     <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
 
@@ -123,6 +97,36 @@
         -->
     <target name="the-build">
         <echo>Hello! I'm the-build.</echo>
+    </target>
+
+
+    <!--
+        Target: set-site
+        Set properties for the current site in 'drupal.site.*'.
+        -->
+    <target name="set-site">
+        <!-- Use this custom task to figure out which site to build. -->
+        <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
+
+        <!-- Copy defaults in first. -->
+        <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
+        <!-- Override defaults with any site-specific values. -->
+        <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
+
+        <!-- Validate that required Drupal site properties are present. -->
+        <fail unless="drupal.site.dir" msg="The 'drupal.sites.${build.site}.dir' property must be set in order to run build tasks." />
+        <fail unless="drupal.site.uri" msg="The 'drupal.sites.${build.site}.uri' property must be set in order to run build tasks." />
+
+        <!-- Fill in defaults for Drupal site properties. -->
+        <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />
+        <property name="drupal.site.database.database" value="${drupal.site.dir}" />
+        <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
+        <property name="drupal.site.settings.file_private_path" value="../artifacts/private/${drupal.site.dir}" />
+        <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />
+        <property name="drupal.site.build.services_dest" value="${drupal.root}/sites/${drupal.site.dir}/services.build.yml" />
+
+        <!-- Configure Drush -->
+        <property name="drush.uri" refid="drupal.site.uri" override="true" />
     </target>
 
 

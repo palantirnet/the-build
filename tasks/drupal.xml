@@ -27,7 +27,7 @@
         Validate that the Drupal config directory doesn't have local modifications,
         to ensure consistent installation.
     -->
-    <target name="drupal-validate-clean-config">
+    <target name="drupal-validate-clean-config" depends="set-site">
       <!-- Assembling this property at run time. -->
       <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
@@ -87,7 +87,7 @@ ${modified_files}
           - The site in maintenance mode
           - Structure only for cache, search, and log tables
         -->
-    <target name="drupal-dump-db" description="Generate a database dump.">
+    <target name="drupal-dump-db" depends="set-site" description="Generate a database dump.">
         <fail unless="drupal.site.admin_user" />
 
         <!-- prompt for a prod admin password -->
@@ -135,7 +135,7 @@ ${modified_files}
     <!-- Target: drupal-load-db
          @todo make this more user-friendly, ESPECIALLY now that drupal site properties are nested like this!
          -->
-    <target name="drupal-load-db" description="Load a database export.">
+    <target name="drupal-load-db" depends="set-site" description="Load a database export.">
         <fail unless="drupal.site.load_db.export_pattern" />
         <fail unless="drupal.site.load_db.contents_command" />
         <fail unless="drupal.site.load_db.mysql_command" />
@@ -181,7 +181,7 @@ Or, you can specify the export file directly:
 
          Check for a Drupal database connection.
          -->
-    <target name="drupal-has-database-connection">
+    <target name="drupal-has-database-connection" depends="set-site">
         <trycatch>
             <try>
                 <drush command="sql-query">
@@ -200,7 +200,7 @@ Or, you can specify the export file directly:
 
          Check for Drupal config, and if it's not present, offer to install Drupal.
          -->
-    <target name="drupal-install-if-no-config">
+    <target name="drupal-install-if-no-config" depends="set-site">
         <if>
             <!-- Check for the core.extension.yml config file, which is present in any
                  complete exported Drupal configuration. -->
@@ -236,7 +236,7 @@ Or, you can specify the export file directly:
          of the places where this is called from code already have separate dependencies
          on that target.
          -->
-    <target name="drupal-first-install">
+    <target name="drupal-first-install" depends="set-site">
         <fail unless="drupal.site.admin_user" />
 
         <drush command="site-install" assume="yes">

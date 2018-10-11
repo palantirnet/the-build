@@ -26,7 +26,7 @@
 
 
     <!-- Default target: build -->
-    <target name="build" description="Build the application.">
+    <target name="build" depends="set-site" description="Build the application.">
         <!-- Create the Drupal custom code directories. -->
         <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
 
@@ -66,7 +66,7 @@
     <!-- Target: install
          Running this target will also run the build target.
          -->
-    <target name="install" depends="build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
+    <target name="install" depends="set-site,build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
@@ -83,7 +83,7 @@
 
 
     <!-- Target: load -->
-    <target name="load" description="Load a database dump.">
+    <target name="load" depends="set-site" description="Load a database dump.">
         <phingcall target="drupal-load-db" />
         <drush command="cache-rebuild" />
     </target>
