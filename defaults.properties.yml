@@ -33,8 +33,8 @@ drupal:
     # Configuration values for a Drupal site build. The values in this section
     # must be customized for each Drupal multisite installation that you add.
     #
-    # This site configuration will not be complete without copying in values
-    # from drupal.sites._defaults.
+    # This site configuration is partial; it will be completed in tasks/the-build.xml by
+    # loading any missing values from drupal.sites._defaults.
     #
     # To add a Drupal multisite installation, copy these default values into
     # your project's .the-build/build.default.properties.yml file and change
