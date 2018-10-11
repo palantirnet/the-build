@@ -5,7 +5,7 @@
  * Iterate over property values.
  *
  * @code
- *   <foreachkey prefix="drupal.sites" target="mytarget" keyParam="key" prefixParam="prefix" />
+ *   <foreachkey prefix="drupal.sites" omitKeys="_defaults" target="mytarget" keyParam="key" prefixParam="prefix" />
  * @endcode
  *
  * @copyright 2018 Palantir.net, Inc.
@@ -44,6 +44,11 @@ class ForeachKeyTask extends \Task {
   protected $prefixParam = '';
 
   /**
+   * @var array
+   */
+  protected $omitKeys = [];
+
+  /**
    * @var \PhingCallTask
    */
   protected $callee;
@@ -78,9 +83,12 @@ class ForeachKeyTask extends \Task {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
         list($key, $property_grandchildren) = explode('.', $property_children, 2);
-        $keys[$key] = $this->prefix;
+        $keys[$key] = $key;
       }
     }
+
+    // Remove keys based on the 'omitKeys' attribute.
+    $keys = array_diff($keys, $this->omitKeys);
 
     // Iterate over each extracted key.
     foreach ($keys as $key => $prefix) {
@@ -92,7 +100,7 @@ class ForeachKeyTask extends \Task {
       $prop = $this->callee->createProperty();
       $prop->setOverride(true);
       $prop->setName($this->prefixParam);
-      $prop->setValue($prefix);
+      $prop->setValue($this->prefix);
 
       $this->callee->main();
     }
@@ -141,6 +149,13 @@ class ForeachKeyTask extends \Task {
    */
   public function setPrefixParam($value) {
     $this->prefixParam = $value;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setOmitKeys($value) {
+    $this->omitKeys = array_map('trim', explode(',', $value));
   }
 
 }
