@@ -21,6 +21,10 @@
     <!-- Provide the <copyproperties /> task. -->
     <taskdef name="copyproperties" classname="TheBuild\CopyPropertiesTask" />
 
+    <!-- Provide the <selectpropertykey /> task. -->
+    <taskdef name="selectpropertykey" classname="TheBuild\SelectPropertyKeyTask" />
+
+
     <!-- Alias the build directory to the Phing start directory. -->
     <property name="build.dir" value="${application.startdir}" />
 
@@ -36,6 +40,14 @@
         <isset property="env.PALANTIR_ENVIRONMENT" />
         <then>
             <property name="build.env" refid="env.PALANTIR_ENVIRONMENT" />
+        </then>
+    </if>
+
+    <!-- Use the THE_BUILD_SITE env variable to set the default site. -->
+    <if>
+        <isset property="env.THE_BUILD_SITE" />
+        <then>
+            <property name="build.site" refid="env.THE_BUILD_SITE" />
         </then>
     </if>
 
@@ -64,37 +76,31 @@
             <!-- Load the-build's global defaults. -->
             <property file="${build.thebuild.dir}/defaults.properties.yml" />
 
+
+            <!-- Set our current site. -->
+            <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
+            <!-- Copy defaults in first. -->
+            <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
+            <!-- Override defaults with any site-specific values. -->
+            <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
+
+
+            <!-- Validate that required Drupal site properties are present. -->
+            <fail unless="drupal.site.dir" msg="The 'drupal.sites.${build.site}.dir' property must be set in order to run build tasks." />
+            <fail unless="drupal.site.uri" msg="The 'drupal.sites.${build.site}.uri' property must be set in order to run build tasks." />
+            <!-- Fill in defaults for Drupal site properties. -->
+            <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />
+            <property name="drupal.site.database.database" value="${drupal.site.dir}" />
+            <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
+            <property name="drupal.site.settings.file_private_path" value="../artifacts/private/${drupal.site.dir}" />
+            <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />
+            <property name="drupal.site.build.services_dest" value="${drupal.root}/sites/${drupal.site.dir}/services.build.yml" />
+
+
             <!-- Prevent the-build from reloading properties. -->
             <property name="build.defaults_loaded" value="true" />
         </then>
     </if>
-
-
-    <!-- Set our current site. -->
-    <!-- @todo:
-           - get a list of property keys within 'drupal.sites.'
-           - if there's just one key, copy the properties
-           - if there's more than one key, prompt to select
-           - use a runtime flag like -Dbuild.site=foo
-           - maybe also allow setting the default with an environment variable? or some
-             other way to work on one site at a time without the flag?
-          - watch out for site names with . in them - those won't be iterable as keys
-         -->
-    <!-- Copy defaults in first. -->
-    <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
-    <!-- Override defaults with any site-specific values. -->
-    <copyproperties fromPrefix="drupal.sites.default" toPrefix="drupal.site" override="true" />
-
-    <!-- Validate that required Drupal site properties are present. -->
-    <fail unless="drupal.site.dir" msg="The 'drupal.sites.default.dir' property must be set in order to run build tasks." />
-    <fail unless="drupal.site.uri" msg="The 'drupal.sites.default.uri' property must be set in order to run build tasks." />
-    <!-- Fill in defaults for Drupal site properties. -->
-    <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />
-    <property name="drupal.site.database.database" value="${drupal.site.dir}" />
-    <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
-    <property name="drupal.site.settings.file_private_path" value="../artifacts/private/default" />
-    <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />
-    <property name="drupal.site.build.services_dest" value="${drupal.root}/sites/${drupal.site.dir}/services.build.yml" />
 
 
     <!-- Define and configure the 'drush' Phing task. -->
