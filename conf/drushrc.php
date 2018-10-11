@@ -14,7 +14,7 @@ if (!empty($output)) {
   $options['root'] = "{$repo}/${drupal.root}";
   $options['uri'] = "${drupal.uri}";
   $options['include'] = "{$repo}/artifacts/acquiacloud/.drush";
-  $options['alias-path'] = "{$repo}/artifacts/acquiacloud/.drush";
+  $options['alias-path'] = "{$repo}/artifacts/acquia-cloud.drush-aliases/.drush";
 }
 
 /**
