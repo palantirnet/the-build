@@ -78,6 +78,12 @@
 
 
             <!-- Set our current site. -->
+            <!--
+                 @todo
+                 The downside of this approach is that the user is prompted for a site even when a site is not required for the target that
+                 they're trying to run, like 'artifact' or 'code-review'. This prompt only appears if there is more than one Drupal multisite
+                 set up, and those two targets are less frequently run, but it's still confusing and annoyinng when it happens!
+                 -->
             <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
             <!-- Copy defaults in first. -->
             <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
