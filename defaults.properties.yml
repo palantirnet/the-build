@@ -57,28 +57,28 @@ drupal:
       # expanded when the property file is loaded. We can not use that behavior
       # here because these values must reference a variable path: the 'default'
       # key in the 'drupal.sites.*' properties.
-      #
-      # # Path to the Drupal config directory, relative to the Drupal root.
-      # config_sync_directory: "../config/sites/default"
-      #
-      # # Database connection for Drupal.
-      # database:
-      #   database: drupal
-      #
-      # settings:
-      #   # Path to the Drupal public files directory, relative to the Drupal root.
-      #   file_public_path: sites/default/files
-      #
-      #   # Path to the Drupal private files directory, relative to the Drupal root.
-      #   file_private_path: "../artifacts/private/default"
-      #
-      # # Configuration used by the default 'build' target.
-      # build:
-      #   # Destination for the templated settings.php file.
-      #   settings_dest: ${drupal.root}/sites/default/settings.build.php
-      #
-      #   # Destination for the templated `services.yml` file.
-      #   services_dest: ${drupal.root}/sites/default/services.build.yml
+#
+#     # Path to the Drupal config directory, relative to the Drupal root.
+#     config_sync_directory: "../config/sites/default"
+#
+#     # Database connection for Drupal.
+#     database:
+#       database: drupal
+#
+#     settings:
+#       # Path to the Drupal public files directory, relative to the Drupal root.
+#       file_public_path: sites/default/files
+#
+#       # Path to the Drupal private files directory, relative to the Drupal root.
+#       file_private_path: "../artifacts/private/default"
+#
+#     # Configuration used by the default 'build' target.
+#     build:
+#       # Destination for the templated settings.php file.
+#       settings_dest: ${drupal.root}/sites/default/settings.build.php
+#
+#       # Destination for the templated `services.yml` file.
+#       services_dest: ${drupal.root}/sites/default/services.build.yml
 
     # These values are used to fill in defaults for Drupal multisites that might
     # not have everything defined. These may be set for specific multisites, or

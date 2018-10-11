@@ -17,27 +17,32 @@ drupal:
 
   sites:
     default:
-      dir: "default"
+      # REQUIRED: Name of the sites subdirectory where the `settings.php` file
+      # should live.
+      dir: default
+
+      # REQUIRED: Your site's URI; the default should be the URI of your local
+      # development environment.
       uri: "${drupal.sites.default.uri}"
 
+      # OPTIONAL: Drupal hash salt defaults to "temporary".
       hash_salt: "${drupal.sites.default.hash_salt}"
 
+      # OPTIONAL: The Drupal database name defaults to the site's "dir" value.
       database:
         database: "drupal"
-        username: "${drupal.sites.default.database.username}"
-        password: "${drupal.sites.default.database.password}"
-        host: "${drupal.sites.default.database.host}"
 
     # Add more multisites here.
-    #second:
-    #  uri: "http://second.local"
-    #  hash_salt: "temporary"
-    #  profile: "config_installer"
-    #  database:
-    #    database: "second"
-    #    username: "drupal"
-    #    password: "drupal"
-    #    host: "${drupal.sites.default.database.host}"
+#   second:
+#     dir: second
+#     uri: "http://second.local"
+
+    # Defaults for all sites; these can be overridden for individual sites.
+    _defaults:
+      database:
+        username: "${drupal.sites._defaults.database.username}"
+        password: "${drupal.sites._defaults.database.password}"
+        host: "${drupal.sites._defaults.database.host}"
 
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
