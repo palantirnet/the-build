@@ -145,9 +145,6 @@
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
-            <!-- All sites will be built for the artifact; this property is set
-                 so that the-build doesn't prompt for it. -->
-            <property name="build.site" value="default" />
             <property name="build.env" value="@host@" />
         </phing>
     </target>
