@@ -307,4 +307,87 @@ Or, you can specify the export file directly:
     </target>
 
 
+    <target name="drupal-add-multisite">
+        <if>
+            <equals arg1="${build.host}" arg2="pantheon" />
+            <then>
+                <fail msg="Pantheon does not support Drupal multisites." />
+            </then>
+        </if>
+
+        <propertyprompt propertyName="new.dir" promptText="Drupal sites subdirectory" promptCharacter=":" />
+        <propertyprompt propertyName="new.uri" promptText="Drupal URI" promptCharacter=":" />
+
+        <!-- Process the URI for use in Drupal's sites.php file. -->
+        <property name="new.domain" value="${new.uri}">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="(https?://)?(.+?)/?" replace="\2" ignoreCase="true"/>
+                </replaceregexp>
+            </filterchain>
+        </property>
+
+        <!-- Process the directory name so that it contains a limited set of characters. -->
+        <property name="new.key" value="${new.dir}">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="[^-_a-z0-9]" replace="_" ignoreCase="true"/>
+                </replaceregexp>
+            </filterchain>
+        </property>
+
+        <!-- Generate a hash salt for Drupal. -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+        <property name="new.hash_salt" value="${hash_salt}" override="true" />
+
+        <mkdir dir="${drupal.root}/sites/${new.dir}" />
+
+        <!-- Use a standard Drupal settings.php file. -->
+        <chmod mode="750" file="${application.startdir}/${drupal.root}/sites/${new.dir}/" />
+        <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.php" tofile="${build.dir}/${drupal.root}/sites/${new.dir}/settings.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Use the default Drupal services.yml file. -->
+        <copy file="${build.dir}/${drupal.root}/sites/default/default.services.yml" tofile="${build.dir}/${drupal.root}/sites/${new.dir}/services.yml" overwrite="true">
+            <filterchain>
+                <striplinecomments>
+                    <comment value="#" />
+                </striplinecomments>
+            </filterchain>
+        </copy>
+
+        <!-- Create sites.php for Drupal if it doesn't already exist. -->
+        <copy file="${build.dir}/${drupal.root}/sites/example.sites.php" tofile="${build.dir}/${drupal.root}/sites/sites.php" overwrite="false" />
+
+        <!-- Whitespace is intentional. -->
+        <echo file="${build.dir}/${drupal.root}/sites/sites.php" append="true">
+$sites['${new.domain}'] = '${new.dir}';
+</echo>
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+The Drupal sites directory at '${drupal.root}/sites/${new.dir}/' has been set up, and the configuration for your local domain has been added to '${drupal.root}/sites/${new.dir}/sites.php'
+
+Next, you need to add the following settings to your .the-build/build.default.properties.yml file:
+
+drupal:
+  sites:
+    ${new.key}:
+      dir: ${new.dir}
+      uri: ${new.uri}
+      hash_salt: ${new.hash_salt}
+
+Finally, install the new multisite with: `phing install -Dbuild.site=${new.key}`
+
+You should also consider:
+  * Adding the domain for your new multisite to your development environment configuration
+  * Creating a new 'profile' in your behat.yml configuration, and updating your behat.args property
+  * Updating your .circleci/config.yml to run tests for your new multisite</echo>
+    </target>
+
+
 </project>

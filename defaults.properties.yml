@@ -10,6 +10,12 @@
 #
 # @copyright 2018 Palantir.net, Inc.
 
+# Configuration for the-build.
+build:
+  # The destination host, either 'acquia', 'pantheon', 'platformsh', or 'other'. This is
+  # currently only used when setting up the settings.php file for a Drupal site.
+  host: other
+
 # Drupal configuration used by tasks/drupal.xml
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
@@ -229,3 +235,16 @@ phpmd:
   rulesets: "${build.thebuild.dir}/defaults/config/phpmd.xml"
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
+
+# Configuration for running behat tests.
+#
+# Putting these flags in configuration allows you to vary the behat configuration per
+# environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
+# these values to the defaults in build.circleci.properties.yml.
+#
+# Also consider:
+#   * Tagging tests based on where they should run (e.g. '@skipci')
+#   * Creating additional "profiles" in behat.yml for environments or multisites (see
+#     http://docs.behat.org/en/v2.5/guides/7.config.html#profiles)
+behat:
+  args: "--suite=default --strict"

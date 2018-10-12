@@ -9,6 +9,9 @@
 # Drupal site, and by some of the targets in the default build.xml file.
 # @see .the-build/drupal.services.yml
 # @see .the-build/drupal.settings.php
+build:
+  host: ${build.host}
+
 drupal:
   root: "${drupal.root}"
 
