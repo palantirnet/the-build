@@ -48,6 +48,7 @@ Configure your build by editing `.the-build/build.default.properties.yml`. You c
 
 * [Configuring the-build](docs/configuration.md)
 * [Building an artifact](docs/artifacts.md)
+* [Using Drupal multisites](docs/drupal_multisite.md)
 * [Custom tasks provided by the-build](docs/tasks.md)
 
 ----

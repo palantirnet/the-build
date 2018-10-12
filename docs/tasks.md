@@ -22,3 +22,74 @@ Copies or symlinks a file or directory within your project.
 <property name="includeresource.mode" value="copy" />
 <includeresource source="vendor/foo/somelibrary" dest="${drupal.root}/libraries/somelibrary" />
 ```
+
+## CopyPropertiesTask [🔗](../src/TheBuild/CopyPropertiesTask.php)
+
+Copies phing properties matching a prefix to properties with a different prefix.
+
+### Attributes
+
+| Name | Type | Description | Default | Required |
+|---|---|---|---|---|
+| fromPrefix | string | Prefix for source properties. | | Yes |
+| toPrefix | string | New prefix for matching properties. | | Yes |
+| override | boolean | Whether to overwrite existing property values. | true | No |
+
+If either of the `fromPrefix` or `toPrefix` attributes does not end in a `.`, one will be added.
+
+### Example
+
+```xml
+<!-- Copy Drupal multisite properties into a consistent property location. -->
+<copyproperties fromPrefix="drupal.sites.default" toPrefix="drupal.site" override="true" />
+```
+
+## ForeachKeyTask [🔗](../src/TheBuild/ForeachKeyTask.php)
+
+Iterate over Phing property values.
+
+### Attributes
+
+| Name | Type | Description | Default | Required |
+|---|---|---|---|---|
+| prefix | string | Prefix for properties to iterate over. | | Yes |
+| target | string | Phing target to run for each property. | | Yes |
+| keyParam | string | Name of a target parameter to pass the property key in. | | Yes |
+| prefixParam | string | Name of a target parameter to pass the property prefix in. | | Yes |
+| omitKeys | string | Comma-separated list of keys to ignore. | | false |
+
+If the `prefix` attribute does not end in a `.`, one will be added.
+
+### Example
+
+```xml
+<foreachkey prefix="drupal.sites" omitKeys="_defaults" target="mytarget" keyParam="key" prefixParam="prefix" />
+```
+
+## SelectPropertyKeyTask [🔗](../src/TheBuild/SelectPropertyKeyTask.php)
+
+Interactively select a key from available property keys.
+
+* If the propertyName property is already set, the task does nothing
+* If no keys are available, the propertyName property is not set and the task does nothing
+* If there is only one key available, that key is used and the user is not prompted
+* If there are multiple keys available, the user will be prompted to select one using a multiple choice menu
+
+
+
+### Attributes
+
+| Name | Type | Description | Default | Required |
+|---|---|---|---|---|
+| prefix | string | Prefix for properties to select among. | | Yes |
+| propertyName | string | Property to populate with the selected value. | | Yes |
+| message | string | Prompt to display to the user. | `Select one:` | Yes |
+| omitKeys | string | Comma-separated list of keys to ignore. | | false |
+
+If the `prefix` attribute does not end in a `.`, one will be added.
+
+### Example
+
+```xml
+<selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
+```

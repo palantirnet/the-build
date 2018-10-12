@@ -119,7 +119,7 @@
 
         <!-- Fill in defaults for Drupal site properties. -->
         <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />
-        <property name="drupal.site.database.database" value="${drupal.site.dir}" />
+        <property name="drupal.site.database.database" value="${build.site}" />
         <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
         <property name="drupal.site.settings.file_private_path" value="../artifacts/private/${drupal.site.dir}" />
         <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />

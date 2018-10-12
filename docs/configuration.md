@@ -41,6 +41,8 @@ Cool! This phing-ism is what allows us to do environment-specific property layer
 1. Load properties from the project's `.the-build/build.default.properties.yml`
 1. Load default property values from the-build's own `defaults.properties.yml` file
 
+In order to support Drupal multisites, site-specific configuration should be set in the `drupal.sites.SITENAME.*` properties, but should be referenced using the `drupal.site.*` properties. See [drupal_multisite.md](drupal_multisite.md) for details on how these properties are provided.
+
 ## Build environments
 
 Generally, the `build.env` property is set from the `PALANTIR_ENVIRONMENT` environment variable.
@@ -63,6 +65,7 @@ There are four core properties that are always available in the-build:
 | `projectname` | A machine name for the project. Set based on the `build.dir`, with the `.local` suffix removed (if it's present). |
 | `build.thebuild.dir` | Path to `the-build` code. Used to find and load default properties and templates. |
 | `build.env` | The build environment. Used for loading environment-specific properties files, and set from the `PALANTIR_ENVIRONMENT` environment variable. |
+| `build.site` | The multisite to build; only used when running site-specific targets. Can be set from the `THE_BUILD_ENVIRONMENT` variable. See [drupal_multisite.md](drupal_multisite.md). |
 
 These properties are provided by the init process in `the-build.xml`, and do not need to be set or overridden in your local build configuration.
 
