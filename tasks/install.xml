@@ -19,19 +19,6 @@
     <!-- Target: install -->
     <target name="install" description="Install the Phing build template into your project.">
 
-        <!-- Copy the build file template.
-             This doesn't do any property substitution except for the "project name",
-             which is the name of the install directory.
-             -->
-        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
-            <filterchain>
-                <replacetokens>
-                    <token key="projectname" value="${projectname}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-
         <!-- Configuration prompts.
              This creates the initial project properties file.
              -->
@@ -62,6 +49,25 @@
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
         <property file="${build.thebuild.dir}/defaults.properties.yml" />
+
+
+        <!-- Copy the build file template.
+
+             This doesn't do any property substitution except for the "projectname",
+             which is the name of the install directory, and the "host", set by prompt
+             above.
+
+             We can't do general property substitution here because this is a phing
+             project file that uses phing variables.
+             -->
+        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}" />
+                    <token key="host" value="${build.host}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
 
         <!-- Create the default properties file. -->
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.default.properties.yml" tofile="${application.startdir}/.the-build/build.default.properties.yml" overwrite="true">
@@ -125,6 +131,7 @@
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
 
         <!-- Use a standard Drupal settings.php file. -->
+        <chmod mode="750" file="${application.startdir}/${drupal.root}/sites/default/" />
         <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.php" tofile="${application.startdir}/${drupal.root}/sites/default/settings.php" overwrite="true">
             <filterchain>
                 <expandproperties />
@@ -152,12 +159,17 @@
                 <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/pantheon.yml" todir="${application.startdir}" overwrite="true" />
             </case>
 
             <case value="platformsh">
                 <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/templates/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
+                <copy todir="${application.startdir}/.platform" overwrite="true">
+                    <fileset dir="${build.thebuild.dir}/defaults/templates/.platform" />
+                </copy>
             </case>
             <default />
         </switch>
@@ -180,20 +192,44 @@
             </filterchain>
         </copy>
 
-        <!-- If we're using the-vagrant, offer to install Drupal. -->
-        <if>
-            <equals arg1="${env.PALANTIR_ENVIRONMENT}" arg2="vagrant" />
-            <then>
-                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now" promptChar="?" />
+        <!-- Run the first build. -->
+        <phing dir="${application.startdir}" target="build" inheritAll="false" />
+
+        <!-- If Drupal has a database connection available, offer to install Drupal. -->
+        <trycatch>
+            <try>
+                <!-- The 'haltonfailure' attribute seems to have the opposite behavior
+                     from what is described in the Phing documentation. -->
+                <phing dir="${application.startdir}" target="drupal-has-database-connection" inheritAll="false" haltonfailure="true" />
+
+                <!-- This code will run only when a database connection is available. -->
+                <input propertyName="install_now" validArgs="y,n" message="Install Drupal now " promptChar="?" />
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
-                        <phing dir="${application.startdir}" target="build" inheritAll="false" />
                         <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
                     </then>
                 </if>
-            </then>
-        </if>
+            </try>
+            <catch>
+                <!-- Drupal will be installed later, if not manually then by the 'install'
+                     target in the default build.xml. -->
+                <echo>Skipping Drupal installation, since the database is not available.
+
+            From within a development environment, you can run `phing install` to install Drupal.
+                </echo>
+            </catch>
+        </trycatch>
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+            Successfully installed the-build. Next, you may want to run:
+
+              $> phing install
+              $> phing test
+              $> phing -l</echo>
     </target>
+
 
 </project>

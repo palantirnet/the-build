@@ -1,25 +1,78 @@
+<?xml version="1.0"?>
+
+<!--
+  @file build.xml
+  Build targets for this project. This file should be customized for your project.
+
+  For a full list of targets, try:
+    phing -l
+
+  @see https://github.com/palantirnet/the-build
+  -->
+
 <project name="@projectname@" default="build">
-    <!-- Run with: vendor/bin/phing -Dbuild.env=vagrant -->
-    <!-- For a list of commands, try: vendor/bin/phing -Dbuild.env=vagrant -l -->
 
-
+    <!-- Add property loading and tasks from palantirnet/the-build. -->
     <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
 
 
-    <!-- Make these commands available by default. -->
+    <!-- Make these additional targets available by default. -->
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+
+
+    <!-- Additional optional targets. -->
     <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
 
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
-        <phingcall target="drupal-build" />
+        <!-- Create the Drupal custom code directories. -->
+        <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
+
+        <!-- Set permissions on the sites subdirectory. -->
+        <mkdir dir="${drupal.root}/sites/${drupal.sites_subdir}" />
+        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+
+        <!-- Create the public files directory and make it world writable. -->
+        <mkdir dir="${drupal.root}/${drupal.settings.file_public_path}" />
+        <chmod file="${drupal.root}/${drupal.settings.file_public_path}" mode="744" />
+
+        <!-- Create the private files directory and make it private. -->
+        <mkdir dir="${drupal.root}/${drupal.settings.file_private_path}" />
+        <chmod file="${drupal.root}/${drupal.settings.file_private_path}" mode="640" />
+
+        <!-- Copy the settings.build.php and services.build.php templates into place. -->
+        <copy todir="${build.dir}" overwrite="true" mode="544">
+            <!-- Copy the template files -->
+            <filelist dir="${build.dir}" files="${build.drupal.settings},${build.drupal.services}" />
+            <!-- Map templates to their destinations -->
+            <mapper type="firstmatch">
+                <mapper type="glob" from="${build.drupal.settings}" to="${build.drupal.settings_dest}" />
+                <mapper type="glob" from="${build.drupal.services}" to="${build.drupal.services_dest}" />
+            </mapper>
+            <!-- Substitute property values -->
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Include styleguide resources in the theme. This approach will symlink
+             resources in development environments, and copy them for artifact builds. -->
+        <!-- <includeresource source="styleguide/source/assets/css" dest="${drupal.root}/themes/custom/example_theme/css" /> -->
     </target>
 
 
-    <!-- Target: install -->
-    <target name="install" description="Install the application.">
-        <phingcall target="drupal-install" />
+    <!-- Target: install
+         Running this target will also run the build target.
+         -->
+    <target name="install" depends="build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
+        <drush command="site-install" assume="yes">
+            <option name="site-name">${drupal.site_name}</option>
+            <option name="account-name">${drupal.admin_user}</option>
+            <option name="account-pass">admin</option>
+            <param>${drupal.profile}</param>
+        </drush>
     </target>
 
 
@@ -29,15 +82,19 @@
     </target>
 
 
-    <!-- Target: test -->
-    <target name="test" description="Run all the tests.">
-        <phingcall target="code-review" />
-        <phingcall target="behat" />
+    <!-- Target: load -->
+    <target name="load" description="Load a database dump.">
+        <phingcall target="drupal-load-db" />
+        <drush command="cache-rebuild" />
     </target>
 
 
+    <!-- Target: test -->
+    <target name="test" description="Run all the tests." depends="code-review,behat" />
+
+
     <!-- Target: behat -->
-    <target name="behat">
+    <target name="behat" description="Run the Behat tests.">
         <property name="behat.command" value="vendor/bin/behat ${behat.args}" />
         <echo msg="$> ${behat.command}" />
         <exec command="${behat.command}" logoutput="true" checkreturn="true" />
@@ -66,7 +123,7 @@
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
-            <property name="build.env" value="acquia" />
+            <property name="build.env" value="@host@" />
         </phing>
     </target>
 

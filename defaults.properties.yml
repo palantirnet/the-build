@@ -38,9 +38,8 @@ drupal:
   # Drupal admin username, if you feel inclined to change it.
   admin_user: admin
 
-  # Whether to allow running the drupal-install target when there are local changes to the
-  # exported Drupal config.
-  allow_dirty_config: no
+  # Comma-separated list of directories that should be present for Drupal development.
+  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom"
 
   # Database connection for Drupal.
   database:
@@ -54,11 +53,37 @@ drupal:
     file_public_path: sites/default/files
 
     # Path to the Drupal private files directory, relative to the Drupal root.
-    file_private_path: ""
+    file_private_path: "../artifacts/private/${drupal.sites_subdir}"
 
   twig:
     # Whether to enable twig debugging.
     debug: false
+
+  # Whether to prevent Drupal install when there are local (non-committed) changes to the
+  # exported Drupal config.
+  validate_clean_config:
+    # Use 'true' or 'yes' to bypass.
+    bypass: false
+
+  # Configuration for the database loading utility.
+  load_db:
+    # Pattern to match gzipped database dump files.
+    export_pattern: artifacts/backups/*.sql.gz
+
+    # The following two commands are composed to load the database into Drupal:
+    #   $> gunzip -c FILENAME.sql.gz | drush sqlc
+    #
+    # Command to extract text contents of the backup file.
+    contents_command: gunzip -c
+    # Command to load database contents into Drupal.
+    mysql_command: drush sqlc
+
+    # Load a specific file rather than one matching the `export_pattern`. This can be used
+    # if your build relies on a seed database that is checked in to the repository.
+    # Otherwise, you may occasionally want to set this value at run time:
+    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
+    #file:
+
 
 # Build configuration used by tasks/drupal.xml
 build:
@@ -76,6 +101,7 @@ build:
 
     # Destination for the templated `services.yml` file.
     services_dest: "${drupal.root}/sites/${drupal.sites_subdir}/services.build.yml"
+
 
 # Configuration for tasks/artifact.xml
 artifact:
@@ -113,6 +139,7 @@ artifact:
     # Name to use for the git remote on the artifact repository.
     remote_name: origin
 
+
 # Configuration for tasks/acquia.xml
 acquia:
 
@@ -125,24 +152,6 @@ acquia:
 
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
-
-# Configuration for tasks/lib/db.xml
-db:
-  load:
-    # Pattern to match gzipped database dump files.
-    export_pattern: artifacts/backups/*.sql.gz
-
-    # Command to extract text contents of the backup file.
-    contents_command: gunzip -c
-
-    # Command to load database contents into Drupal.
-    mysql_command: drush sqlc
-
-    # Load a specific file rather than one matching the `export_pattern`. This can be used
-    # if your build relies on a seed database that is checked in to the repository.
-    # Otherwise, you may occasionally want to set this value at run time:
-    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
-    #file:
 
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors

@@ -15,8 +15,10 @@
 
     <!--
       Target: build-artifact
+
+      Build and deploy the application.
       -->
-    <target name="artifact-main" description="Build and deploy the application.">
+    <target name="artifact-main">
         <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 

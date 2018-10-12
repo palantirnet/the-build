@@ -30,7 +30,7 @@ behat:
   args: "--suite=default --strict"
 
 # To build an artifact from your code, add the URL to your artifact git repository.
-# @see https://github.com/palantirnet/the-build/blob/release-2.0/docs/properties.md
+# @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.properties.yml
 #
 # artifact:
 #   git:
