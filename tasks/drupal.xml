@@ -190,7 +190,21 @@ Or, you can specify the export file directly:
                 <echo msg="Drupal database connection available." />
             </try>
             <catch>
-                <fail msg="Drupal database connection not available." />
+                <trycatch>
+                    <try>
+                        <!-- @todo This is potentially really sketchy; if you have root access and called your multisite
+                             'mysql' or 'information_schema', would it destroy your MySQL install?
+
+                             This helps with the multisite install process, though... and it will still fail if
+                             permissions are set up properly for mysql...
+                             -->
+                        <drush command="sql-create" assume="yes" />
+                        <echo msg="Drupal database connection available." />
+                    </try>
+                    <catch>
+                        <fail msg="Drupal database connection not available." />
+                    </catch>
+                </trycatch>
             </catch>
         </trycatch>
     </target>
@@ -213,7 +227,9 @@ Or, you can specify the export file directly:
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
-                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false">
+                            <property name="build.site" value="${build.site}" />
+                        </phing>
                     </then>
                     <else>
                         <fail msg="Install cancelled." />
@@ -307,7 +323,7 @@ Or, you can specify the export file directly:
     </target>
 
 
-    <target name="drupal-add-multisite">
+    <target name="drupal-add-multisite" description="Set up a new Drupal multisite.">
         <if>
             <equals arg1="${build.host}" arg2="pantheon" />
             <then>
@@ -315,11 +331,31 @@ Or, you can specify the export file directly:
             </then>
         </if>
 
-        <propertyprompt propertyName="new.dir" promptText="Drupal sites subdirectory" promptCharacter=":" />
-        <propertyprompt propertyName="new.uri" promptText="Drupal URI" promptCharacter=":" />
+        <!--
+            Prompt the user for this required information.
+            -->
+        <propertyprompt propertyName="_multisite.dir" promptText="Drupal sites subdirectory" promptCharacter=":" />
+        <propertyprompt propertyName="_multisite.uri" promptText="Drupal URI" promptCharacter=":" />
 
-        <!-- Process the URI for use in Drupal's sites.php file. -->
-        <property name="new.domain" value="${new.uri}">
+
+        <!--
+            Set up the Drupal site directory.
+             -->
+        <phing buildfile="${build.thebuild.dir}/tasks/install.xml" target="drupal-sites-directory">
+            <property name="drupal.site.dir" value="${_multisite.dir}" override="true" />
+            <property name="drupal.site.uri" value="${_multisite.uri}" override="true" />
+        </phing>
+
+
+        <!--
+            Add the new site to sites.php so that Drupal can route requests to the new multisite.
+             -->
+
+        <!-- Create sites.php for Drupal if it doesn't already exist. -->
+        <copy file="${build.dir}/${drupal.root}/sites/example.sites.php" tofile="${build.dir}/${drupal.root}/sites/sites.php" overwrite="false" />
+
+        <!-- Process the URI for use as a $sites key in Drupal's sites.php file. -->
+        <property name="_multisite.sites_php_domain" value="${_multisite.uri}">
             <filterchain>
                 <replaceregexp>
                     <regexp pattern="(https?://)?(.+?)/?" replace="\2" ignoreCase="true"/>
@@ -327,8 +363,23 @@ Or, you can specify the export file directly:
             </filterchain>
         </property>
 
+        <!-- Append the new array entry. -->
+        <!-- Whitespace is intentional. -->
+        <echo file="${build.dir}/${drupal.root}/sites/sites.php" append="true">
+$sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
+</echo>
+        <echo msg="Added the new multisite to Drupal's sites.php file" />
+
+
+        <!--
+            Generate property configuration for the user to add to their .the-build/build.default.properties.yml file.
+            -->
+
+        <!-- Generate a hash salt for Drupal. -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="_multisite.hash_salt" />
+
         <!-- Process the directory name so that it contains a limited set of characters. -->
-        <property name="new.key" value="${new.dir}">
+        <property name="_multisite.key" value="${_multisite.dir}">
             <filterchain>
                 <replaceregexp>
                     <regexp pattern="[^-_a-z0-9]" replace="_" ignoreCase="true"/>
@@ -336,52 +387,23 @@ Or, you can specify the export file directly:
             </filterchain>
         </property>
 
-        <!-- Generate a hash salt for Drupal. -->
-        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-        <property name="new.hash_salt" value="${hash_salt}" override="true" />
-
-        <mkdir dir="${drupal.root}/sites/${new.dir}" />
-
-        <!-- Use a standard Drupal settings.php file. -->
-        <chmod mode="750" file="${application.startdir}/${drupal.root}/sites/${new.dir}/" />
-        <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.php" tofile="${build.dir}/${drupal.root}/sites/${new.dir}/settings.php" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
-        <!-- Use the default Drupal services.yml file. -->
-        <copy file="${build.dir}/${drupal.root}/sites/default/default.services.yml" tofile="${build.dir}/${drupal.root}/sites/${new.dir}/services.yml" overwrite="true">
-            <filterchain>
-                <striplinecomments>
-                    <comment value="#" />
-                </striplinecomments>
-            </filterchain>
-        </copy>
-
-        <!-- Create sites.php for Drupal if it doesn't already exist. -->
-        <copy file="${build.dir}/${drupal.root}/sites/example.sites.php" tofile="${build.dir}/${drupal.root}/sites/sites.php" overwrite="false" />
-
-        <!-- Whitespace is intentional. -->
-        <echo file="${build.dir}/${drupal.root}/sites/sites.php" append="true">
-$sites['${new.domain}'] = '${new.dir}';
-</echo>
+        <!--
+            There are still some manual steps, so print lots of information for the user.
+            -->
 
         <!-- Whitespace is intentional. -->
         <echo>
 
-The Drupal sites directory at '${drupal.root}/sites/${new.dir}/' has been set up, and the configuration for your local domain has been added to '${drupal.root}/sites/${new.dir}/sites.php'
-
-Next, you need to add the following settings to your .the-build/build.default.properties.yml file:
+To build and install this site, you need to add the following configuration to your .the-build/build.default.properties.yml file:
 
 drupal:
   sites:
-    ${new.key}:
-      dir: ${new.dir}
-      uri: ${new.uri}
-      hash_salt: ${new.hash_salt}
+    ${_multisite.key}:
+      dir: ${_multisite.dir}
+      uri: ${_multisite.uri}
+      hash_salt: ${_multisite.hash_salt}
 
-Finally, install the new multisite with: `phing install -Dbuild.site=${new.key}`
+Finally, install the new multisite with: `phing install -Dbuild.site=${_multisite.key}`
 
 You should also consider:
   * Adding the domain for your new multisite to your development environment configuration
