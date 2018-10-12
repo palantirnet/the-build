@@ -131,6 +131,31 @@
 
 
     <!--
+        Target: sites-run
+        Run a Phing target against each configured Drupal multisite.
+        -->
+    <target name="sites-run" description="Run a target against all sites. Use -Dtarget=foo">
+        <fail unless="target" />
+        <foreachkey prefix="drupal.sites" omitKeys="_defaults" target="sites-run-target" keyParam="site_key" prefixParam="prefix" />
+    </target>
+
+
+    <!--
+        Target: sites-run-target
+        Utility target used by 'all-sites' above. Runs the specified
+        target in an isolated Phing environment.
+        -->
+    <target name="sites-run-target">
+        <fail unless="target" />
+        <fail unless="site_key" />
+        <echo msg="Running 'phing ${target} -Dbuild.site=${site_key}'" />
+        <phing target="${target}" dir="${build.dir}" inheritAll="false">
+            <property name="build.site" value="${site_key}" />
+        </phing>
+    </target>
+
+
+    <!--
         Target: mkdir
         Utility target to allow creating a list of directories with <foreach />.
         -->

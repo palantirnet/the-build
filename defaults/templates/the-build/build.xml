@@ -76,6 +76,28 @@
     </target>
 
 
+    <!-- Target: build-all
+         Run the build target for all configured multisites. This is the same as running:
+           phing sites-run -Dtarget=build
+         -->
+    <target name="build-all">
+        <phingcall target="sites-run">
+            <property name="target" value="build" />
+        </phingcall>
+    </target>
+
+
+    <!-- Target: install-all
+         Run the install target for all configured multisites. This is the same as running:
+           phing sites-run -Dtarget=install
+         -->
+    <target name="install-all">
+        <phingcall target="sites-run">
+            <property name="target" value="install" />
+        </phingcall>
+    </target>
+
+
     <!-- Target: migrate -->
     <target name="migrate" description="Run the migrations.">
         <echo>Configure this target to load sample data and run the migrations.</echo>

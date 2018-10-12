@@ -20,6 +20,26 @@ This command will prompt you for the Drupal sites subdirectory and the site URL,
 
 You will still need to manually update your Vagrant, Behat, and CircleCI configuration.
 
+## Building or installing all sites at once
+
+You can build all of your multisites at once with:
+
+```
+$> phing build-all
+```
+
+Similarly, you can install all of your multisites at once with:
+
+```
+$> phing install-all
+```
+
+If you need to run other site-specific commands against all sites at once, use the `sites-run` target, for example:
+
+```
+$> phing sites-run -Dtarget=load
+```
+
 ## Example Multisite Configuration
 
 ```
