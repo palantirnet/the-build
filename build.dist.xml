@@ -14,8 +14,11 @@
 
     <!-- Default target: build -->
     <target name="build" description="Build the application.">
-        <phingcall target="drupal-build" />
         <phingcall target="styleguide" />
+        <phingcall target="drupal-build" />
+        <!-- Include styleguide resources in the theme. This approach will symlink
+             resources in development environments, and copy them for artifact builds. -->
+        <!-- <includeresource mode="${build.artifact_mode}" source="styleguide/source/assets/css" dest="${drupal.root}/themes/custom/example_theme/css" /> -->
     </target>
 
 
