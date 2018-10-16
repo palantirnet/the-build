@@ -192,11 +192,10 @@ Or, you can specify the export file directly:
             <catch>
                 <trycatch>
                     <try>
-                        <!-- @todo This is potentially really sketchy; if you have root access and called your multisite
-                             'mysql' or 'information_schema', would it destroy your MySQL install?
-
-                             This helps with the multisite install process, though... and it will still fail if
-                             permissions are set up properly for mysql...
+                        <!-- If there's a database and it is accessible, this code will
+                             not be run. This code can help with setting up new
+                             multisites, since they will use new databases that may or may
+                             not exist yet.
                              -->
                         <drush command="sql-create" assume="yes" />
                         <echo msg="Drupal database connection available." />
