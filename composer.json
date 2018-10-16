@@ -14,7 +14,7 @@
     "require": {
         "continuousphp/phing-drush-task": "dev-master",
         "drupal/coder": "~8.2.12",
-        "drush/drush": "^8.1.15",
+        "drush/drush": "^8.1.15@dev",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
