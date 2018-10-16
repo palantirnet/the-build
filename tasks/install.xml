@@ -15,6 +15,8 @@
     <basename property="projectname" file="${build.dir}" suffix="local" />
     <resolvepath file="${phing.dir.install}/../" propertyName="build.thebuild.dir" />
 
+    <!-- Provide the <copyproperties /> task. -->
+    <taskdef name="copyproperties" classname="TheBuild\CopyPropertiesTask" />
 
     <!-- Target: install -->
     <target name="install" description="Install the Phing build template into your project.">
@@ -29,10 +31,10 @@
 
         <!-- Generate a hash salt for Drupal. -->
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-        <property name="drupal.hash_salt" value="${hash_salt}" override="true" />
+        <property name="drupal.sites.default.hash_salt" value="${hash_salt}" override="true" />
 
         <!-- Prompt for the Drupal URI. -->
-        <propertyprompt propertyName="drupal.uri" defaultValue="${default.drupal.uri}" promptText="Drupal URI" promptCharacter=":" />
+        <propertyprompt propertyName="drupal.sites.default.uri" defaultValue="${default.drupal.sites.default.uri}" promptText="Drupal URI" promptCharacter=":" />
 
         <!-- Prompt for the web host. -->
         <input propertyName="build.host" validArgs="acquia,pantheon,platformsh,other" message="Hosting platform" promptChar=":" />
@@ -49,6 +51,8 @@
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
         <property file="${build.thebuild.dir}/defaults.properties.yml" />
+        <!-- Copy defaults to fill in the sites array. -->
+        <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.sites.default" override="false" />
 
 
         <!-- Copy the build file template.
@@ -130,40 +134,20 @@
         <!-- Copy the CircleCI properties. -->
         <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
 
-        <!-- Use a standard Drupal settings.php file. -->
-        <chmod mode="750" file="${application.startdir}/${drupal.root}/sites/default/" />
-        <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.php" tofile="${application.startdir}/${drupal.root}/sites/default/settings.php" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
-        <!-- Use the default Drupal services.yml file. -->
-        <copy file="${application.startdir}/${drupal.root}/sites/default/default.services.yml" tofile="${application.startdir}/${drupal.root}/sites/default/services.yml" overwrite="true">
-            <filterchain>
-                <striplinecomments>
-                    <comment value="#" />
-                </striplinecomments>
-            </filterchain>
-        </copy>
-
-        <!-- Add host-specific settings.php and deployment files. -->
+        <!-- Add host-specific files for settings.php templates, the-build properties, and hosting configuration. -->
         <switch value="${build.host}">
             <case value="acquia">
-                <copy file="${phing.dir.install}/../defaults/config/settings.acquia.php" todir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.build-acquia.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${phing.dir.install}/../defaults/templates/the-build/build.acquia.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
             </case>
 
             <case value="pantheon">
-                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/pantheon.yml" todir="${application.startdir}" overwrite="true" />
             </case>
 
             <case value="platformsh">
-                <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${application.startdir}/${drupal.root}/sites/default" />
                 <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
                 <copy file="${build.thebuild.dir}/defaults/templates/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
@@ -191,6 +175,11 @@
                 <expandproperties />
             </filterchain>
         </copy>
+
+        <!-- Set up the Drupal sites directory. -->
+        <phingcall target="drupal-sites-directory">
+            <property name="drupal.site.dir" value="default" />
+        </phingcall>
 
         <!-- Run the first build. -->
         <phing dir="${application.startdir}" target="build" inheritAll="false" />
@@ -229,6 +218,52 @@
               $> phing install
               $> phing test
               $> phing -l</echo>
+    </target>
+
+
+    <target name="drupal-sites-directory">
+        <fail unless="drupal.site.dir" />
+        <fail unless="build.host" />
+        <fail unless="drupal.root" />
+        <fail unless="build.dir" />
+
+        <!-- Make sure the sites directory exists. This is not necessary for the 'default' site, but is required for creating additional multisites. -->
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+
+        <!-- Use our own basic Drupal settings.php file. -->
+        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
+        <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.php" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/settings.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Use the default Drupal services.yml file. -->
+        <copy file="${build.dir}/${drupal.root}/sites/default/default.services.yml" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/services.yml" overwrite="true">
+            <filterchain>
+                <striplinecomments>
+                    <comment value="#" />
+                </striplinecomments>
+            </filterchain>
+        </copy>
+
+        <!-- Add host-specific settings.php and deployment files. -->
+        <switch value="${build.host}">
+            <case value="acquia">
+                <copy file="${phing.dir.install}/../defaults/config/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+            </case>
+
+            <case value="pantheon">
+                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+            </case>
+
+            <case value="platformsh">
+                <httpget url="https://raw.githubusercontent.com/platformsh/platformsh-example-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+            </case>
+            <default />
+        </switch>
+
+        <echo msg="Set up the Drupal sites directory at '${drupal.root}/sites/${drupal.site.dir}/'" />
     </target>
 
 

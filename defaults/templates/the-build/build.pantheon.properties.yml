@@ -1,6 +1,10 @@
 # @file
 # Configuration properties specific to the Pantheon deployment.
-build:
-  drupal:
-    settings: .the-build/drupal.settings.build-pantheon.php
-    services_dest: artifacts/dev/null
+drupal:
+  twig:
+    debug: false
+  sites:
+    default:
+      build:
+        settings_template: .the-build/drupal.settings.build-pantheon.php
+        services_dest: artifacts/dev/null

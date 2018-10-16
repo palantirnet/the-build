@@ -26,30 +26,30 @@
 
 
     <!-- Default target: build -->
-    <target name="build" description="Build the application.">
+    <target name="build" depends="set-site" description="Build the application.">
         <!-- Create the Drupal custom code directories. -->
         <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
 
         <!-- Set permissions on the sites subdirectory. -->
-        <mkdir dir="${drupal.root}/sites/${drupal.sites_subdir}" />
-        <chmod file="${drupal.root}/sites/${drupal.sites_subdir}" mode="750" />
+        <mkdir dir="${drupal.root}/sites/${drupal.site.dir}" />
+        <chmod file="${drupal.root}/sites/${drupal.site.dir}" mode="750" />
 
         <!-- Create the public files directory and make it world writable. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_public_path}" />
-        <chmod file="${drupal.root}/${drupal.settings.file_public_path}" mode="744" />
+        <mkdir dir="${drupal.root}/${drupal.site.settings.file_public_path}" />
+        <chmod file="${drupal.root}/${drupal.site.settings.file_public_path}" mode="744" />
 
         <!-- Create the private files directory and make it private. -->
-        <mkdir dir="${drupal.root}/${drupal.settings.file_private_path}" />
-        <chmod file="${drupal.root}/${drupal.settings.file_private_path}" mode="640" />
+        <mkdir dir="${drupal.root}/${drupal.site.settings.file_private_path}" />
+        <chmod file="${drupal.root}/${drupal.site.settings.file_private_path}" mode="640" />
 
         <!-- Copy the settings.build.php and services.build.php templates into place. -->
         <copy todir="${build.dir}" overwrite="true" mode="544">
             <!-- Copy the template files -->
-            <filelist dir="${build.dir}" files="${build.drupal.settings},${build.drupal.services}" />
+            <filelist dir="${build.dir}" files="${drupal.site.build.settings_template},${drupal.site.build.services_template}" />
             <!-- Map templates to their destinations -->
             <mapper type="firstmatch">
-                <mapper type="glob" from="${build.drupal.settings}" to="${build.drupal.settings_dest}" />
-                <mapper type="glob" from="${build.drupal.services}" to="${build.drupal.services_dest}" />
+                <mapper type="glob" from="${drupal.site.build.settings_template}" to="${drupal.site.build.settings_dest}" />
+                <mapper type="glob" from="${drupal.site.build.services_template}" to="${drupal.site.build.services_dest}" />
             </mapper>
             <!-- Substitute property values -->
             <filterchain>
@@ -66,13 +66,35 @@
     <!-- Target: install
          Running this target will also run the build target.
          -->
-    <target name="install" depends="build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
+    <target name="install" depends="set-site,build,drupal-validate-clean-config,drupal-has-database-connection,drupal-install-if-no-config" description="Install the application.">
         <drush command="site-install" assume="yes">
-            <option name="site-name">${drupal.site_name}</option>
-            <option name="account-name">${drupal.admin_user}</option>
+            <option name="site-name">${projectname}</option>
+            <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>${drupal.profile}</param>
+            <param>${drupal.site.profile}</param>
         </drush>
+    </target>
+
+
+    <!-- Target: build-all
+         Run the build target for all configured multisites. This is the same as running:
+           phing sites-run -Dtarget=build
+         -->
+    <target name="build-all">
+        <phingcall target="sites-run">
+            <property name="target" value="build" />
+        </phingcall>
+    </target>
+
+
+    <!-- Target: install-all
+         Run the install target for all configured multisites. This is the same as running:
+           phing sites-run -Dtarget=install
+         -->
+    <target name="install-all">
+        <phingcall target="sites-run">
+            <property name="target" value="install" />
+        </phingcall>
     </target>
 
 
@@ -83,7 +105,7 @@
 
 
     <!-- Target: load -->
-    <target name="load" description="Load a database dump.">
+    <target name="load" depends="set-site" description="Load a database dump.">
         <phingcall target="drupal-load-db" />
         <drush command="cache-rebuild" />
     </target>

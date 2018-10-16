@@ -27,9 +27,9 @@
         Validate that the Drupal config directory doesn't have local modifications,
         to ensure consistent installation.
     -->
-    <target name="drupal-validate-clean-config">
+    <target name="drupal-validate-clean-config" depends="set-site">
       <!-- Assembling this property at run time. -->
-      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.config_sync_directory}" />
+      <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
         <!-- Use git to list local (not yet committed) changes to the config directory. -->
         <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
@@ -87,14 +87,14 @@ ${modified_files}
           - The site in maintenance mode
           - Structure only for cache, search, and log tables
         -->
-    <target name="drupal-dump-db" description="Generate a database dump.">
-        <fail unless="drupal.admin_user" />
+    <target name="drupal-dump-db" depends="set-site" description="Generate a database dump.">
+        <fail unless="drupal.site.admin_user" />
 
         <!-- prompt for a prod admin password -->
         <propertyprompt propertyName="pass" promptText="Drupal admin password" defaultValue="admin" useExistingValue="true" />
         <drush command="user-password">
            <option name="password" value="${pass}" />
-           <param>${drupal.admin_user}</param>
+           <param>${drupal.site.admin_user}</param>
         </drush>
 
         <!-- put the site in maintenance mode -->
@@ -121,7 +121,7 @@ ${modified_files}
         <!-- now we can go back to the worst password ever -->
         <drush command="user-password">
            <option name="password" value="admin" />
-           <param>${drupal.admin_user}</param>
+           <param>${drupal.site.admin_user}</param>
         </drush>
 
         <!-- and take the site out of maintenance mode -->
@@ -132,54 +132,57 @@ ${modified_files}
     </target>
 
 
-    <!-- Target: drupal-load-db -->
-    <target name="drupal-load-db" description="Load a database export.">
-        <fail unless="drupal.load_db.export_pattern" />
-        <fail unless="drupal.load_db.contents_command" />
-        <fail unless="drupal.load_db.mysql_command" />
+    <!-- Target: drupal-load-db
+         @todo make this more user-friendly, ESPECIALLY now that drupal site properties are nested like this!
+         -->
+    <target name="drupal-load-db" depends="set-site" description="Load a database export.">
+        <fail unless="drupal.site.load_db.export_pattern" />
+        <fail unless="drupal.site.load_db.contents_command" />
+        <fail unless="drupal.site.load_db.mysql_command" />
 
         <!-- If no database file is set, look for one based on the 'export_pattern'. -->
         <if>
-            <not><isset property="drupal.load_db.file" /></not>
+            <not><isset property="drupal.site.load_db.file" /></not>
             <then>
-                <!-- Use the last listed file that matches the drupal.load_db.export_pattern property -->
-                <exec dir="${build.dir}" command="ls ${drupal.load_db.export_pattern} | tail -1" outputProperty="drupal.load_db.discovered_file" />
-                <!-- ... but respect drupal.load_db.file if it was already set. -->
-                <property name="drupal.load_db.file" value="${drupal.load_db.discovered_file}" />
+                <!-- Use the last listed file that matches the drupal.site.load_db.export_pattern property -->
+                <exec dir="${build.dir}" command="ls ${drupal.site.load_db.export_pattern} | tail -1" outputProperty="drupal.site.load_db.discovered_file" />
+                <!-- ... but respect drupal.site.load_db.file if it was already set. -->
+                <property name="drupal.site.load_db.file" value="${drupal.site.load_db.discovered_file}" />
             </then>
         </if>
 
         <!-- Validate that we've found a file to load -->
         <if>
-          <equals arg1="${drupal.load_db.file}" arg2="" />
+          <equals arg1="${drupal.site.load_db.file}" arg2="" />
           <then>
-              <echo>Missing database export at '${drupal.load_db.export_pattern}'
+              <echo>Missing database export at '${drupal.site.load_db.export_pattern}'
 
 Please download a database export to:
-  ${drupal.load_db.export_pattern}
+  ${drupal.site.load_db.export_pattern}
 
 Alternatively, you can specify the export file prefix; for example:
-  phing [YOUR-TARGET] -Ddrupal.load_db.export_pattern=artifacts/prod-*
+  phing [YOUR-TARGET] -Ddrupal.site.load_db.export_pattern=artifacts/prod-*
 
 Or, you can specify the export file directly:
-  phing [YOUR-TARGET] -Ddrupal.load_db.file=artifacts/my_db.sql.gz
+  phing [YOUR-TARGET] -Ddrupal.site.load_db.file=artifacts/my_db.sql.gz
               </echo>
               <fail message="Missing database export." />
           </then>
         </if>
 
         <!-- Load the contents of the file into Drupal -->
-        <property name="drupal.load_db.command" value="${drupal.load_db.contents_command} ${drupal.load_db.file} | ${drupal.load_db.mysql_command}" />
-        <echo>$> ${drupal.load_db.command}</echo>
-        <exec dir="${build.dir}" command="${drupal.load_db.command}" checkreturn="true" logoutput="true" />
+        <property name="drupal.site.load_db.command" value="${drupal.site.load_db.contents_command} ${drupal.site.load_db.file} | ${drupal.site.load_db.mysql_command}" />
+        <echo>$> ${drupal.site.load_db.command}</echo>
+        <exec dir="${build.dir}" command="${drupal.site.load_db.command}" checkreturn="true" logoutput="true" />
     </target>
 
 
     <!-- Target: drupal-has-database-connection
 
-         Check for a Drupal database connection.
+         Check for a Drupal database connection. If the database doesn't exist and we have
+         the permissions, it will be created.
          -->
-    <target name="drupal-has-database-connection">
+    <target name="drupal-has-database-connection" depends="set-site">
         <trycatch>
             <try>
                 <drush command="sql-query">
@@ -188,7 +191,20 @@ Or, you can specify the export file directly:
                 <echo msg="Drupal database connection available." />
             </try>
             <catch>
-                <fail msg="Drupal database connection not available." />
+                <trycatch>
+                    <try>
+                        <!-- If there's a database and it is accessible, this code will
+                             not be run. This code can help with setting up new
+                             multisites, since they will use new databases that may or may
+                             not exist yet.
+                             -->
+                        <drush command="sql-create" assume="yes" />
+                        <echo msg="Drupal database connection available." />
+                    </try>
+                    <catch>
+                        <fail msg="Drupal database connection not available." />
+                    </catch>
+                </trycatch>
             </catch>
         </trycatch>
     </target>
@@ -198,11 +214,11 @@ Or, you can specify the export file directly:
 
          Check for Drupal config, and if it's not present, offer to install Drupal.
          -->
-    <target name="drupal-install-if-no-config">
+    <target name="drupal-install-if-no-config" depends="set-site">
         <if>
             <!-- Check for the core.extension.yml config file, which is present in any
                  complete exported Drupal configuration. -->
-            <not><available file="${drupal.root}/${drupal.config_sync_directory}/core.extension.yml" /></not>
+            <not><available file="${drupal.root}/${drupal.site.config_sync_directory}/core.extension.yml" /></not>
             <then>
                 <echo>No exported Drupal config available to install from.</echo>
 
@@ -211,7 +227,9 @@ Or, you can specify the export file directly:
                 <if>
                     <equals arg1="${install_now}" arg2="y" />
                     <then>
-                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false" />
+                        <phing dir="${application.startdir}" target="drupal-first-install" inheritAll="false">
+                            <property name="build.site" value="${build.site}" />
+                        </phing>
                     </then>
                     <else>
                         <fail msg="Install cancelled." />
@@ -234,12 +252,12 @@ Or, you can specify the export file directly:
          of the places where this is called from code already have separate dependencies
          on that target.
          -->
-    <target name="drupal-first-install">
-        <fail unless="drupal.admin_user" />
+    <target name="drupal-first-install" depends="set-site">
+        <fail unless="drupal.site.admin_user" />
 
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
-            <option name="account-name">${drupal.admin_user}</option>
+            <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
             <param>standard</param>
         </drush>
@@ -301,7 +319,96 @@ Or, you can specify the export file directly:
              - Disabled user-configurable timezones
              - Replaced the standard profile with config_installer
 
-             Your config has been exported to ${drupal.root}/${drupal.config_sync_directory}</echo>
+             Your config has been exported to ${drupal.root}/${drupal.site.config_sync_directory}</echo>
+    </target>
+
+
+    <target name="drupal-add-multisite" description="Set up a new Drupal multisite.">
+        <if>
+            <equals arg1="${build.host}" arg2="pantheon" />
+            <then>
+                <fail msg="Pantheon does not support Drupal multisites." />
+            </then>
+        </if>
+
+        <!--
+            Prompt the user for this required information.
+            -->
+        <propertyprompt propertyName="_multisite.dir" promptText="Drupal sites subdirectory" promptCharacter=":" />
+        <propertyprompt propertyName="_multisite.uri" promptText="Drupal URI" promptCharacter=":" />
+
+
+        <!--
+            Set up the Drupal site directory.
+             -->
+        <phing buildfile="${build.thebuild.dir}/tasks/install.xml" target="drupal-sites-directory">
+            <property name="drupal.site.dir" value="${_multisite.dir}" override="true" />
+            <property name="drupal.site.uri" value="${_multisite.uri}" override="true" />
+        </phing>
+
+
+        <!--
+            Add the new site to sites.php so that Drupal can route requests to the new multisite.
+             -->
+
+        <!-- Create sites.php for Drupal if it doesn't already exist. -->
+        <copy file="${build.dir}/${drupal.root}/sites/example.sites.php" tofile="${build.dir}/${drupal.root}/sites/sites.php" overwrite="false" />
+
+        <!-- Process the URI for use as a $sites key in Drupal's sites.php file. -->
+        <property name="_multisite.sites_php_domain" value="${_multisite.uri}">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="(https?://)?(.+?)/?" replace="\2" ignoreCase="true"/>
+                </replaceregexp>
+            </filterchain>
+        </property>
+
+        <!-- Append the new array entry. -->
+        <!-- Whitespace is intentional. -->
+        <echo file="${build.dir}/${drupal.root}/sites/sites.php" append="true">
+$sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
+</echo>
+        <echo msg="Added the new multisite to Drupal's sites.php file" />
+
+
+        <!--
+            Generate property configuration for the user to add to their .the-build/build.default.properties.yml file.
+            -->
+
+        <!-- Generate a hash salt for Drupal. -->
+        <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="_multisite.hash_salt" />
+
+        <!-- Process the directory name so that it contains a limited set of characters. -->
+        <property name="_multisite.key" value="${_multisite.dir}">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="[^-_a-z0-9]" replace="_" ignoreCase="true"/>
+                </replaceregexp>
+            </filterchain>
+        </property>
+
+        <!--
+            There are still some manual steps, so print lots of information for the user.
+            -->
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+To build and install this site, you need to add the following configuration to your .the-build/build.default.properties.yml file:
+
+drupal:
+  sites:
+    ${_multisite.key}:
+      dir: ${_multisite.dir}
+      uri: ${_multisite.uri}
+      hash_salt: ${_multisite.hash_salt}
+
+Finally, install the new multisite with: `phing install -Dbuild.site=${_multisite.key}`
+
+You should also consider:
+  * Adding the domain for your new multisite to your development environment configuration
+  * Creating a new 'profile' in your behat.yml configuration, and updating your behat.args property
+  * Updating your .circleci/config.yml to run tests for your new multisite</echo>
     </target>
 
 
