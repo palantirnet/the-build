@@ -179,7 +179,8 @@ Or, you can specify the export file directly:
 
     <!-- Target: drupal-has-database-connection
 
-         Check for a Drupal database connection.
+         Check for a Drupal database connection. If the database doesn't exist and we have
+         the permissions, it will be created.
          -->
     <target name="drupal-has-database-connection" depends="set-site">
         <trycatch>
