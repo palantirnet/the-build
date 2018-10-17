@@ -30,7 +30,7 @@ default:
       region_map:
         anywhere: "*"
 
-circle:
+circleci:
   extensions:
     Behat\MinkExtension:
       base_url: ${drupal.sites.default.uri}:8000

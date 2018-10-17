@@ -12,4 +12,4 @@ drupal:
         host: 127.0.0.1
 
 behat:
-  args: "--profile=circle --suite=default --strict --format=junit --out=/tmp/artifacts --tags=~@skipci"
+  args: "--profile=circleci --suite=default --strict --format=junit --out=/tmp/artifacts --tags=~@skipci"
