@@ -230,7 +230,9 @@
 
     <target name="artifact-build">
         <echo>Installing composer dependencies in the artifact...</echo>
-        <exec dir="${artifact.directory}" command="composer install --no-interaction --no-dev" checkreturn="true" />
+        <composer command="install">
+            <arg line="--no-interaction --no-dev --working-dir=${artifact.directory}" />
+        </composer>
 
         <echo>Deleting .git subdirectories added by Composer...</echo>
         <delete includeemptydirs="true">
