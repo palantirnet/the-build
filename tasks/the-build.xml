@@ -91,6 +91,19 @@
     <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
 
 
+    <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
+    <exec command="command -V composer" returnProperty="composer.not_available.composer" />
+    <exec command="command -V composer.phar" returnProperty="composer.not_available.composer_phar" />
+    <if>
+        <isfalse value="${composer.not_available.composer}" />
+        <then><property name="composer.composer" value="composer" /></then>
+    </if>
+    <if>
+        <isfalse value="${composer.not_available.composer_phar}" />
+        <then><property name="composer.composer" value="composer.phar" /></then>
+    </if>
+
+
     <!--
         Default target: the-build
         This target is included only because the <project> tag requires it.

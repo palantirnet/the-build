@@ -230,7 +230,7 @@
 
     <target name="artifact-build">
         <echo>Installing composer dependencies in the artifact...</echo>
-        <composer command="install">
+        <composer command="install" composer="${composer.composer}">
             <arg line="--no-interaction --no-dev --working-dir=${artifact.directory}" />
         </composer>
 

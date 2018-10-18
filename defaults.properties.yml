@@ -236,6 +236,7 @@ phpmd:
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 
+
 # Configuration for running behat tests.
 #
 # Putting these flags in configuration allows you to vary the behat configuration per
@@ -248,3 +249,11 @@ phpmd:
 #     http://docs.behat.org/en/v2.5/guides/7.config.html#profiles)
 behat:
   args: "--suite=default --strict"
+
+
+# Configuration for composer.
+#
+# Use this configuration if you're running on an environment where composer is not available on the command line as
+# `composer` or `composer.phar`.
+# composer:
+#   composer: ${build.thebuild.dir}/vendor/bin/composer.phar
