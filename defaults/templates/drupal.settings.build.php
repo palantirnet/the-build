@@ -18,10 +18,17 @@ $config_directories = array();
 $config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
 
 $settings['hash_salt'] = '${drupal.site.hash_salt}';
+$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
 $settings['container_yamls'][] = __DIR__ . '/services.build.yml';
 
 $settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = '${drupal.site.settings.file_private_path}';
+
+// Disable the render cache.
+$settings['cache']['bins']['render'] = 'cache.backend.null';
+
+// Disable the dynamic page cache.
+$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
 
 // Disable CSS and JS aggregation.
 $config['system.performance']['css']['preprocess'] = FALSE;
