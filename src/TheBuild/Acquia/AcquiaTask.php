@@ -2,15 +2,20 @@
 /**
  * @file AcquiaTask.php
  *
-
- will use acquia.cloud.endpoint
- will use acquia.cloud.email and acquia.cloud.key if available
- 
- credentialsFile = ~/.acquia/cloudapi.conf
- email = acquia.cloud.email
- key = acquia.cloud.key
- endpoint = https://cloudapi.acquia.com/v1
-
+ * Abastract base task for creating Acquia Cloud API tasks.
+ *
+ * Loads the Acquia Cloud credentials from a JSON file and constructs
+ * authenticated requests against the Cloud API.
+ *
+ * This class will use the credentials file at ~/.acquia/cloudapi.conf if none
+ * is provided in the task call:
+ *
+ * @code
+ *   <exampleTask credentialsFile="artifacts/cloudapi.conf" />
+ * @endcode
+ *
+ * Extending classes may also set the 'endpoint' property if it is necessary to
+ * use the v2 API instead of v1.
  *
  * @copyright 2018 Palantir.net, Inc.
  */
@@ -24,37 +29,39 @@ use PhingFile;
 abstract class AcquiaTask extends \Task {
 
   /**
+   * Required. The Acquia Cloud credentials file containing a json array with
+   * 'email' and 'key' values.
    * @var \PhingFile
    */
   protected $credentialsFile;
+
+  /**
+   * Email address associated with the Acquia Cloud access. This value is set
+   * from the credentials file.
+   * @var string
+   */
   protected $email;
+
+  /**
+   * Secure key associated with the Acquia Cloud access. This value is set from
+   * the credentials file.
+   * @var string
+   */
   protected $key;
+
+  /**
+   * The Acquia Cloud API endpoint. This code is specific to version 1 of the
+   * API.
+   * @var string
+   */
   protected $endpoint = 'https://cloudapi.acquia.com/v1';
 
-  protected $_required_keys = ['email', 'key'];
-  protected $setup = FALSE;
-
-  public function setCredentialsFile(\PhingFile $file) {
-    $this->credentialsFile = new \PhingFile($file);
-  }
-
-  public function setEmail($value) {
-    $this->email = $value;
-  }
-
-  public function setKey($value) {
-    $this->key = $value;
-  }
-
-  public function setEndpoint($value) {
-    $this->endpoint = rtrim($value, '/');
-  }
-
-  public function main() {
-    $this->loadCredentials();
-    $this->validate();
-  }
-
+  /**
+   * Load the Acquia Cloud credentials from the cloudapi.conf JSON file.
+   *
+   * @throws \IOException
+   * @throws \NullPointerException
+   */
   protected function loadCredentials() {
     if (empty($this->email) || empty($this->key)) {
       if (empty($this->credentialsFile)) {
@@ -68,24 +75,24 @@ abstract class AcquiaTask extends \Task {
       $contents = file_get_contents($this->credentialsFile);
       $creds = json_decode($contents, TRUE);
 
-      $this->setEmail($creds['email']);
-      $this->setKey($creds['key']);
+      $this->email = $creds['email'];
+      $this->key = $creds['key'];
     }
-  }
 
-  protected function validate() {
-    foreach ($this->_required_keys as $attribute) {
-      if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
-      }
+    if (empty($this->email) || empty($this->key)) {
+      throw new BuildException('Missing Acquia Cloud API credentials.');
     }
   }
 
   /**
+   * Build an HTTP request object against the Acquia Cloud API.
+   *
    * @param $path
    * @return HTTP_Request2
    */
   protected function createRequest($path) {
+    $this->loadCredentials();
+
     $uri = $this->endpoint . '/' . ltrim($path, '/');
 
     $request = new HTTP_Request2($uri);
@@ -95,11 +102,28 @@ abstract class AcquiaTask extends \Task {
     return $request;
   }
 
-  protected function get($path) {
+  /**
+   * Example of how to query the Acquia Cloud API.
+   *
+   * @param $path
+   * @return string
+   * @throws \HTTP_Request2_Exception
+   */
+  protected function getApiResponseBody($path) {
     $request = $this->createRequest($path);
 
     $this->log('GET ' . $request->getUrl());
     $response = $request->send();
     return $response->getBody();
   }
+
+  /**
+   * @param PhingFile $file
+   * @throws \IOException
+   * @throws \NullPointerException
+   */
+  public function setCredentialsFile(PhingFile $file) {
+    $this->credentialsFile = new PhingFile($file);
+  }
+
 }
