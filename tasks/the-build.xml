@@ -27,9 +27,6 @@
     <!-- Provide the <selectpropertykey /> task. -->
     <taskdef name="selectpropertykey" classname="TheBuild\SelectPropertyKeyTask" />
 
-    <!-- Provide the <propertyjson /> task. -->
-    <taskdef name="propertyjson" classname="TheBuild\PropertyJsonTask" />
-
     <!-- Alias the build directory to the Phing start directory. -->
     <property name="build.dir" value="${application.startdir}" />
 

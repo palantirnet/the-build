@@ -191,9 +191,9 @@ acquia:
 
   realm:
   site:
-  env:
+  env: "test"
   cloud:
-    conf:
+    conf: "${env.HOME}/.acquia/cloudapi.conf"
 
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors

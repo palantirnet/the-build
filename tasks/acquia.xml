@@ -14,15 +14,22 @@
 
 <project name="acquia" default="acquia-status">
 
-    <!-- Provide the <acquiaGetBackup /> task. -->
-    <taskdef name="acquiaGetBackup" classname="TheBuild\Acquia\GetLatestBackup" />
+    <!-- Provide the <getAcquiaBackup /> task. -->
+    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackup" />
+
 
     <fail unless="projectname" />
     <fail unless="build.dir" />
     <fail unless="build.env" />
 
 
-    <target name="acquia-get-backup">
+    <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">
+        <fail unless="acquia.backups" />
+        <fail unless="acquia.realm" />
+        <fail unless="acquia.site" />
+        <fail unless="acquia.env" />
+        <fail unless="acquia.cloud.conf" />
+
         <getAcquiaBackup dir="${acquia.backups}" realm="${acquia.realm}" site="${acquia.site}" env="${acquia.env}" credentialsFile="${acquia.cloud.conf}" propertyName="drupal.load_db.file" />
     </target>
 
