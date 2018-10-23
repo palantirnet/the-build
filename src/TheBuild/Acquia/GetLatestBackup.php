@@ -108,9 +108,7 @@ class GetLatestBackup extends AcquiaTask {
 
     // Store the Acquia Cloud API JSON database backup records in our backups
     // directory.
-    if (empty($this->backupsFile)) {
-      $this->backupsFile = new PhingFile($this->dir, 'backups.json');
-    }
+    $this->backupsFile = new PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
 
     // Check the database backup records for entries within our time window.
     $backups = $this->getCurrentBackupRecords();
@@ -148,7 +146,7 @@ class GetLatestBackup extends AcquiaTask {
       $this->log("Using backup from " . $this->formatBackupTime($newest_backup) . " ({$newest_backup['id']})");
     }
 
-    // This means that we didn't have a current record in backups.json, and the Acquia Cloud API returned empty or
+    // This means that we didn't have a current record in our backups json, and the Acquia Cloud API returned empty or
     // malformed JSON.
     if (empty($newest_backup)) {
       throw new BuildException('Failed to find a backup record.');
@@ -207,7 +205,12 @@ class GetLatestBackup extends AcquiaTask {
    * @return array
    */
   protected function getCurrentBackupRecords() {
-    $backups = $this->getBackupRecords($this->backupsFile);
+    try {
+      $backups = $this->getBackupRecords($this->backupsFile);
+    }
+    catch (BuildException $e) {
+      $backups = [];
+    }
 
     $current_backups = [];
 
