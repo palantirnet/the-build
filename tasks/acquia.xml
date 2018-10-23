@@ -21,7 +21,7 @@
 
 
     <!-- Provide the <getAcquiaBackup /> task. -->
-    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackup" />
+    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackupTask" />
 
 
     <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">

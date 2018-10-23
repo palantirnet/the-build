@@ -1,6 +1,6 @@
 <?php
 /**
- * @file GetLatestBackup.php
+ * @file GetLatestBackupTask.php
  *
  * Get the latest backup of a site from the Acquia Cloud API.
  *
@@ -20,7 +20,7 @@ use BuildException;
 use PhingFile;
 
 
-class GetLatestBackup extends AcquiaTask {
+class GetLatestBackupTask extends AcquiaTask {
 
   /**
    * Directory for storing downloaded database backups.
