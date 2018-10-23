@@ -118,25 +118,24 @@ drupal:
         # environment.
         services_template: .the-build/drupal.services.build.yml
 
+      # Configuration for the database loading utility.
+      load_db:
+        # Pattern to match gzipped database dump files.
+        export_pattern: artifacts/backups/*.sql.gz
 
-  # Configuration for the database loading utility.
-  load_db:
-    # Pattern to match gzipped database dump files.
-    export_pattern: artifacts/backups/*.sql.gz
+        # The following two commands are composed to load the database into Drupal:
+        #   $> gunzip -c FILENAME.sql.gz | drush sqlc
+        #
+        # Command to extract text contents of the backup file.
+        contents_command: gunzip -c
+        # Command to load database contents into Drupal.
+        mysql_command: drush sqlc
 
-    # The following two commands are composed to load the database into Drupal:
-    #   $> gunzip -c FILENAME.sql.gz | drush sqlc
-    #
-    # Command to extract text contents of the backup file.
-    contents_command: gunzip -c
-    # Command to load database contents into Drupal.
-    mysql_command: drush sqlc
-
-    # Load a specific file rather than one matching the `export_pattern`. This can be used
-    # if your build relies on a seed database that is checked in to the repository.
-    # Otherwise, you may occasionally want to set this value at run time:
-    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
-    #file:
+        # Load a specific file rather than one matching the `export_pattern`. This can be used
+        # if your build relies on a seed database that is checked in to the repository.
+        # Otherwise, you may occasionally want to set this value at run time:
+        #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
+        #file:
 
 
 # Configuration for tasks/artifact.xml

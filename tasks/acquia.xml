@@ -24,8 +24,11 @@
 
 
     <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">
-        <getAcquiaBackup dir="${acquia.backups}" realm="${acquia.realm}" site="${acquia.site}" env="${acquia.env}" credentialsFile="${acquia.cloud.conf}" propertyName="drupal.load_db.file" />
+        <getAcquiaBackup dir="${acquia.backups}" realm="${acquia.realm}" site="${acquia.site}" env="${acquia.env}" credentialsFile="${acquia.cloud.conf}" propertyName="drupal.site.load_db.file" />
     </target>
+
+
+    <target name="acquia-load-backup" depends="acquia-get-backup,drupal-load-db" description="Get and load a current database backup." />
 
 
 </project>
