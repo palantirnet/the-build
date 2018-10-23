@@ -6,9 +6,9 @@
  *
  * @code
  *   <!-- Required parameters only -->
- *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" />
+ *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" />
  *   <!-- All parameters -->
- *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" database="multisite_db" env="test" maxAge="48" propertyName="database_backup_file" />
+ *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="test" database="multisite_db" maxAge="48" propertyName="database_backup_file" />
  * @endcode
  *
  * @copyright 2018 Palantir.net, Inc.
@@ -294,6 +294,9 @@ class GetLatestBackupTask extends AcquiaTask {
   }
   public function setDir($value) {
     $this->dir = new PhingFile($value);
+  }
+  public function setMaxAge($value) {
+    $this->maxAge = (int) $value;
   }
   public function setPropertyName($value) {
     $this->propertyName = $value;

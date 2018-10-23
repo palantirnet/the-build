@@ -93,3 +93,33 @@ If the `prefix` attribute does not end in a `.`, one will be added.
 ```xml
 <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
 ```
+
+## Acquia\GetLatestBackupTask [🔗](../src/TheBuild/Acquia/GetLatestBackupTask.php)
+
+Download a recent backup from Acquia Cloud.
+
+### Attributes
+
+| Name | Type | Description | Default | Required |
+|---|---|---|---|---|
+| dir | directory path | Local backups directory. | | Yes |
+| realm | string | Acquia hosting realm, either "devcloud" or "prod". | | Yes |
+| site | string | Acquia site name. | | Yes |
+| env | string | Acquia environment, generally "dev", "test", or "prod". | | Yes |
+| database | string | Acquia database name. | The site name. | No |
+| maxAge | int | Maximum age of the backup, in hours. | 24 | No |
+| propertyName | string | Name of a property to set to the backup file. | | No |
+| credentialsFile | file path | Path to your Acquia Cloud API credentials. (Do not check this file in to your repository) | `~/.acquia/cloudapi.conf` | No |
+
+### Example
+
+```xml
+<!-- Provide the <getAcquiaBackup /> task. -->
+<taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackupTask" />
+
+<!-- Required parameters only -->
+<getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" />
+
+<!-- More parameters -->
+<getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" credentialsFile="artifacts/.acquia/cloudapi.conf" propertyName="drupal.site.load_db.file" />
+```
