@@ -178,20 +178,22 @@ artifact:
 
 # Configuration for tasks/acquia.xml
 acquia:
-
-  # Machine name of your Acquia site account.
-  #accountname:
-
-  # Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or
-  # `staging-12345.prod.hosting.acquia.com`
-  #ssh:
-
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
 
-  realm:
-  site:
-  env: "test"
+  # The Acquia Cloud hosting "realm" where the site is running.
+  #   - Acquia Cloud Enterprise: 'prod'
+  #   - Acquia Cloud Professional: 'devcloud'
+  realm: ""
+
+  # Acquia site/application name.
+  site: ""
+
+  # Acquia environment to download backups from.
+  env: "prod"
+
+  # Acquia Cloud API credentials file, downloaded from your Acquia account. Do not check
+  # this file into your codebase.
   cloud:
     conf: "${env.HOME}/.acquia/cloudapi.conf"
 

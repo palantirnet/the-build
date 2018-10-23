@@ -51,6 +51,15 @@ class GetLatestBackup extends AcquiaTask {
   protected $site;
 
   /**
+   * The Acquia Cloud environment. Generally 'dev', 'test', or 'prod', unless
+   * a site has RA or other additional environments.
+   *
+   * Required parameter.
+   * @var string
+   */
+  protected $env;
+
+  /**
    * The name of the database whose backup to download. This will correspond
    * with the site name unless your site uses multiple databases or you are
    * running Drupal multisites.
@@ -59,15 +68,6 @@ class GetLatestBackup extends AcquiaTask {
    * @var string
    */
   protected $database;
-
-  /**
-   * The Acquia Cloud environment. Generally 'dev', 'test', or 'prod', unless
-   * a site has RA or other additional environments.
-   *
-   * Optional parameter.
-   * @var string
-   */
-  protected $env = 'prod';
 
   /**
    * Maximum age of the database backup in hours. If there is no backup matching
