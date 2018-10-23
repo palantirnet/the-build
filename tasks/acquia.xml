@@ -14,13 +14,14 @@
 
 <project name="acquia" default="acquia-status">
 
-    <!-- Provide the <getAcquiaBackup /> task. -->
-    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackup" />
-
 
     <fail unless="projectname" />
     <fail unless="build.dir" />
     <fail unless="build.env" />
+
+
+    <!-- Provide the <getAcquiaBackup /> task. -->
+    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackup" />
 
 
     <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">
