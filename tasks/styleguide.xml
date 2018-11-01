@@ -79,7 +79,10 @@
         <if>
             <and>
                 <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
-                <not><available file="${styleguide.root.resolved}/node_modules/.yarn-integrity" type="file" /></not>
+                <or>
+                  <not><available file="${styleguide.root.resolved}/node_modules/.yarn-integrity" type="file" /></not>
+                  <not><available file="${styleguide.root.resolved}/node_modules/node-sass/vendor/linux-x64-59/binding.node" type="file" /></not>
+                </or>
             </and>
             <then>
                 <exec dir="${styleguide.root.resolved}" command="yarn install --non-interactive --no-progress --prefer-offline" passthru="true" checkreturn="true" />
