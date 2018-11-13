@@ -141,7 +141,16 @@
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
     </target>
 
+  
+    <!-- Target: code-fix -->
+    <target name="code-fix" description="Run the automated code fixer.">
+        <!-- Run PHP Code Beautifier and Fixer. -->
+        <property name="phpcbf.command" value="vendor/bin/phpcbf --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+        <echo msg="$> ${phpcbf.command}" />
+        <exec command="${phpcbf.command}" logoutput="true" checkreturn="false" />
+    </target>
 
+  
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
