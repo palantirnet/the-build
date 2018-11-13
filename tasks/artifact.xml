@@ -324,8 +324,8 @@
                 <exec dir="${artifact.directory}" command="git tag -d ${artifact.git.artifact_tag}" checkreturn="true" logoutput="true" />
             </then>
         </if>
-        <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git reset --hard HEAD" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
