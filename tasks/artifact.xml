@@ -277,35 +277,53 @@
 
 
     <target name="artifact-optionalPush">
+        <selectone list="push,keep,discard" propertyName="artifact.result" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" />
+
         <if>
-            <or>
-                <equals arg1="${push}" arg2="" />
-                <not><isset property="push" /></not>
-            </or>
+            <equals arg1="${artifact.result}" arg2="push" />
             <then>
-                <input propertyName="push" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" validArgs="y,n" />
+                <phingcall target="artifact-push" />
+                <phingcall target="artifact-resetState" />
             </then>
         </if>
 
         <if>
-            <equals arg1="${push}" arg2="y" />
+            <equals arg1="${artifact.result}" arg2="keep" />
             <then>
-                <echo>Pushing changes.</echo>
-                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+                <echo>Artifact changes are in the temporary branch '${artifact.git.temporary_branch}'</echo>
+            </then>
+        </if>
 
-                <!-- If this is a build of a tag, push the new artifact tag. -->
-                <if>
-                    <equals arg1="${artifact.git.no_tag}" arg2="0" />
-                    <then>
-                        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
-                    </then>
-                </if>
+        <if>
+            <equals arg1="${artifact.result}" arg2="discard" />
+            <then>
+                <phingcall target="artifact-resetState" />
+            </then>
+        </if>
+    </target>
+
+
+    <target name="artifact-push">
+        <echo>Pushing changes.</echo>
+        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+
+        <!-- If this is a build of a tag, push the new artifact tag. -->
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
             </then>
         </if>
     </target>
 
 
     <target name="artifact-resetState">
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <exec dir="${artifact.directory}" command="git tag -d ${artifact.git.artifact_tag}" checkreturn="true" logoutput="true" />
+            </then>
+        </if>
         <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
