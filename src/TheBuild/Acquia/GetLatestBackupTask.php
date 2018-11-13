@@ -273,7 +273,7 @@ class GetLatestBackupTask extends AcquiaTask {
    */
   protected function formatBackupTime($backup) {
     $time = new \DateTime('now');
-    $time->setTimestamp($newest_backup['started']);
+    $time->setTimestamp($backup['started']);
     return $time->format(DATE_RFC850);
   }
 
