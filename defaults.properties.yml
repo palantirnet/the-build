@@ -180,6 +180,9 @@ acquia:
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
 
+  # Max age of the downloaded backup database, in hours.
+  backup_age_hours: 24
+
   # The Acquia Cloud hosting "realm" where the site is running.
   #   - Acquia Cloud Enterprise: 'prod'
   #   - Acquia Cloud Professional: 'devcloud'
@@ -187,6 +190,10 @@ acquia:
 
   # Acquia site/application name.
   site: ""
+
+  # Acquia database name. This can be left to match the site name unless you're
+  # using multisites.
+  database: "${acquia.site}"
 
   # Acquia environment to download backups from.
   env: "prod"
