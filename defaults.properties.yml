@@ -253,7 +253,8 @@ behat:
 
 # Configuration for composer.
 #
-# Use this configuration if you're running on an environment where composer is not available on the command line as
-# `composer` or `composer.phar`.
+# Use this configuration if you're running on an environment where composer is not
+# available on the command line as `composer` or `composer.phar`. In some cases, you may
+# need to add composer to your project itself with `composer require composer/composer`.
 # composer:
-#   composer: ${build.thebuild.dir}/vendor/bin/composer.phar
+#   composer: /path/to/composer.phar
