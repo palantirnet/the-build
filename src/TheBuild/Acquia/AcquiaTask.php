@@ -30,7 +30,7 @@ abstract class AcquiaTask extends \Task {
 
   /**
    * Required. The Acquia Cloud credentials file containing a json array with
-   * 'email' and 'key' values.
+   * 'mail' and 'key' values.
    * @var \PhingFile
    */
   protected $credentialsFile;
@@ -40,7 +40,7 @@ abstract class AcquiaTask extends \Task {
    * from the credentials file.
    * @var string
    */
-  protected $email;
+  protected $mail;
 
   /**
    * Secure key associated with the Acquia Cloud access. This value is set from
@@ -63,7 +63,7 @@ abstract class AcquiaTask extends \Task {
    * @throws \NullPointerException
    */
   protected function loadCredentials() {
-    if (empty($this->email) || empty($this->key)) {
+    if (empty($this->mail) || empty($this->key)) {
       if (empty($this->credentialsFile)) {
         $this->credentialsFile = new PhingFile($_SERVER['HOME'] . '/.acquia/cloudapi.conf');
       }
@@ -75,11 +75,11 @@ abstract class AcquiaTask extends \Task {
       $contents = file_get_contents($this->credentialsFile);
       $creds = json_decode($contents, TRUE);
 
-      $this->email = $creds['email'];
+      $this->mail = $creds['mail'];
       $this->key = $creds['key'];
     }
 
-    if (empty($this->email) || empty($this->key)) {
+    if (empty($this->mail) || empty($this->key)) {
       throw new BuildException('Missing Acquia Cloud API credentials.');
     }
   }
@@ -97,7 +97,7 @@ abstract class AcquiaTask extends \Task {
 
     $request = new HTTP_Request2($uri);
     $request->setConfig('follow_redirects', TRUE);
-    $request->setAuth($this->email, $this->key);
+    $request->setAuth($this->mail, $this->key);
 
     return $request;
   }
