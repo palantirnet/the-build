@@ -16,10 +16,10 @@ All artifact configuration should be in your project's base properties file, `.t
 
 ## Runtime flags
 
-* `push` - Value should be `y` or `n`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
+* `artifact.result` - Value should be `push`, `keep`, or `discard`. When this flag is provided, it will bypass the "Push artifact changes?" prompt.
 
 ```
-$> phing artifact -Dpush=y
+$> phing artifact -Dartifact.result=keep
 ```
 
 ## Examples
