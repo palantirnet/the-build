@@ -401,6 +401,19 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
             </filterchain>
         </reflexive>
 
+        <property name="_multisite.drush_alias">@multisite_placeholder@
+  $aliases['local.${_multisite.key}'] = [
+    'uri' => '${_multisite.uri}',
+  ];</property>
+
+        <reflexive file="drush/${projectname}.aliases.drushrc.php">
+            <filterchain>
+                <replacetokens>
+                    <token key="multisite_placeholder" value="${_multisite.drush_alias}" />
+                </replacetokens>
+            </filterchain>
+        </reflexive>
+
         <!-- If the '@multisite_placeholder@' is missing from the default properties file, the developer will have to
              add the configuration manually. -->
         <exec command="grep '@multisite_placeholder@' .the-build/build.default.properties.yml" returnProperty="_multisite.placeholder_missing" />

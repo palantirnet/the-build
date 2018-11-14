@@ -162,8 +162,13 @@
         <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.services.build.yml" />
         <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.settings.build.php" />
 
-        <!-- Copy Drush configuration. -->
+        <!-- Copy Drush configuration and aliases file templates. -->
         <copy file="${phing.dir.install}/../defaults/templates/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+        <copy file="${phing.dir.install}/../defaults/templates/projectname.aliases.drushrc.php" tofile="${application.startdir}/drush/${projectname}.aliases.drushrc.php" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
