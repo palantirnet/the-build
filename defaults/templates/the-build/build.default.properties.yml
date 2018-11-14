@@ -36,9 +36,7 @@ drupal:
         database: "drupal"
 
     # Add more multisites here.
-#   second:
-#     dir: second
-#     uri: "http://second.local"
+    # @multisite_placeholder@
 
     # Defaults for all sites; these can be overridden for individual sites.
     _defaults:
