@@ -280,6 +280,7 @@
         <if>
             <equals arg1="${artifact.result}" arg2="push" />
             <then>
+                <!-- Push the changes, delete the temporary branch, and keep any tag that was created. -->
                 <phingcall target="artifact-push" />
                 <phingcall target="artifact-resetState" />
             </then>
@@ -288,6 +289,9 @@
         <if>
             <equals arg1="${artifact.result}" arg2="keep" />
             <then>
+                <!-- Keep the temporary branch, but delete any tag that was created, since if we run the artifact
+                     generation again, the tag should be re-created against the regenerated artifact. -->
+                <phingcall target="artifact-cleanupTag" />
                 <echo>Artifact changes are in the temporary branch '${artifact.git.temporary_branch}'</echo>
             </then>
         </if>
@@ -295,6 +299,8 @@
         <if>
             <equals arg1="${artifact.result}" arg2="discard" />
             <then>
+                <!-- Delete the temporary branch and any tag that was created. -->
+                <phingcall target="artifact-cleanupTag" />
                 <phingcall target="artifact-resetState" />
             </then>
         </if>
@@ -315,13 +321,17 @@
     </target>
 
 
-    <target name="artifact-resetState">
+    <target name="artifact-cleanupTag">
         <if>
             <equals arg1="${artifact.git.no_tag}" arg2="0" />
             <then>
                 <exec dir="${artifact.directory}" command="git tag -d ${artifact.git.artifact_tag}" checkreturn="true" logoutput="true" />
             </then>
         </if>
+    </target>
+
+
+    <target name="artifact-resetState">
         <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git reset --hard HEAD" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
