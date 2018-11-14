@@ -63,9 +63,7 @@
 
         <phingcall target="artifact-commit" />
 
-        <phingcall target="artifact-optionalPush" />
-
-        <phingcall target="artifact-resetState" />
+        <phingcall target="artifact-finish" />
     </target>
 
 
@@ -276,7 +274,7 @@
     </target>
 
 
-    <target name="artifact-optionalPush">
+    <target name="artifact-finish">
         <selectone list="push,keep,discard" propertyName="artifact.result" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" />
 
         <if>
