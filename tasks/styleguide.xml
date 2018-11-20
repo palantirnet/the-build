@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+
+<!--
+  @file styleguide.xml
+  Targets for managing the style guide.
+
+  Include this file in your build.xml with:
+    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+
+  @see defaults.properties.yml
+
+  Copyright 2018 Palantir.net, Inc.
+  -->
+
+<project name="Styleguide" default="styleguide">
+
+    <fail unless="build.dir" />
+    <fail unless="build.env" />
+    <fail unless="projectname" />
+
+
+    <!-- Target: styleguide -->
+    <target name="styleguide" depends="styleguide-exists" description="Install and build the style guide.">
+        <if>
+            <equals arg1="${styleguide.exists}" arg2="1" />
+            <then>
+                <phingcall target="styleguide-build" />
+            </then>
+            <else>
+                <echo>Skipping style guide build.</echo>
+            </else>
+        </if>
+    </target>
+
+
+    <!--
+        Target: styleguide-exists
+
+        Check whether the styleguide directory exists and has the composer and yarn files that we expect.
+        -->
+    <target name="styleguide-exists">
+        <resolvepath propertyName="styleguide.root.resolved" file="${styleguide.root}" dir="${build.dir}" />
+        <echo>Looking for style guide at '${styleguide.root.resolved}'</echo>
+
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}" type="dir" />
+                <available file="${styleguide.root.resolved}/composer.json" type="file" />
+                <available file="${styleguide.root.resolved}/composer.lock" type="file" />
+                <available file="${styleguide.root.resolved}/package.json" type="file" />
+                <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
+            </and>
+            <then>
+                <property name="styleguide.exists" value="1" />
+                <echo>Style guide found.</echo>
+            </then>
+            <else>
+                <echo>No style guide found.</echo>
+            </else>
+        </if>
+    </target>
+
+
+    <!--
+        Target: styleguide-exists-or-else
+
+        Fail if the styleguide does not exist.
+        -->
+    <target name="styleguide-exists-or-else" depends="styleguide-exists">
+        <if>
+            <not><equals arg1="${styleguide.exists}" arg2="1" /></not>
+            <then>
+                <fail message="Style guide not found at '${styleguide.root}'" />
+            </then>
+        </if>
+    </target>
+
+
+    <!--
+        Target: styleguide-build
+
+        Install and build the style guide.
+        -->
+    <target name="styleguide-build" depends="styleguide-exists-or-else,styleguide-install">
+        <echo>Running build command in ${styleguide.root}: ${styleguide.command}</echo>
+        <exec dir="${styleguide.root.resolved}" command="${styleguide.command}" passthru="true" checkreturn="true" />
+    </target>
+
+
+    <!--
+        Target: styleguide-install
+
+        Install the styleguide dependencies with composer and yarn.
+        -->
+    <target name="styleguide-install" depends="styleguide-exists-or-else">
+        <!-- Run composer install in the styleguide. -->
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}/composer.lock" type="file" />
+                <not><available file="${styleguide.root.resolved}/vendor/autoload.php" type="file" /></not>
+            </and>
+            <then>
+                <exec dir="${styleguide.root.resolved}" command="composer install --no-interaction" passthru="true" checkreturn="true" />
+            </then>
+        </if>
+
+        <!-- Run yarn install in the styleguide. -->
+        <if>
+            <and>
+                <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
+                <or>
+                  <not><available file="${styleguide.root.resolved}/node_modules/.yarn-integrity" type="file" /></not>
+                  <not><available file="${styleguide.root.resolved}/node_modules/node-sass/vendor/linux-x64-59/binding.node" type="file" /></not>
+                </or>
+            </and>
+            <then>
+                <exec dir="${styleguide.root.resolved}" command="yarn install --non-interactive --no-progress --prefer-offline" passthru="true" checkreturn="true" />
+            </then>
+        </if>
+    </target>
+
+
+</project>

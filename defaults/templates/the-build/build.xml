@@ -23,10 +23,11 @@
     <!-- Additional optional targets. -->
     <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
     <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
 
 
     <!-- Default target: build -->
-    <target name="build" depends="set-site" description="Build the application.">
+    <target name="build" depends="styleguide,set-site" description="Build the application.">
         <!-- Create the Drupal custom code directories. -->
         <foreach list="${drupal.create_dirs}" param="dir" target="mkdir" />
 
