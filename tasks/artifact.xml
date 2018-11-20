@@ -63,9 +63,7 @@
 
         <phingcall target="artifact-commit" />
 
-        <phingcall target="artifact-optionalPush" />
-
-        <phingcall target="artifact-resetState" />
+        <phingcall target="artifact-finish" />
     </target>
 
 
@@ -230,7 +228,9 @@
 
     <target name="artifact-build">
         <echo>Installing composer dependencies in the artifact...</echo>
-        <exec dir="${artifact.directory}" command="composer install --no-interaction --no-dev" checkreturn="true" />
+        <composer command="install" composer="${composer.composer}">
+            <arg line="--no-interaction --no-dev --working-dir=${artifact.directory}" />
+        </composer>
 
         <echo>Deleting .git subdirectories added by Composer...</echo>
         <delete includeemptydirs="true">
@@ -274,38 +274,66 @@
     </target>
 
 
-    <target name="artifact-optionalPush">
+    <target name="artifact-finish">
+        <selectone list="push,keep,discard" propertyName="artifact.result" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" />
+
         <if>
-            <or>
-                <equals arg1="${push}" arg2="" />
-                <not><isset property="push" /></not>
-            </or>
+            <equals arg1="${artifact.result}" arg2="push" />
             <then>
-                <input propertyName="push" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" validArgs="y,n" />
+                <!-- Push the changes, delete the temporary branch, and keep any tag that was created. -->
+                <phingcall target="artifact-push" />
+                <phingcall target="artifact-resetState" />
             </then>
         </if>
 
         <if>
-            <equals arg1="${push}" arg2="y" />
+            <equals arg1="${artifact.result}" arg2="keep" />
             <then>
-                <echo>Pushing changes.</echo>
-                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+                <!-- Keep the temporary branch, but delete any tag that was created, since if we run the artifact
+                     generation again, the tag should be re-created against the regenerated artifact. -->
+                <phingcall target="artifact-cleanupTag" />
+                <echo>Artifact changes are in the temporary branch '${artifact.git.temporary_branch}'</echo>
+            </then>
+        </if>
 
-                <!-- If this is a build of a tag, push the new artifact tag. -->
-                <if>
-                    <equals arg1="${artifact.git.no_tag}" arg2="0" />
-                    <then>
-                        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
-                    </then>
-                </if>
+        <if>
+            <equals arg1="${artifact.result}" arg2="discard" />
+            <then>
+                <!-- Delete the temporary branch and any tag that was created. -->
+                <phingcall target="artifact-cleanupTag" />
+                <phingcall target="artifact-resetState" />
+            </then>
+        </if>
+    </target>
+
+
+    <target name="artifact-push">
+        <echo>Pushing changes.</echo>
+        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+
+        <!-- If this is a build of a tag, push the new artifact tag. -->
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
+            </then>
+        </if>
+    </target>
+
+
+    <target name="artifact-cleanupTag">
+        <if>
+            <equals arg1="${artifact.git.no_tag}" arg2="0" />
+            <then>
+                <exec dir="${artifact.directory}" command="git tag -d ${artifact.git.artifact_tag}" checkreturn="true" logoutput="true" />
             </then>
         </if>
     </target>
 
 
     <target name="artifact-resetState">
-        <exec dir="${artifact.directory}" command="chmod -R 750 * " checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout -- ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" command="git reset --hard HEAD" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />

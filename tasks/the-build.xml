@@ -27,6 +27,10 @@
     <!-- Provide the <selectpropertykey /> task. -->
     <taskdef name="selectpropertykey" classname="TheBuild\SelectPropertyKeyTask" />
 
+    <!-- Provide the <selectone /> task. -->
+    <taskdef name="selectone" classname="TheBuild\SelectOneTask" />
+
+
     <!-- Alias the build directory to the Phing start directory. -->
     <property name="build.dir" value="${application.startdir}" />
 
@@ -88,6 +92,19 @@
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
     <property name="drush.root" value="${build.dir}/${drupal.root}" />
     <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
+
+
+    <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
+    <exec command="command -v composer" outputProperty="composer.path.composer" />
+    <exec command="command -v composer.phar" outputProperty="composer.path.composer_phar" />
+    <if>
+        <not><equals arg1="${composer.path.composer}" arg2="" /></not>
+        <then><property name="composer.composer" value="${composer.path.composer}" /></then>
+    </if>
+    <if>
+        <not><equals arg1="${composer.path.composer_phar}" arg2="" /></not>
+        <then><property name="composer.composer" value="${composer.path.composer_phar}" /></then>
+    </if>
 
 
     <!--
