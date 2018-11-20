@@ -27,6 +27,9 @@
     <!-- Provide the <selectpropertykey /> task. -->
     <taskdef name="selectpropertykey" classname="TheBuild\SelectPropertyKeyTask" />
 
+    <!-- Provide the <selectone /> task. -->
+    <taskdef name="selectone" classname="TheBuild\SelectOneTask" />
+
 
     <!-- Alias the build directory to the Phing start directory. -->
     <property name="build.dir" value="${application.startdir}" />
@@ -92,15 +95,15 @@
 
 
     <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
-    <exec command="command -V composer" returnProperty="composer.not_available.composer" />
-    <exec command="command -V composer.phar" returnProperty="composer.not_available.composer_phar" />
+    <exec command="command -v composer" outputProperty="composer.path.composer" />
+    <exec command="command -v composer.phar" outputProperty="composer.path.composer_phar" />
     <if>
-        <isfalse value="${composer.not_available.composer}" />
-        <then><property name="composer.composer" value="composer" /></then>
+        <not><equals arg1="${composer.path.composer}" arg2="" /></not>
+        <then><property name="composer.composer" value="${composer.path.composer}" /></then>
     </if>
     <if>
-        <isfalse value="${composer.not_available.composer_phar}" />
-        <then><property name="composer.composer" value="composer.phar" /></then>
+        <not><equals arg1="${composer.path.composer_phar}" arg2="" /></not>
+        <then><property name="composer.composer" value="${composer.path.composer_phar}" /></then>
     </if>
 
 
