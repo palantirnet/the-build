@@ -387,28 +387,62 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
             </filterchain>
         </property>
 
-        <!--
-            There are still some manual steps, so print lots of information for the user.
-            -->
+        <!-- Add the multisite configuration to the default build properties file. -->
+        <property name="_multisite.config">@multisite_placeholder@
+    ${_multisite.key}:
+      dir: ${_multisite.dir}
+      uri: ${_multisite.uri}
+      hash_salt: ${_multisite.hash_salt}</property>
 
-        <!-- Whitespace is intentional. -->
-        <echo>
+        <reflexive file=".the-build/build.default.properties.yml">
+            <filterchain>
+                <replacetokens>
+                    <token key="multisite_placeholder" value="${_multisite.config}" />
+                </replacetokens>
+            </filterchain>
+        </reflexive>
+
+        <!-- If the '@multisite_placeholder@' is missing from the default properties file, the developer will have to
+             add the configuration manually. -->
+        <exec command="grep '@multisite_placeholder@' .the-build/build.default.properties.yml" returnProperty="_multisite.placeholder_missing" />
+        <if>
+            <equals arg1="${_multisite.placeholder_missing}" arg2="1" />
+            <then>
+                <!-- Whitespace is intentional. -->
+                <echo>
 
 To build and install this site, you need to add the following configuration to your .the-build/build.default.properties.yml file:
 
 drupal:
   sites:
-    ${_multisite.key}:
-      dir: ${_multisite.dir}
-      uri: ${_multisite.uri}
-      hash_salt: ${_multisite.hash_salt}
+    # ${_multisite.config}
+                </echo>
+            </then>
+        </if>
 
-Finally, install the new multisite with: `phing install -Dbuild.site=${_multisite.key}`
+        <!-- Add a Drush alias for the multisite. -->
+        <property name="_multisite.drush_alias">@multisite_placeholder@
+  $aliases['local.${_multisite.key}'] = [
+    'uri' => '${_multisite.uri}',
+  ];</property>
 
-You should also consider:
-  * Adding the domain for your new multisite to your development environment configuration
-  * Creating a new 'profile' in your behat.yml configuration, and updating your behat.args property
-  * Updating your .circleci/config.yml to run tests for your new multisite</echo>
+        <reflexive file="drush/${projectname}.aliases.drushrc.php">
+            <filterchain>
+                <replacetokens>
+                    <token key="multisite_placeholder" value="${_multisite.drush_alias}" />
+                </replacetokens>
+            </filterchain>
+        </reflexive>
+
+        <!-- Whitespace is intentional. -->
+        <echo>
+
+Finally, you can install the new multisite with: `phing install -Dbuild.site=${_multisite.key}`
+
+You may also need to:
+  * Add the domain for your new multisite to your development environment configuration
+  * Create a new 'profile' in your behat.yml configuration, and updating your behat.args property
+  * Update your .circleci/config.yml to run tests for your new multisite</echo>
     </target>
 
 

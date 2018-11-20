@@ -35,10 +35,8 @@ drupal:
       database:
         database: "drupal"
 
-    # Add more multisites here.
-#   second:
-#     dir: second
-#     uri: "http://second.local"
+    # Multisites created by `phing drupal-add-multisite` will be automatically added here.
+    # @multisite_placeholder@
 
     # Defaults for all sites; these can be overridden for individual sites.
     _defaults:
