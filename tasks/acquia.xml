@@ -20,34 +20,16 @@
     <fail unless="build.env" />
 
 
-    <!-- Default task: acquia-status -->
-    <target name="acquia-status">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="acquia.backups" />
+    <!-- Provide the <getAcquiaBackup /> task. -->
+    <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackupTask" />
 
-        <echo>Properties for running 'acquia-dbdl-prod' and 'acquia-dbdl-test' targets are present.</echo>
+
+    <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">
+        <getAcquiaBackup dir="${acquia.backups}" realm="${acquia.realm}" site="${acquia.site}" env="${acquia.env}" credentialsFile="${acquia.cloud.conf}" maxAge="${acquia.backup_age_hours}" database="${acquia.database}" propertyName="drupal.site.load_db.file" />
     </target>
 
 
-    <!-- Download production databases from Acquia -->
-    <target name="acquia-dbdl-prod">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="acquia.backups" />
-
-        <filesync sourcedir="${acquia.accountname}.prod@${acquia.ssh}:/mnt/files/${acquia.accountname}.prod/backups/" destinationdir="${acquia.backups}" />
-    </target>
-
-
-    <!-- Download staging databases from Acquia -->
-    <target name="acquia-dbdl-test">
-        <fail unless="acquia.accountname" />
-        <fail unless="acquia.ssh" />
-        <fail unless="acquia.backups" />
-
-        <filesync sourcedir="${acquia.accountname}.test@${acquia.ssh}:/mnt/files/${acquia.accountname}.test/backups/" destinationdir="${acquia.backups}" />
-    </target>
+    <target name="acquia-load-backup" depends="acquia-get-backup,drupal-load-db" description="Get and load a current database backup." />
 
 
 </project>

@@ -118,25 +118,24 @@ drupal:
         # environment.
         services_template: .the-build/drupal.services.build.yml
 
+      # Configuration for the database loading utility.
+      load_db:
+        # Pattern to match gzipped database dump files.
+        export_pattern: artifacts/backups/*.sql.gz
 
-  # Configuration for the database loading utility.
-  load_db:
-    # Pattern to match gzipped database dump files.
-    export_pattern: artifacts/backups/*.sql.gz
+        # The following two commands are composed to load the database into Drupal:
+        #   $> gunzip -c FILENAME.sql.gz | drush sqlc
+        #
+        # Command to extract text contents of the backup file.
+        contents_command: gunzip -c
+        # Command to load database contents into Drupal.
+        mysql_command: drush sqlc
 
-    # The following two commands are composed to load the database into Drupal:
-    #   $> gunzip -c FILENAME.sql.gz | drush sqlc
-    #
-    # Command to extract text contents of the backup file.
-    contents_command: gunzip -c
-    # Command to load database contents into Drupal.
-    mysql_command: drush sqlc
-
-    # Load a specific file rather than one matching the `export_pattern`. This can be used
-    # if your build relies on a seed database that is checked in to the repository.
-    # Otherwise, you may occasionally want to set this value at run time:
-    #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
-    #file:
+        # Load a specific file rather than one matching the `export_pattern`. This can be used
+        # if your build relies on a seed database that is checked in to the repository.
+        # Otherwise, you may occasionally want to set this value at run time:
+        #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
+        #file:
 
 
 # Configuration for tasks/artifact.xml
@@ -178,16 +177,31 @@ artifact:
 
 # Configuration for tasks/acquia.xml
 acquia:
-
-  # Machine name of your Acquia site account.
-  #accountname:
-
-  # Acquia SSH host, like `srv-1234.devcloud.hosting.acquia.com` or
-  # `staging-12345.prod.hosting.acquia.com`
-  #ssh:
-
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
+
+  # Max age of the downloaded backup database, in hours.
+  backup_age_hours: 24
+
+  # The Acquia Cloud hosting "realm" where the site is running.
+  #   - Acquia Cloud Enterprise: 'prod'
+  #   - Acquia Cloud Professional: 'devcloud'
+  realm: ""
+
+  # Acquia site/application name.
+  site: ""
+
+  # Acquia database name. This can be left to match the site name unless you're
+  # using multisites.
+  database: "${acquia.site}"
+
+  # Acquia environment to download backups from.
+  env: "prod"
+
+  # Acquia Cloud API credentials file, downloaded from your Acquia account. Do not check
+  # this file into your codebase.
+  cloud:
+    conf: "${env.HOME}/.acquia/cloudapi.conf"
 
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors
