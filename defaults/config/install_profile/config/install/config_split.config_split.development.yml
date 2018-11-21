@@ -5,7 +5,9 @@ id: development
 label: Development
 description: 'Configuration for local development environments.'
 folder: ../config/config_split/development
-module: {  }
+module:
+  devel: 0
+  kint: 0
 theme: {  }
 blacklist: {  }
 graylist: {  }
