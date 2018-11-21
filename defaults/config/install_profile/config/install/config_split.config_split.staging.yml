@@ -3,7 +3,7 @@ status: false
 dependencies: {  }
 id: staging
 label: Staging
-description: 'Configuration for use on shared staging environments'
+description: 'Configuration for use on shared staging environments.'
 folder: ../config/config_split/staging
 module: {  }
 theme: {  }
