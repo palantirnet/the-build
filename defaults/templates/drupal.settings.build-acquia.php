@@ -15,6 +15,13 @@ $config['system.file']['path']['temporary'] = $_ENV['TEMP'];
 $config_directories = [];
 $config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
 
+// Enable/disable config_split configurations.
+if (isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION']) {
+  $config['config_split.config_split.production']['status'] = TRUE;
+}
+elseif (isset($_ENV['AH_NON_PRODUCTION']) && $_ENV['AH_NON_PRODUCTION']) {
+  $config['config_split.config_split.staging']['status'] = TRUE;
+}
 
 //// Add an htaccess prompt on dev and staging environments.
 //// @see https://docs.acquia.com/articles/password-protect-your-non-production-environments-acquia-hosting#phpfpm
