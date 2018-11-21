@@ -7,7 +7,7 @@
   Include this file in your build.xml with:
   <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
 
-  @see defaults.properties.yml
+  @see defaults.yml
 
   Copyright 2016, 2018 Palantir.net, Inc.
   -->

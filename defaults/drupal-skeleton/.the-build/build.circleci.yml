@@ -1,0 +1,14 @@
+# These properties are for running the Drupal Skeleton on circle.
+drupal:
+  twig:
+    debug: false
+  sites:
+    default:
+      database:
+        database: circle_test
+        username: root
+        password: "root"
+        host: 127.0.0.1
+
+behat:
+  args: "--profile=circleci --suite=default --strict --format=junit --out=/tmp/artifacts --tags=~@skipci"

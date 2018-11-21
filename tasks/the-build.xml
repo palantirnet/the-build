@@ -69,18 +69,18 @@
         <then>
             <!-- Load the project's environment-specific properties. -->
             <if>
-                <available file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                <available file="${build.dir}/.the-build/build.${build.env}.yml" />
                 <then>
-                    <property file="${build.dir}/.the-build/build.${build.env}.properties.yml" />
+                    <property file="${build.dir}/.the-build/build.${build.env}.yml" />
                 </then>
             </if>
 
             <!-- Load the project's defaults. This may be loaded twice, but that
                  should not be a problem. -->
-            <property file="${build.dir}/.the-build/build.default.properties.yml" />
+            <property file="${build.dir}/.the-build/build.yml" />
 
             <!-- Load the-build's global defaults. -->
-            <property file="${build.thebuild.dir}/defaults.properties.yml" />
+            <property file="${build.thebuild.dir}/defaults.yml" />
 
             <!-- Prevent the-build from reloading properties. -->
             <property name="build.defaults_loaded" value="true" />

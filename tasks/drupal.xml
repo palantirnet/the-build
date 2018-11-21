@@ -7,7 +7,7 @@
   Include this file in your build.xml with:
     <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
 
-  @see defaults.properties.yml
+  @see defaults.yml
 
   Copyright 2016, 2018 Palantir.net, Inc.
   -->
@@ -357,7 +357,7 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
 
 
         <!--
-            Generate property configuration for the user to add to their .the-build/build.default.properties.yml file.
+            Generate property configuration for the user to add to their .the-build/build.yml file.
             -->
 
         <!-- Generate a hash salt for Drupal. -->
@@ -379,7 +379,7 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
       uri: ${_multisite.uri}
       hash_salt: ${_multisite.hash_salt}</property>
 
-        <reflexive file=".the-build/build.default.properties.yml">
+        <reflexive file=".the-build/build.yml">
             <filterchain>
                 <replacetokens>
                     <token key="multisite_placeholder" value="${_multisite.config}" />
@@ -389,14 +389,14 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
 
         <!-- If the '@multisite_placeholder@' is missing from the default properties file, the developer will have to
              add the configuration manually. -->
-        <exec command="grep '@multisite_placeholder@' .the-build/build.default.properties.yml" returnProperty="_multisite.placeholder_missing" />
+        <exec command="grep '@multisite_placeholder@' .the-build/build.yml" returnProperty="_multisite.placeholder_missing" />
         <if>
             <equals arg1="${_multisite.placeholder_missing}" arg2="1" />
             <then>
                 <!-- Whitespace is intentional. -->
                 <echo>
 
-To build and install this site, you need to add the following configuration to your .the-build/build.default.properties.yml file:
+To build and install this site, you need to add the following configuration to your .the-build/build.yml file:
 
 drupal:
   sites:

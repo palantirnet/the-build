@@ -42,7 +42,7 @@ $> vendor/bin/phing test
 
 ## Configuration
 
-Configure your build by editing `.the-build/build.default.properties.yml`. You can find more properties in [defaults.properties.yml](defaults.properties.yml), and override the defaults by copying them into your project's properties files.
+Configure your build by editing `.the-build/build.yml`. You can find more properties in [defaults.yml](defaults.yml), and override the defaults by copying them into your project's properties files.
 
 ## Additional documentation
 

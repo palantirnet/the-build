@@ -6,5 +6,5 @@ drupal:
   sites:
     default:
       build:
-        settings_template: .the-build/drupal.settings.build-pantheon.php
+        settings_template: .the-build/drupal/settings.build-pantheon.php
         services_dest: artifacts/dev/null

@@ -1,6 +1,6 @@
 # Building an Artifact
 
-You can find the full set of configuration options for artifacts under the 'artifact' property in the [defaults.properties.yml](../defaults.properties.yml) file.
+You can find the full set of configuration options for artifacts under the 'artifact' property in the [defaults.yml](../defaults.yml) file.
 
 ## Basic configuration
 
@@ -12,7 +12,7 @@ artifact:
     remote: example@svn-9999.devcloud.hosting.acquia.com:example.git
 ```
 
-All artifact configuration should be in your project's base properties file, `.the-build/build.default.properties.yml`.
+All artifact configuration should be in your project's base properties file, `.the-build/build.yml`.
 
 ## Runtime flags
 

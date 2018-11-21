@@ -5,7 +5,7 @@
   Targets for managing Drupal code artifacts.
 
   @see docs/artifacts.md
-  @see defaults.properties.yml
+  @see defaults.yml
 
   Copyright 2018 Palantir.net, Inc.
   -->
@@ -22,7 +22,7 @@
         <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 
-        <!-- Defaults are set in defaults.properties.yml -->
+        <!-- Defaults are set in defaults.yml -->
         <fail unless="artifact.directory" />
         <fail unless="artifact.prefix" />
         <fail unless="artifact.git.remote_base_branch" />

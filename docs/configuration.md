@@ -2,11 +2,11 @@
 
 ## Where to set configuration
 
-In general, you should configure the-build for your project in the `.the-build/build.default.properties.yml` file within your project root.
+In general, you should configure the-build for your project in the `.the-build/build.yml` file within your project root.
 
-You can customize your test and prod build behaviors by adding environment-specific configuration to the `.the-build/build.ENVIRONMENT.properties.yml` files.
+You can customize your test and prod build behaviors by adding environment-specific configuration to the `.the-build/build.ENVIRONMENT.yml` files.
 
-You can find documentation for the full set of properties used by the-build in the [`defaults.properties.yml`](../defaults.properties.yml) file. Properties and default values can be copied from there into your project's `.the-build/build.default.properties.yml` file.
+You can find documentation for the full set of properties used by the-build in the [`defaults.yml`](../defaults.yml) file. Properties and default values can be copied from there into your project's `.the-build/build.yml` file.
 
 ## Property loading
 
@@ -37,9 +37,9 @@ Cool! This phing-ism is what allows us to do environment-specific property layer
   phing build -Dbuild.env=circleci
   ```
 1. Set the `build.dir`, `projectname`, `build.thebuild.dir`, and `build.env` core properties in `tasks/the-build.xml`
-1. Load properties from the project's `.the-build/build.[environment].properties.yml`
-1. Load properties from the project's `.the-build/build.default.properties.yml`
-1. Load default property values from the-build's own `defaults.properties.yml` file
+1. Load properties from the project's `.the-build/build.[environment].yml`
+1. Load properties from the project's `.the-build/build.yml`
+1. Load default property values from the-build's own `defaults.yml` file
 
 In order to support Drupal multisites, site-specific configuration should be set in the `drupal.sites.SITENAME.*` properties, but should be referenced using the `drupal.site.*` properties. See [drupal_multisite.md](drupal_multisite.md) for details on how these properties are provided.
 
@@ -71,7 +71,7 @@ These properties are provided by the init process in `the-build.xml`, and do not
 
 ## Available properties
 
-All available properties are documented in the-build's [defaults.properties.yml](../defaults.properties.yml) file. This file is also the source of default values for the-build; anything that is not set in your project's `.the-build/build.*.properties.yml` files will be set based on these defaults.
+All available properties are documented in the-build's [defaults.yml](../defaults.yml) file. This file is also the source of default values for the-build; anything that is not set in your project's `.the-build/build.*.yml` files will be set based on these defaults.
 
 ----
 Copyright 2016, 2017, 2018 Palantir.net, Inc.
