@@ -4,6 +4,11 @@ To develop and test changes to the-build, you'll generally need to have a Drupal
 
 1. Choose a site to test against
 2. Check out the-build as a git repository into the site's `vendor/` directory
+   - `cd vendor/palantirnet`
+   - `rm -rf the-build`
+   - `git clone git@github.com:palantirnet/the-build.git`
+   - `cd the-build`
+   - Checkout an existing branch or create a new one.
 3. Make, commit, and push your changes from within `vendor/palantirnet/the-build/`
 
 The major thing to watch out for here is that your copy of the-build is temporary -- in certain cases (especially when switching branches) when you run composer commands, your repo may be replaced with a different version.
