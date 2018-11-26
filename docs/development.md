@@ -15,11 +15,11 @@ The major thing to watch out for here is that your copy of the-build is temporar
 
 ## Testing on an existing site
 
-You can clone the-build into the vendor directory of an existing site. If it doesn't have a version of the-build already installed, you'll need to require it with `composer require palantirnet/the-build:dev-release-2.0` first.
+You can clone the-build into the vendor directory of an existing site. If it doesn't have a version of the-build already installed, you'll need to require it with `composer require palantirnet/the-build:dev-release-2.0 --dev` first.
 
 ```
 cd my-site
-composer require palantirnet/the-build:dev-release-2.0 --prefer-source
+composer require palantirnet/the-build:dev-release-2.0 --prefer-source --dev
 ```
 
 At this point, `vendor/palantirnet/the-build` should be a clone of `git@github.com:palantirnet/the-build.git`.
