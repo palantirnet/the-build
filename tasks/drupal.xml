@@ -255,7 +255,7 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site">
         <fail unless="drupal.site.admin_user" />
 
-        <symlink link="${build.dir}/${drupal.root}/profiles/contrib/the_build" target="${build.thebuild.dir}/defaults/config/install_profile" />
+        <symlink link="${build.dir}/${drupal.root}/modules/custom/the_build_utility" target="${build.thebuild.dir}/config/custom_module/" />
 
         <composer command="require" composer="${composer.composer}">
             <arg value="drupal/config_split" />
