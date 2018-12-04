@@ -280,6 +280,11 @@ Or, you can specify the export file directly:
             <param>the_build_utility</param>
         </drush>
 
+        <drush command="config-delete" assume="yes">
+            <param>core.extension</param>
+            <param>module.standard</param>
+        </drush>
+
         <drush command="config-set" assume="yes">
             <param>core.extension</param>
             <param>module.config_installer</param>
