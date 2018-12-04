@@ -268,13 +268,9 @@ Or, you can specify the export file directly:
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>the_build</param>
+            <param>standard</param>
         </drush>
 
-        <drush command="config-delete" assume="yes">
-            <param>core.extension</param>
-            <param>module.the_build</param>
-        </drush>
         <drush command="config-set" assume="yes">
             <param>core.extension</param>
             <param>module.config_installer</param>
@@ -291,7 +287,7 @@ Or, you can specify the export file directly:
         <!-- Whitespace is intentional. -->
         <echo>
 
-             Drupal has been installed with the install profile "the_build". Future installs will be run using config_installer.
+             Drupal has been installed with the install profile "standard". Future installs will be run using config_installer.
 
              Your config has been exported to ${drupal.root}/${drupal.site.config_sync_directory}</echo>
     </target>
