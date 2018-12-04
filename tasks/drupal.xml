@@ -282,6 +282,18 @@ Or, you can specify the export file directly:
             <param>config_installer</param>
         </drush>
 
+        <drush command="pm-enable" assume="yes">
+            <param>config_split</param>
+            <param>devel</param>
+            <param>workbench</param>
+            <param>workbench_tabs</param>
+            <param>the_build_utility</param>
+        </drush>
+
+        <drush command="pm-uninstall" assume="yes">
+            <param>the_build_utility</param>
+        </drush>
+
         <drush command="config-export" assume="yes" />
 
         <!-- Whitespace is intentional. -->
