@@ -255,13 +255,10 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site">
         <fail unless="drupal.site.admin_user" />
 
-        <symlink link="${build.dir}/${drupal.root}/modules/custom/the_build_utility">
-            <fileset dir="${build.thebuild.dir}/config/custom_module">
-                <include name="*" />
-            </fileset>
-        </symlink>
+        <symlink link="${build.dir}/${drupal.root}/modules/custom/the_build_utility" target="${build.thebuild.dir}/defaults/config/modules/custom/the_build_utility" />
 
         <composer command="require" composer="${composer.composer}">
+            <arg value="drupal/config_installer" />
             <arg value="drupal/config_split" />
             <arg value="drupal/devel" />
             <arg value="drupal/workbench" />
@@ -275,23 +272,25 @@ Or, you can specify the export file directly:
             <param>standard</param>
         </drush>
 
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>module.config_installer</param>
-            <param>1000</param>
-        </drush>
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>profile</param>
-            <param>config_installer</param>
-        </drush>
-
         <drush command="pm-enable" assume="yes">
+            <param>config_installer</param>
             <param>config_split</param>
             <param>devel</param>
             <param>workbench</param>
             <param>workbench_tabs</param>
             <param>the_build_utility</param>
+        </drush>
+
+        <drush command="config-set" assume="yes">
+            <param>core.extension</param>
+            <param>module.config_installer</param>
+            <param>1000</param>
+        </drush>
+
+        <drush command="config-set" assume="yes">
+            <param>core.extension</param>
+            <param>profile</param>
+            <param>config_installer</param>
         </drush>
 
         <drush command="pm-uninstall" assume="yes">

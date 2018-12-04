@@ -2,6 +2,7 @@ name: the-build utility module
 description: 'Base settings from palantirnet/the-build.'
 type: module
 core: 8.x
+hide: true
 
 dependencies:
   # Contrib modules
