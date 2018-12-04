@@ -258,7 +258,6 @@ Or, you can specify the export file directly:
         <symlink link="${build.dir}/${drupal.root}/modules/custom/the_build_utility" target="${build.thebuild.dir}/defaults/config/modules/custom/the_build_utility" />
 
         <composer command="require" composer="${composer.composer}">
-            <arg value="drupal/config_installer" />
             <arg value="drupal/config_split" />
             <arg value="drupal/devel" />
             <arg value="drupal/workbench" />
