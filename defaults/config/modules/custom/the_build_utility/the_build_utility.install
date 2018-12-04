@@ -52,4 +52,25 @@ function the_build_utility_install() {
   $date_settings->set('timezone.default', 'America/Chicago');
   $date_settings->set('timezone.user.configurable', FALSE);
   $date_settings->save(TRUE);
+
+  // Install modules that we want but are not included with standard profile.
+  $install = ['config_split', 'devel', 'workbench', 'workbench_tabs'];
+  \Drupal::service('module_installer')->install($install);
+
+  // Remove any entity dependencies so we can uninstall modules.
+
+  // Begin Comment module.
+  // Remove the comment fields.
+  $fields = entity_load_multiple_by_properties('field_storage_config', ['type' => 'comment']);
+  foreach ($fields as $field) {
+    $field->delete();
+  }
+
+  // Remove state setting.
+  \Drupal::state()->delete('comment.node_comment_statistics_scale');
+  // End Comment module.
+
+  // Uninstall the modules from the standard profile that we don't want.
+  $uninstall = ['automated_cron', 'big_pipe', 'comment', 'contact', 'history', 'search', 'tour'];
+  \Drupal::service('module_installer')->uninstall($uninstall);
 }

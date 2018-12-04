@@ -272,11 +272,6 @@ Or, you can specify the export file directly:
         </drush>
 
         <drush command="pm-enable" assume="yes">
-            <param>config_installer</param>
-            <param>config_split</param>
-            <param>devel</param>
-            <param>workbench</param>
-            <param>workbench_tabs</param>
             <param>the_build_utility</param>
         </drush>
 
