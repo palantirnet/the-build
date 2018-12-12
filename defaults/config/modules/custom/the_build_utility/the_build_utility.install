@@ -54,7 +54,7 @@ function the_build_utility_install() {
   $date_settings->save(TRUE);
 
   // Install modules that we want but are not included with standard profile.
-  $install = ['config_split', 'devel', 'workbench', 'workbench_tabs'];
+  $install = ['admin_toolbar', 'admin_toolbar_tools', 'config_split', 'devel', 'workbench', 'workbench_tabs'];
   \Drupal::service('module_installer')->install($install);
 
   // Remove any entity dependencies so we can uninstall modules.
