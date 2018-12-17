@@ -12,8 +12,6 @@
  * @see https://api.drupal.org/api/drupal/sites%21default%21default.settings.php/8.6.x
  */
 
-$settings['install_profile'] = 'config_installer';
-
 
 // This is the core set of defaults from default.settings.php. They will be overridden
 // as necessary by the includes below.
