@@ -3,12 +3,12 @@
 #
 # This file may be customized for your project. The full set of default values can be
 # found in the-build's repository.
-# @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.properties.yml
+# @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.yml
 
 # These properties are used when building the settings.php and settings.yml for your
 # Drupal site, and by some of the targets in the default build.xml file.
-# @see .the-build/drupal.services.yml
-# @see .the-build/drupal.settings.php
+# @see .the-build/drupal/services.build.yml
+# @see .the-build/drupal/settings.build.php
 build:
   host: ${build.host}
 
@@ -47,12 +47,12 @@ drupal:
 
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
-# these values to the defaults in build.circleci.properties.yml.
+# these values to the defaults in build.circleci.yml.
 behat:
   args: "--suite=default --strict"
 
 # To build an artifact from your code, add the URL to your artifact git repository.
-# @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.properties.yml
+# @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.yml
 #
 # artifact:
 #   git:

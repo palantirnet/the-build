@@ -3,9 +3,9 @@
 #
 # Properties may be overridden for individual projects by copying them to the project's
 # own property files:
-#   - .the-build/build.default.properties.yml
-#   - .the-build/build.circleci.properties.yml
-#   - .the-build/build.acquia.properties.yml
+#   - .the-build/build.yml
+#   - .the-build/build.circleci.yml
+#   - .the-build/build.acquia.yml
 #   - etc.
 #
 # @copyright 2018 Palantir.net, Inc.
@@ -43,7 +43,7 @@ drupal:
     # loading any missing values from drupal.sites._defaults.
     #
     # To add a Drupal multisite installation, copy these default values into
-    # your project's .the-build/build.default.properties.yml file and change
+    # your project's .the-build/build.yml file and change
     # the 'default' key to the name of your new multisite. The key must not
     # contain '.' characters, but the 'dir' property may.
     default:
@@ -112,11 +112,11 @@ drupal:
       build:
         # Source template for Drupal's `settings.php` file. This may vary per build
         # environment.
-        settings_template: .the-build/drupal.settings.build.php
+        settings_template: .the-build/drupal/settings.build.php
 
         # Source template for Drupal's `services.yml` file. This may vary per build
         # environment.
-        services_template: .the-build/drupal.services.build.yml
+        services_template: .the-build/drupal/services.build.yml
 
       # Configuration for the database loading utility.
       load_db:
@@ -147,10 +147,10 @@ artifact:
   prefix: artifact-
 
   # Path to a template .gitignore file to use in the artifact.
-  gitignore_template: "${build.thebuild.dir}/defaults/templates/artifact.gitignore"
+  gitignore_template: "${build.thebuild.dir}/defaults/artifact/gitignore"
 
   # Path to a template README file to use in the artifact.
-  readme_template: "${build.thebuild.dir}/defaults/templates/artifact.README.md"
+  readme_template: "${build.thebuild.dir}/defaults/artifact/README.md"
 
   git:
     # Git repository for the artifact. This is typically an Acquia or Pantheon git URL.
@@ -209,7 +209,7 @@ acquia:
 # template.
 phplint:
   # Path to a file where each line is a pattern matching files to lint.
-  includesfile: "${build.thebuild.dir}/defaults/config/phplint.txt"
+  includesfile: "${build.thebuild.dir}/defaults/standard/phplint.txt"
 
 
 # Configuration for using PHP_CodeSniffer to review code according to the Drupal coding
@@ -246,7 +246,7 @@ phpmd:
   # Output format for phpmd.
   format: text
   # Comma-separated list of ruleset paths or names.
-  rulesets: "${build.thebuild.dir}/defaults/config/phpmd.xml"
+  rulesets: "${build.thebuild.dir}/defaults/standard/phpmd.xml"
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 
@@ -255,7 +255,7 @@ phpmd:
 #
 # Putting these flags in configuration allows you to vary the behat configuration per
 # environment. Sometimes, there are tests that are appropriate to skip on CI. Compare
-# these values to the defaults in build.circleci.properties.yml.
+# these values to the defaults in build.circleci.yml.
 #
 # Also consider:
 #   * Tagging tests based on where they should run (e.g. '@skipci')

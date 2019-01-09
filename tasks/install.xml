@@ -26,7 +26,7 @@
              -->
         <echo message="Configure the default environment..." />
 
-        <property file="${build.thebuild.dir}/defaults.properties.yml" prefix="default" />
+        <property file="${build.thebuild.dir}/defaults.yml" prefix="default" />
         <mkdir dir="${application.startdir}/.the-build" />
 
         <!-- Generate a hash salt for Drupal. -->
@@ -50,7 +50,7 @@
         </switch>
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
-        <property file="${build.thebuild.dir}/defaults.properties.yml" />
+        <property file="${build.thebuild.dir}/defaults.yml" />
         <!-- Copy defaults to fill in the sites array. -->
         <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.sites.default" override="false" />
 
@@ -64,7 +64,7 @@
              We can't do general property substitution here because this is a phing
              project file that uses phing variables.
              -->
-        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}" />
@@ -74,7 +74,7 @@
         </copy>
 
         <!-- Create the default properties file. -->
-        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.default.properties.yml" tofile="${application.startdir}/.the-build/build.default.properties.yml" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/the-build/build.yml" tofile="${application.startdir}/.the-build/build.yml" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -117,7 +117,7 @@
              These copy commands use <expandproperties /> for property substitution.
              -->
         <!-- Copy the behat template. -->
-        <copy file="${phing.dir.install}/../defaults/templates/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -125,57 +125,57 @@
 
         <!-- Copy the CircleCI configuration -->
         <copy todir="${application.startdir}/" overwrite="true">
-            <fileset dir="${phing.dir.install}/../defaults/templates" includes=".circleci/" />
+            <fileset dir="${phing.dir.install}/../defaults/install" includes=".circleci/" />
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
 
         <!-- Copy the CircleCI properties. -->
-        <copy file="${phing.dir.install}/../defaults/templates/the-build/build.circleci.properties.yml" tofile="${application.startdir}/.the-build/build.circleci.properties.yml" overwrite="true" />
+        <copy file="${phing.dir.install}/../defaults/install/the-build/build.circleci.yml" tofile="${application.startdir}/.the-build/build.circleci.yml" overwrite="true" />
 
         <!-- Add host-specific files for settings.php templates, the-build properties, and hosting configuration. -->
         <switch value="${build.host}">
             <case value="acquia">
-                <copy file="${phing.dir.install}/../defaults/templates/drupal.settings.build-acquia.php" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${phing.dir.install}/../defaults/templates/the-build/build.acquia.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build-acquia.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
+                <copy file="${phing.dir.install}/../defaults/install/the-build/build.acquia.yml" todir="${application.startdir}/.the-build" overwrite="true" />
             </case>
 
             <case value="pantheon">
-                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-pantheon.php" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.pantheon.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/templates/pantheon.yml" todir="${application.startdir}" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-pantheon.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.pantheon.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
             </case>
 
             <case value="platformsh">
-                <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.build-platformsh.php" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/templates/the-build/build.platformsh.properties.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/templates/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-platformsh.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.platformsh.yml" todir="${application.startdir}/.the-build" overwrite="true" />
+                <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
                 <copy todir="${application.startdir}/.platform" overwrite="true">
-                    <fileset dir="${build.thebuild.dir}/defaults/templates/.platform" />
+                    <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
                 </copy>
             </case>
             <default />
         </switch>
 
         <!-- Copy Drupal configuration templates (used by the 'build' target). -->
-        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.services.build.yml" />
-        <copy todir="${application.startdir}/.the-build" file="${phing.dir.install}/../defaults/templates/drupal.settings.build.php" />
+        <copy file="${phing.dir.install}/../defaults/install/drupal/services.build.yml" todir="${application.startdir}/.the-build/drupal" />
+        <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build.php" todir="${application.startdir}/.the-build/drupal" />
 
         <!-- Copy Drush configuration and aliases file templates. -->
-        <copy file="${phing.dir.install}/../defaults/templates/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/drush/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
-        <copy file="${phing.dir.install}/../defaults/templates/projectname.aliases.drushrc.php" tofile="${application.startdir}/drush/${projectname}.aliases.drushrc.php" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/drush/projectname.aliases.drushrc.php" tofile="${application.startdir}/drush/${projectname}.aliases.drushrc.php" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
 
         <!-- Configure the .gitignore for our settings.php structure. -->
-        <copy file="${phing.dir.install}/../defaults/templates/project.gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -237,7 +237,7 @@
 
         <!-- Use our own basic Drupal settings.php file. -->
         <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
-        <copy file="${build.thebuild.dir}/defaults/templates/drupal.settings.php" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/settings.php" overwrite="true">
+        <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.php" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/settings.php" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
@@ -255,7 +255,7 @@
         <!-- Add host-specific settings.php and deployment files. -->
         <switch value="${build.host}">
             <case value="acquia">
-                <copy file="${phing.dir.install}/../defaults/config/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+                <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
             </case>
 
             <case value="pantheon">

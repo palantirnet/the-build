@@ -6,7 +6,7 @@
  *
  * To customize the configuration:
  * - Create a settings.local.php
- * - Edit the templates at .the-build/drupal.settings.*.php
+ * - Edit the templates at .the-build/drupal/settings.*.php
  * - Avoid editing this file
  *
  * @see https://api.drupal.org/api/drupal/sites%21default%21default.settings.php/8.6.x

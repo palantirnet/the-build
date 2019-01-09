@@ -6,5 +6,5 @@ drupal:
   sites:
     default:
       build:
-        settings_template: .the-build/drupal.settings.build-acquia.php
+        settings_template: .the-build/drupal/settings.build-acquia.php
         services_dest: artifacts/dev/null
