@@ -272,3 +272,14 @@ behat:
 # need to add composer to your project itself with `composer require composer/composer`.
 # composer:
 #   composer: /path/to/composer.phar
+
+
+# Configuration for building the style guide.
+#
+# Use these properties if you're using a Composer + Yarn install process for your
+# style guide and need to customize the location or the build command.
+styleguide:
+  # Location of the style guide, relative to the project root.
+  root: 'styleguide'
+  # Command to compile the style guide assets, for use during the build and artifact steps.
+  command: 'yarn default'
