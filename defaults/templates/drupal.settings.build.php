@@ -24,6 +24,11 @@ $settings['container_yamls'][] = __DIR__ . '/services.build.yml';
 $settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = '${drupal.site.settings.file_private_path}';
 
+// Enable/disable config_split configurations. To simulate other config split
+// environments, change "development" to either "staging" or "production", then run:
+//   drush cr && drush cim -y
+$config['config_split.config_split.development']['status'] = TRUE;
+
 // Disable the render cache.
 $settings['cache']['bins']['render'] = 'cache.backend.null';
 

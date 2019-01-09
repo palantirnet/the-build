@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the-build utility module.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+use Drupal\shortcut\Entity\Shortcut;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function the_build_utility_install() {
+  // Allow visitor account creation with administrative approval.
+  $user_settings = \Drupal::configFactory()->getEditable('user.settings');
+  $user_settings->set('register', USER_REGISTER_ADMINISTRATORS_ONLY)->save(TRUE);
+
+  // Populate the default shortcut set.
+  $shortcut = Shortcut::create([
+    'shortcut_set' => 'default',
+    'title' => t('Manage Taxonomy'),
+    'weight' => -20,
+    'link' => ['uri' => 'internal:/admin/structure/taxonomy'],
+  ]);
+  $shortcut->save();
+
+  $shortcut = Shortcut::create([
+    'shortcut_set' => 'default',
+    'title' => t('Manage Menus'),
+    'weight' => -19,
+    'link' => ['uri' => 'internal:/admin/structure/menu'],
+  ]);
+  $shortcut->save();
+
+  $shortcut = Shortcut::create([
+    'shortcut_set' => 'default',
+    'title' => t('Status Report'),
+    'weight' => -18,
+    'link' => ['uri' => 'internal:/admin/reports/status'],
+  ]);
+  $shortcut->save();
+
+  // Configure time and date settings.
+  $date_settings = \Drupal::configFactory()->getEditable('system.date');
+  $date_settings->set('country.default', 'US');
+  $date_settings->set('timezone.default', 'America/Chicago');
+  $date_settings->set('timezone.user.configurable', FALSE);
+  $date_settings->save(TRUE);
+
+  // Install modules that we want but are not included with standard profile.
+  $install = ['admin_toolbar', 'admin_toolbar_tools', 'config_split', 'devel', 'workbench', 'workbench_tabs'];
+  \Drupal::service('module_installer')->install($install);
+
+  // Remove any entity dependencies so we can uninstall modules.
+
+  // Begin Comment module.
+  // Remove the comment fields.
+  $fields = entity_load_multiple_by_properties('field_storage_config', ['type' => 'comment']);
+  foreach ($fields as $field) {
+    $field->delete();
+  }
+
+  // Remove state setting.
+  \Drupal::state()->delete('comment.node_comment_statistics_scale');
+  // End Comment module.
+
+  // Uninstall the modules from the standard profile that we don't want.
+  $uninstall = ['automated_cron', 'big_pipe', 'comment', 'contact', 'history', 'search', 'tour'];
+  \Drupal::service('module_installer')->uninstall($uninstall);
+}

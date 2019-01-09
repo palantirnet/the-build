@@ -12,7 +12,6 @@
  * @see https://api.drupal.org/api/drupal/sites%21default%21default.settings.php/8.6.x
  */
 
-$settings['install_profile'] = 'config_installer';
 
 // This is the core set of defaults from default.settings.php. They will be overridden
 // as necessary by the includes below.
@@ -25,6 +24,13 @@ $settings['file_scan_ignore_directories'] = [
   'bower_components',
 ];
 $settings['entity_update_batch_size'] = 50;
+
+
+// Disable our three default config_split configurations. These will be enabled in the
+// settings.build.php file that is compiled for either development or for the artifact.
+$config['config_split.config_split.production']['status'] = FALSE;
+$config['config_split.config_split.staging']['status'] = FALSE;
+$config['config_split.config_split.development']['status'] = FALSE;
 
 
 // Additional settings files to load. Order is significant.

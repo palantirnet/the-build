@@ -255,6 +255,16 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site">
         <fail unless="drupal.site.admin_user" />
 
+        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/config/modules/the_build_utility" />
+
+        <composer command="require" composer="${composer.composer}">
+            <arg value="drupal/admin_toolbar" />
+            <arg value="drupal/config_split" />
+            <arg value="drupal/devel" />
+            <arg value="drupal/workbench" />
+            <arg value="drupal/workbench_tabs" />
+        </composer>
+
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
@@ -262,48 +272,29 @@ Or, you can specify the export file directly:
             <param>standard</param>
         </drush>
 
-        <drush command="pm-uninstall" assume="yes">
-            <param>automated_cron</param>
-            <param>big_pipe</param>
-            <param>contact</param>
-            <param>history</param>
-            <param>search</param>
-            <param>tour</param>
+        <drush command="pm-enable" assume="yes">
+            <param>the_build_utility</param>
         </drush>
 
-        <drush command="config-set" assume="yes">
-            <param>user.settings</param>
-            <param>register</param>
-            <param>admin_only</param>
-        </drush>
-        <drush command="config-set" assume="yes">
-            <param>system.date</param>
-            <param>country.default</param>
-            <param>US</param>
-        </drush>
-        <drush command="config-set" assume="yes">
-            <param>system.date</param>
-            <param>timezone.default</param>
-            <param>America/Chicago</param>
-        </drush>
-        <drush command="config-set" assume="yes">
-            <param>system.date</param>
-            <param>timezone.user.configurable</param>
-            <param>false</param>
-        </drush>
         <drush command="config-delete" assume="yes">
             <param>core.extension</param>
             <param>module.standard</param>
         </drush>
+
         <drush command="config-set" assume="yes">
             <param>core.extension</param>
             <param>module.config_installer</param>
             <param>1000</param>
         </drush>
+
         <drush command="config-set" assume="yes">
             <param>core.extension</param>
             <param>profile</param>
             <param>config_installer</param>
+        </drush>
+
+        <drush command="pm-uninstall" assume="yes">
+            <param>the_build_utility</param>
         </drush>
 
         <drush command="config-export" assume="yes" />
@@ -311,13 +302,7 @@ Or, you can specify the export file directly:
         <!-- Whitespace is intentional. -->
         <echo>
 
-             Drupal has been installed using the standard profile, with the following changes:
-             - Disabled the automated_cron, big_pipe, contact, history, search, and tour modules
-             - Disabled anonymous user registration
-             - Set the default country to "US"
-             - Set the default timezone to "America/Chicago"
-             - Disabled user-configurable timezones
-             - Replaced the standard profile with config_installer
+             Drupal has been installed with the install profile "standard". Future installs will be run using config_installer.
 
              Your config has been exported to ${drupal.root}/${drupal.site.config_sync_directory}</echo>
     </target>
