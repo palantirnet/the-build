@@ -1,6 +1,6 @@
 # "The" Build
 
-This repository contains reusable phing build tasks for Drupal projects.
+This repository contains project setup templates and reusable phing build tasks for Drupal projects.
 
 _Note: If you are starting a new a project, you may be looking for the [drupal-skeleton](https://github.com/palantirnet/drupal-skeleton)._
 
@@ -28,7 +28,7 @@ This will trigger an interactive prompt to configure your basic build properties
 * `drush/drushrc.php`
 * `config/` (if you elect to install Drupal)
 
-Manually review these files, then check them in to your project. At this point, you'll generally fire up your Drupal site with:
+These files should be checked in to your project. At this point, you'll generally fire up your Drupal site with:
 
 ```sh
 $> vendor/bin/phing build install
@@ -53,4 +53,4 @@ Configure your build by editing `.the-build/build.yml`. You can find more proper
 * [Developing on the-build](docs/development.md)
 
 ----
-Copyright 2016, 2017, 2018 Palantir.net, Inc.
+Copyright 2016, 2017, 2018, 2019 Palantir.net, Inc.
