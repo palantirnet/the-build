@@ -5,7 +5,7 @@
   Contains the-build's environment-specific property loading.
 
   This file is included in the build.dist.xml template with:
-    <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
+    <import file="vendor/palantirnet/the-build/targets/the-build.xml" />
 
   Copyright 2016, 2017, 2018 Palantir.net, Inc.
   -->
@@ -130,8 +130,8 @@
         <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
 
         <!-- Validate that required Drupal site properties are present. -->
-        <fail unless="drupal.site.dir" msg="The 'drupal.sites.${build.site}.dir' property must be set in order to run build tasks." />
-        <fail unless="drupal.site.uri" msg="The 'drupal.sites.${build.site}.uri' property must be set in order to run build tasks." />
+        <fail unless="drupal.site.dir" msg="The 'drupal.sites.${build.site}.dir' property must be set in order to run build targets." />
+        <fail unless="drupal.site.uri" msg="The 'drupal.sites.${build.site}.uri' property must be set in order to run build targets." />
 
         <!-- Fill in defaults for Drupal site properties. -->
         <property name="drupal.site.config_sync_directory" value="../config/sites/${drupal.site.dir}" />

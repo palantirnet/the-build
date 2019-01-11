@@ -68,7 +68,7 @@ Alternatively, you may chose to not set the `artifact.git.remote_branch` propert
 
 ## Concepts
 
-This section describes a generalized artifact build process. This is the process implemented in [tasks/artifact.xml](../tasks/artifact.xml), and usage is described above.
+This section describes a generalized artifact build process. This is the process implemented in [targets/artifact.xml](../targets/artifact.xml), and usage is described above.
 
 ### Definitions
 

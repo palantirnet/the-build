@@ -1,4 +1,4 @@
-# Custom Tasks
+# Custom Phing Tasks
 
 ## IncludeResourceTask [🔗](../src/TheBuild/IncludeResourceTask.php)
 

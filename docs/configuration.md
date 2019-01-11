@@ -36,7 +36,7 @@ Cool! This phing-ism is what allows us to do environment-specific property layer
   ```
   phing build -Dbuild.env=circleci
   ```
-1. Set the `build.dir`, `projectname`, `build.thebuild.dir`, and `build.env` core properties in `tasks/the-build.xml`
+1. Set the `build.dir`, `projectname`, `build.thebuild.dir`, and `build.env` core properties in `targets/the-build.xml`
 1. Load properties from the project's `.the-build/build.[environment].yml`
 1. Load properties from the project's `.the-build/build.yml`
 1. Load default property values from the-build's own `defaults.yml` file

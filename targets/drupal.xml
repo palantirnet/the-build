@@ -5,7 +5,7 @@
   Targets for managing Drupal.
 
   Include this file in your build.xml with:
-    <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+    <import file="vendor/palantirnet/the-build/targets/drupal.xml" />
 
   @see defaults.yml
 
@@ -326,7 +326,7 @@ Or, you can specify the export file directly:
         <!--
             Set up the Drupal site directory.
              -->
-        <phing buildfile="${build.thebuild.dir}/tasks/install.xml" target="drupal-sites-directory">
+        <phing buildfile="${build.thebuild.dir}/targets/install.xml" target="drupal-sites-directory">
             <property name="drupal.site.dir" value="${_multisite.dir}" override="true" />
             <property name="drupal.site.uri" value="${_multisite.uri}" override="true" />
         </phing>
