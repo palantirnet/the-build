@@ -1,7 +1,7 @@
 {
     "name": "palantirnet/the-build",
-    "description": "Phing build tasks for Drupal projects.",
-    "license": "GPL-2.0+",
+    "description": "Project setup templates and Phing build tasks for Drupal projects.",
+    "license": "MIT",
     "authors": [
         {
             "name": "Palantir.net",
