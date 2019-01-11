@@ -5,7 +5,7 @@
   Targets for managing the style guide.
 
   Include this file in your build.xml with:
-    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+    <import file="vendor/palantirnet/the-build/targets/styleguide.xml" />
 
   @see defaults.properties.yml
 

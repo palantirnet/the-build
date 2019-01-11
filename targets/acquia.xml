@@ -5,7 +5,7 @@
   Targets for working with Acquia.
 
   Include this file in your build.xml with:
-  <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
+  <import file="vendor/palantirnet/the-build/targets/acquia.xml" />
 
   @see defaults.yml
 

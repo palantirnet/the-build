@@ -2,7 +2,7 @@
 
 Multisite builds are supported under `the-build`. When you have multiple sites configured in your `.the-build/build.yml` file, and you run targets like `build` and `install` that act on a specific site, you will be prompted to select a site.
 
-These site-specific targets declare a dependency on the `set-site` target in [tasks/the-build.xml](../tasks/the-build.xml), which sets up the site properties in `drupal.site.*`. This allows targets to reference the same properties (e.g. `${drupal.site.uri}`) for each site, rather than needing to reference a site-specific property (e.g. `${drupal.sites.default.uri}`, `${drupal.sites.intranet.uri}`).
+These site-specific targets declare a dependency on the `set-site` target in [targets/the-build.xml](../targets/the-build.xml), which sets up the site properties in `drupal.site.*`. This allows targets to reference the same properties (e.g. `${drupal.site.uri}`) for each site, rather than needing to reference a site-specific property (e.g. `${drupal.sites.default.uri}`, `${drupal.sites.intranet.uri}`).
 
 Default values for all sites are set in the `drupal.sites._defaults.*` properties, but individual sites can override them.
 

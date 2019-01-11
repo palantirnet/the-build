@@ -12,18 +12,18 @@
 
 <project name="@projectname@" default="build">
 
-    <!-- Add property loading and tasks from palantirnet/the-build. -->
-    <import file="vendor/palantirnet/the-build/tasks/the-build.xml" />
+    <!-- Add property loading and targets from palantirnet/the-build. -->
+    <import file="vendor/palantirnet/the-build/targets/the-build.xml" />
 
 
     <!-- Make these additional targets available by default. -->
-    <import file="vendor/palantirnet/the-build/tasks/drupal.xml" />
+    <import file="vendor/palantirnet/the-build/targets/drupal.xml" />
 
 
     <!-- Additional optional targets. -->
-    <import file="vendor/palantirnet/the-build/tasks/artifact.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/acquia.xml" />
-    <import file="vendor/palantirnet/the-build/tasks/styleguide.xml" />
+    <import file="vendor/palantirnet/the-build/targets/artifact.xml" />
+    <import file="vendor/palantirnet/the-build/targets/acquia.xml" />
+    <import file="vendor/palantirnet/the-build/targets/styleguide.xml" />
 
 
     <!-- Default target: build -->

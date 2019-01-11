@@ -16,7 +16,7 @@ build:
   # currently only used when setting up the settings.php file for a Drupal site.
   host: other
 
-# Drupal configuration used by tasks/drupal.xml
+# Drupal configuration used by targets/drupal.xml
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
   # configuration in your `composer.json`. Use caution when changing this value.
@@ -39,7 +39,7 @@ drupal:
     # Configuration values for a Drupal site build. The values in this section
     # must be customized for each Drupal multisite installation that you add.
     #
-    # This site configuration is partial; it will be completed in tasks/the-build.xml by
+    # This site configuration is partial; it will be completed in targets/the-build.xml by
     # loading any missing values from drupal.sites._defaults.
     #
     # To add a Drupal multisite installation, copy these default values into
@@ -138,7 +138,7 @@ drupal:
         #file:
 
 
-# Configuration for tasks/artifact.xml
+# Configuration for targets/artifact.xml
 artifact:
   # The path of the working directory where the artifact should be built.
   directory: artifacts/build
@@ -175,7 +175,7 @@ artifact:
     remote_name: origin
 
 
-# Configuration for tasks/acquia.xml
+# Configuration for targets/acquia.xml
 acquia:
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
