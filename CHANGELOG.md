@@ -18,11 +18,11 @@ Additional changes include:
 * Rewritten install process. This code is now all in one location, and configuration prompts for values that are not generally changed from the defaults have been removed. Templates for Behat and CircleCI are more dynamic, and templates for configuring Pantheon and Platform.sh hosting have been added.
 * Rewritten artifact build process. This code should now be more readable, reliable, and adaptable. Artifacts are available from the default `build.xml` file, and are suitable for deployment on Acquia, Pantheon, or generic hosting environments.
 * Rewritten Acquia targets, including downloading a recent database backup.
-* Applying the MIT license to the project.
+* Applying the MIT license to the project.
 
 [Here's the list of issues associated with the 2.0 milestone.](https://github.com/palantirnet/the-build/issues?utf8=%E2%9C%93&q=milestone%3A2.0)
 
-### Updating to this release
+### Updating to this release from 1.x
 
 **There is no automated upgrade path for this release.** However, you can remove the previous version of the-build and install this one instead -- especially if you haven't added any heavy customization to your project's build process.
 
