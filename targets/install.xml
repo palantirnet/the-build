@@ -154,6 +154,7 @@
                 <copy todir="${application.startdir}/.platform" overwrite="true">
                     <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
                 </copy>
+                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
             </case>
             <default />
         </switch>
