@@ -264,6 +264,9 @@
             </case>
 
             <case value="platformsh">
+                <composer command="require" composer="${composer.composer}">
+                    <arg value="platformsh/config-reader:^2.1" />
+                </composer>
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
             </case>
             <default />
