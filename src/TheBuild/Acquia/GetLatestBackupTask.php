@@ -251,6 +251,10 @@ class GetLatestBackupTask extends AcquiaTask {
 
         return $backups;
       }
+      elseif (count($backups) === 0) {
+        // The site might not have been backed up yet.
+        throw new BuildException('No Acquia Cloud backups found: ' . $file->getCanonicalPath());
+      }
     }
     throw new BuildException('Acquia Cloud backup records could not be loaded from JSON: ' . $file->getCanonicalPath());
   }
