@@ -1,5 +1,14 @@
 # Change Log
 
+## Release 2.0.1
+
+### Fixed
+
+* Fixed `settings.php` and environment configuration for Platform.sh (#126, #131)
+* Fixed bugs with first runs of `phing acquia-get-backup` (#132)
+* Removed deprecated config for testing the `palantirnet/drupal-skeleton` project (#128)
+
+
 ## Release 2.0
 
 This release has several core architectural changes:
