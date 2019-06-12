@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/example
+    working_directory: ~/cleanup
     docker:
       - image: circleci/php:7.1-node-browsers
       - image: circleci/mysql:5.7-ram
@@ -43,6 +43,15 @@ jobs:
           name: Configure URL in /etc/hosts
           command: echo 127.0.0.1 ${CIRCLE_PROJECT_REPONAME}.local | sudo tee -a /etc/hosts
 
+      # Note: phing and drupal-check have mutually exclusive requirements.
+      # It'd be better to add drupal-check as a dependency of the drupal project
+      # rather than as part of the virtual environment, but this will have to do
+      # for now. Also note, drupal-check is added as part of the-vagrant so it
+      # is available to run within our VM.
+      - run:
+          name: Install drupal-check
+          command: composer global require mglaman/drupal-check
+
       # Composer package cache
       - restore_cache:
           keys:
@@ -53,26 +62,10 @@ jobs:
             - source-v1-{{ .Branch }}
             - source-v1-
 
-      # Create a new project using the drupal-skeleton project
+      - checkout
       - run:
-          name: Create a new Drupal project
-          command: composer create-project palantirnet/drupal-skeleton example dev-drupal8 --no-interaction
-          working_directory: ~/
-
-      # Use this copy of the-build
-      - run:
-          name: Replace the default version of the-build with this one
-          command: rm -r vendor/palantirnet/the-build
-
-      - checkout:
-          path: ~/example/vendor/palantirnet/the-build
-
-      # Source cache - update when branch changes
-      - save_cache:
-          key: source-v1-{{ .Branch }}
-          paths:
-            - ".git"
-
+          name: Composer install
+          command: composer install --no-interaction --prefer-dist
 
       # Composer package cache - update when the contents of the Composer cache directory
       # change
@@ -81,33 +74,36 @@ jobs:
           key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
           paths:
               - ~/.composer
+      # Source cache - update when branch changes
+      - save_cache:
+          key: source-v1-{{ .Branch }}
+          paths:
+            - ".git"
 
-
-      # Install the-build
+      # Run code reviews before installing Drupal, so that tests fail earlier.
       - run:
-          name: Install the-build in the project
-          command: printf 'http://the-build.local\nother\nn' | vendor/bin/the-build-installer
+          name: Run code reviews
+          command: vendor/bin/phing code-review
 
       - run:
           name: Wait for DB
           # Dockerize is preinstalled in circleci/* docker image
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
 
-      # Install Drupal (separately, so that we can see it fail separately)
+      - run:
+          name: Build Drupal's settings.php
+          command: vendor/bin/phing build
       - run:
           name: Install Drupal
-          command: printf 'y' | vendor/bin/phing install -Ddrupal.validate_clean_config.bypass=yes
-
-      # Add a multisite
+          command: vendor/bin/phing install
       - run:
-          name: Add a multisite to the project
-          command: printf 'intranet\nintranet.the-build.local' | vendor/bin/phing drupal-add-multisite
-
+          name: Run any migrations
+          command: vendor/bin/phing migrate
       - run:
           name: Run Behat tests
           command: |
               nohup php -S ${CIRCLE_PROJECT_REPONAME}.local:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
-              vendor/bin/phing test -Dbuild.env=circleci
+              vendor/bin/phing test
 
       - store_artifacts:
           path: /tmp/artifacts
