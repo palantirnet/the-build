@@ -250,6 +250,13 @@ phpmd:
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 
+# Configuration for checking the site with the Drupal Checker code linter.
+#
+# @see https://github.com/mglaman/drupal-check
+# These values are used in the build.dist.xml template:
+drupal-check:
+  # Space seperated list of directories
+  directories: "${drupal.root}/modules/custom/ ${drupal.root}/themes/custom/ ${drupal.root}/profiles/custom/"
 
 # Configuration for running behat tests.
 #
