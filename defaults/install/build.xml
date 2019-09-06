@@ -142,7 +142,7 @@
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
 
         <!-- Run Drupal Check. -->
-        <property name="drupal-check.command" value="drupal-check ${drupal-check.directories}" />
+        <property name="drupal-check.command" value="/home/circleci/.composer/vendor/bin/drupal-check ${drupal-check.directories}" />
         <echo msg="$> ${drupal-check.command}" />
         <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
     </target>
