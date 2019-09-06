@@ -140,6 +140,11 @@
         <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
         <echo msg="$> ${phpmd.command}" />
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
+      
+        <!-- Run Drupal Check. -->
+        <property name="drupal-check.command" value="vendor/bin/drupal-check ${drupal-check.directories}" />
+        <echo msg="$> ${drupal-check.command}" />
+        <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
     </target>
 
   
