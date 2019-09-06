@@ -140,14 +140,14 @@
         <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
         <echo msg="$> ${phpmd.command}" />
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
-      
+
         <!-- Run Drupal Check. -->
-        <property name="drupal-check.command" value="vendor/bin/drupal-check ${drupal-check.directories}" />
+        <property name="drupal-check.command" value="drupal-check ${drupal-check.directories}" />
         <echo msg="$> ${drupal-check.command}" />
         <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
     </target>
 
-  
+
     <!-- Target: code-fix -->
     <target name="code-fix" description="Run the automated code fixer.">
         <!-- Run PHP Code Beautifier and Fixer. -->
@@ -156,7 +156,7 @@
         <exec command="${phpcbf.command}" logoutput="true" checkreturn="false" />
     </target>
 
-  
+
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
