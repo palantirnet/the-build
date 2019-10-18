@@ -142,7 +142,15 @@
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
 
         <!-- Run Drupal Check. -->
-        <property name="drupal-check.command" value="/home/circleci/.composer/vendor/bin/drupal-check ${drupal-check.directories}" />
+        <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
+    </target>
+
+
+    <!-- Separated out so that we can use foreach. drupal-check only accepts a single directory argument. -->
+    <target name="drupal-check">
+        <fail unless="drupal-check.dir" />
+        <property name="drupal-check.bin" value="~/bin/drupal-check" />
+        <property name="drupal-check.command" value="${drupal-check.bin} ${drupal-check.dir}" />
         <echo msg="$> ${drupal-check.command}" />
         <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
     </target>
