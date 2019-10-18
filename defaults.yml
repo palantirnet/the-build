@@ -205,8 +205,8 @@ acquia:
 
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors
-# and deprecated code. This property is used by the <phplint> task in the build.dist.xml
-# template.
+# and deprecated code. This property is used by the <phplint> task in the
+# defaults/build.xml template.
 phplint:
   # Path to a file where each line is a pattern matching files to lint.
   includesfile: "${build.thebuild.dir}/defaults/standard/phplint.txt"
@@ -219,7 +219,7 @@ phplint:
 # @see https://github.com/squizlabs/PHP_CodeSniffer
 # @see https://www.drupal.org/project/coder
 #
-# These values are used in the build.dist.xml template:
+# These values are used in the defaults/build.xml template:
 #   $> phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}
 phpcs:
   # Path to a PHP_CodeSniffer standard file.
@@ -238,7 +238,7 @@ phpcs:
 #
 # @see https://phpmd.org/
 #
-# These values are used in the build.dist.xml template:
+# These values are used in the defaults/build.xml template:
 #   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}
 phpmd:
   # Comma-separated list of directories to review.
