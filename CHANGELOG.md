@@ -1,6 +1,6 @@
 # Change Log
 
-## Release 2.1.0
+## Release 2.1.1
 
 ### Added
 
@@ -9,6 +9,14 @@
 ### Fixed
 
 * New mysql package name in the default CircleCI configuration (#134)
+
+### Updating from 2.0
+
+These changes affect `build.xml` and `.circleci/config.yml`, which means that in addition to updating the package itself, you will either need to re-run the-build's installer script, or apply the changes manually to your copies of those files:
+
+* [Changes to apply to your build.xml](https://github.com/palantirnet/the-build/compare/2.0.1...2.1.0#diff-3895e49cbca4d72f37a94c0656b0c772)
+* [Changes to apply to your .the-build/build.circleci.yml](https://github.com/palantirnet/the-build/compare/2.0.1...2.1.0#diff-a01d410fdee850d48c771170d3205a38)
+* [Changes to apply to your .the-build/build.yml](https://github.com/palantirnet/the-build/compare/2.0.1...2.1.0#diff-32200cbbe6a158d0d84a425f49b2cbef) (make sure you've updated to the-vagrant 2.4.0 so that drupal-check is installed globally on the VM)
 
 ## Release 2.0.1
 
