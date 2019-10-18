@@ -13,3 +13,6 @@ drupal:
 
 behat:
   args: "--profile=circleci --suite=default --strict --format=junit --out=/tmp/artifacts --tags=~@skipci"
+
+drupal-check:
+  bin: "/home/circleci/.composer/vendor/bin/drupal-check"
