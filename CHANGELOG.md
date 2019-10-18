@@ -1,5 +1,15 @@
 # Change Log
 
+## Release 2.1.0
+
+### Added
+
+* drupal-check is now part of the default code reviews (#133 / #129)
+
+### Fixed
+
+* New mysql package name in the default CircleCI configuration (#134)
+
 ## Release 2.0.1
 
 ### Fixed
