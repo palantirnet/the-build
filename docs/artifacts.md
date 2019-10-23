@@ -26,7 +26,7 @@ $> phing artifact -Dartifact.result=keep
 
 #### Example: Pushing an artifact to an Acquia environment
 
-1. Configure the artifact in the `conf/build.default.properties` file of your project:
+1. Configure the artifact in the `.the-build/build.yml` file of your project:
 
   ```
   # Acquia git URL
@@ -44,7 +44,7 @@ $> phing artifact -Dartifact.result=keep
 
 #### Example: Pushing an artifact to a Pantheon environment
 
-1. Configure the artifact in the `conf/build.default.properties` file of your project:
+1. Configure the artifact in the `.the-build/build.yml` file of your project:
 
   ```
   # Pantheon git URL
@@ -87,6 +87,8 @@ When hosting a site on Platform.sh, you do not need to use the-build's artifact 
 ```
 vendor/bin/phing build -Dbuild.env=platformsh
 ```
+
+(Note that this is included in the default [.platform.app.yaml](defaults/install/.platform.app.yaml) configuration, which is added when you install the-build and tell it you're hosting with Platform.sh.)
 
 ### Artifact creation tools
 
