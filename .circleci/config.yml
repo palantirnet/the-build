@@ -1,9 +1,12 @@
+# This CircleCI configuration is for testing the-build itself. For the configuration
+# installed in projects, see defaults/install/.circleci/config.yml
+
 version: 2
 jobs:
   build:
     working_directory: ~/example
     docker:
-      - image: circleci/php:7.1-node-browsers
+      - image: circleci/php:7.2-node-browsers
       - image: circleci/mysql:5.7-ram
         command: --max_allowed_packet=16M
         environment:
