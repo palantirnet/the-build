@@ -169,9 +169,11 @@
                 <expandproperties />
             </filterchain>
         </copy>
-        <copy file="${phing.dir.install}/../defaults/install/drush/projectname.aliases.drushrc.php" tofile="${application.startdir}/drush/${projectname}.aliases.drushrc.php" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/drush/sites/projectname.site.yml" tofile="${application.startdir}/drush/sites/${projectname}.site.yml" overwrite="true">
             <filterchain>
-                <expandproperties />
+                <replacetokens>
+                    <token key="uri" value="${drupal.sites.default.uri}" />
+                </replacetokens>
             </filterchain>
         </copy>
 
