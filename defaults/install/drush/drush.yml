@@ -1,6 +1,3 @@
-options:
-  # root: '/var/www/your-project.local/web'
-
 command:
   sql:
     dump:
