@@ -221,13 +221,13 @@
 
             Successfully installed the-build. Next, you may want to run:
 
+              $> phing list
               $> phing install
-              $> phing test
-              $> phing -l</echo>
+              $> phing test</echo>
     </target>
 
 
-    <target name="drupal-sites-directory">
+    <target name="drupal-sites-directory" hidden="true">
         <fail unless="drupal.site.dir" />
         <fail unless="build.host" />
         <fail unless="drupal.root" />

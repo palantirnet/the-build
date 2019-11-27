@@ -111,7 +111,7 @@
         Default target: the-build
         This target is included only because the <project> tag requires it.
         -->
-    <target name="the-build">
+    <target name="the-build" hidden="true">
         <echo>Hello! I'm the-build.</echo>
     </target>
 
@@ -120,7 +120,7 @@
         Target: set-site
         Set properties for the current site in 'drupal.site.*'.
         -->
-    <target name="set-site">
+    <target name="set-site" hidden="true">
         <!-- Use this custom task to figure out which site to build. -->
         <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
 
@@ -161,7 +161,7 @@
         Utility target used by 'all-sites' above. Runs the specified
         target in an isolated Phing environment.
         -->
-    <target name="sites-run-target">
+    <target name="sites-run-target" hidden="true">
         <fail unless="target" />
         <fail unless="site_key" />
         <echo msg="Running 'phing ${target} -Dbuild.site=${site_key}'" />
@@ -175,7 +175,7 @@
         Target: mkdir
         Utility target to allow creating a list of directories with <foreach />.
         -->
-    <target name="mkdir">
+    <target name="mkdir" hidden="true">
         <echo msg="${dir}" />
         <mkdir dir="${dir}" />
     </target>

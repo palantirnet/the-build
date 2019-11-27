@@ -38,7 +38,7 @@
 
         Check whether the styleguide directory exists and has the composer and yarn files that we expect.
         -->
-    <target name="styleguide-exists">
+    <target name="styleguide-exists" hidden="true">
         <resolvepath propertyName="styleguide.root.resolved" file="${styleguide.root}" dir="${build.dir}" />
         <echo>Looking for style guide at '${styleguide.root.resolved}'</echo>
 
@@ -66,7 +66,7 @@
 
         Fail if the styleguide does not exist.
         -->
-    <target name="styleguide-exists-or-else" depends="styleguide-exists">
+    <target name="styleguide-exists-or-else" depends="styleguide-exists" hidden="true">
         <if>
             <not><equals arg1="${styleguide.exists}" arg2="1" /></not>
             <then>
@@ -81,7 +81,7 @@
 
         Install and build the style guide.
         -->
-    <target name="styleguide-build" depends="styleguide-exists-or-else,styleguide-install">
+    <target name="styleguide-build" depends="styleguide-exists-or-else,styleguide-install" hidden="true">
         <echo>Running build command in ${styleguide.root}: ${styleguide.command}</echo>
         <exec dir="${styleguide.root.resolved}" command="${styleguide.command}" passthru="true" checkreturn="true" />
     </target>
@@ -92,7 +92,7 @@
 
         Install the styleguide dependencies with composer and yarn.
         -->
-    <target name="styleguide-install" depends="styleguide-exists-or-else">
+    <target name="styleguide-install" depends="styleguide-exists-or-else" hidden="true">
         <!-- Run composer install in the styleguide. -->
         <if>
             <and>

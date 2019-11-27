@@ -18,7 +18,7 @@
 
       Build and deploy the application.
       -->
-    <target name="artifact-main">
+    <target name="artifact-main" hidden="true">
         <!-- This property MUST be provided. -->
         <fail unless="artifact.git.remote" message="The remote git repository must be configured in the 'artifact.git.remote' property." />
 
@@ -67,7 +67,7 @@
     </target>
 
 
-    <target name="artifact-safeToBuild">
+    <target name="artifact-safeToBuild" hidden="true">
         <!-- Make sure the caller is using a deployment environment. -->
         <echo>Deploy environment:   ${build.env}</echo>
         <if>
@@ -142,7 +142,7 @@
     </target>
 
 
-    <target name="artifact-initializeRepository">
+    <target name="artifact-initializeRepository" hidden="true">
         <fail unless="artifact.directory" />
         <fail unless="artifact.git.remote" />
 
@@ -163,7 +163,7 @@
     </target>
 
 
-    <target name="artifact-setupBranch">
+    <target name="artifact-setupBranch" hidden="true">
         <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
         <if>
             <not><equals arg1="${remote_fetch.error}" arg2="0" /></not>
@@ -194,7 +194,7 @@
     </target>
 
 
-    <target name="artifact-updateCode">
+    <target name="artifact-updateCode" hidden="true">
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*,**/.git,**/.git/**" />
@@ -226,7 +226,7 @@
     </target>
 
 
-    <target name="artifact-build">
+    <target name="artifact-build" hidden="true">
         <echo>Installing composer dependencies in the artifact...</echo>
         <composer command="install" composer="${composer.composer}">
             <arg line="--no-interaction --no-dev --working-dir=${artifact.directory}" />
@@ -243,7 +243,7 @@
     </target>
 
 
-    <target name="artifact-build-one">
+    <target name="artifact-build-one" hidden="true">
         <!--
             - Override the Drupal root so that it is within the artifact directory.
             - Override the "artifact mode" so that files managed with the
@@ -257,7 +257,7 @@
     </target>
 
 
-    <target name="artifact-commit">
+    <target name="artifact-commit" hidden="true">
         <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
         <exec command="git add --all" dir="${artifact.directory}" />
 
@@ -274,7 +274,7 @@
     </target>
 
 
-    <target name="artifact-finish">
+    <target name="artifact-finish" hidden="true">
         <selectone list="push,keep,discard" propertyName="artifact.result" message="Push artifact changes to the '${artifact.git.remote_branch}' branch?" />
 
         <if>
@@ -307,7 +307,7 @@
     </target>
 
 
-    <target name="artifact-push">
+    <target name="artifact-push" hidden="true">
         <echo>Pushing changes.</echo>
         <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
 
@@ -321,7 +321,7 @@
     </target>
 
 
-    <target name="artifact-cleanupTag">
+    <target name="artifact-cleanupTag" hidden="true">
         <if>
             <equals arg1="${artifact.git.no_tag}" arg2="0" />
             <then>
@@ -331,7 +331,7 @@
     </target>
 
 
-    <target name="artifact-resetState">
+    <target name="artifact-resetState" hidden="true">
         <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git reset --hard HEAD" checkreturn="true" logoutput="true" />
         <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
