@@ -10,6 +10,21 @@
 
 * Updated from Drush 8 to Drush 9
 
+### Updating from 2.1
+
+This change requires a lot of dependency math! The easiest way to resolve it is to remove the-build from the requirements, and then re-add it.
+
+```
+composer remove --dev palantirnet/the-build
+composer require --dev palantirnet/the-build
+```
+
+Afterwards, you'll need to update the drush configuration in your project:
+
+* Remove `drush/drushrc.php`
+* Optional: copy `vendor/palantirnet/the-build/defaults/install/drush/drush.yml` to `drush/drush.yml`
+* Migrate your site aliases by running `drush site:alias-convert` from within your VM (otherwise you'll get any global drush aliases you have set up)
+
 ## Release 2.1.2
 
 ### Changed
