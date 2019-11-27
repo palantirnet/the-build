@@ -195,6 +195,9 @@
 
 
     <target name="artifact-updateCode">
+        <!-- Sometimes files have read-only permissions that will cause issues when we
+             attempt to remove them. -->
+        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*,**/.git,**/.git/**" />
@@ -205,7 +208,7 @@
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
         <exec command="git ls-files" dir="${build.dir}" output="${tmpfile}" />
 
-        <copy todir="${artifact.directory}" preservemode="false" mode="750" overwrite="true" haltonerror="true">
+        <copy todir="${artifact.directory}" overwrite="true" haltonerror="true">
             <filelist dir="${build.dir}" listfile="${tmpfile}" />
         </copy>
         <delete file="${tmpfile}" />
