@@ -11,14 +11,8 @@
     "bin": [
         "bin/the-build-installer"
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/becw/phing-drush-task"
-        }
-    ],
     "require": {
-        "continuousphp/phing-drush-task": "dev-drush-9",
+        "palantirnet/phing-drush-task": "^1.1",
         "drupal/coder": "~8.2.12",
         "drush/drush": "^9.0",
         "pear/http_request2": "^2.3",
