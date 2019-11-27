@@ -12,8 +12,7 @@ $settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
 $config['system.file']['path']['temporary'] = $_ENV['TEMP'];
 
-$config_directories = [];
-$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
+$settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
 
 // Enable/disable config_split configurations.
 if (isset($_ENV['AH_PRODUCTION']) && $_ENV['AH_PRODUCTION']) {
