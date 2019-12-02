@@ -5,6 +5,7 @@
 ### Changed
 
 * Preserve file permissions when building the artifact (#130 / #138)
+* Hide internal phing targets from `phing -l`, and update the default target in the build.xml template to run `phing -l` (#139)
 
 ## Release 2.1.1
 
