@@ -9,10 +9,13 @@
 ### Changed
 
 * Updated from Drush 8 to Drush 9
+* Changed how the `config_sync_directory` is handled for Drupal 8.8 - see [drupal.org/node/3018145](https://www.drupal.org/node/3018145)
 
 ### Updating from 2.1
 
-This change requires a lot of dependency math! The easiest way to resolve it is to remove the-build from the requirements, and then re-add it.
+This version is only compatible with Drupal 8.8 and higher.
+
+The Drush update requires a lot of dependency math! The easiest way to resolve it is to remove the-build from the requirements, and then re-add it.
 
 ```
 composer remove --dev palantirnet/the-build
