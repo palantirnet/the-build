@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## Release 2.1.2
 
 ### Changed
 
