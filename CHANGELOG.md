@@ -1,10 +1,6 @@
 # Change Log
 
-## UNRELEASED
-
-### Added
-
-### Fixed
+## 2.2.0
 
 ### Changed
 
@@ -13,7 +9,7 @@
 
 ### Updating from 2.1
 
-This version is only compatible with Drupal 8.8 and higher.
+Your Drupal site must be running Drupal 8.8 to use the-build version 2.2 and newer.
 
 The Drush update requires a lot of dependency math! The easiest way to resolve it is to remove the-build from the requirements, and then re-add it.
 
