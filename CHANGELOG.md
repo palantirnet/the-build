@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+### Changed
+
+* Preserve file permissions when building the artifact (#130 / #138)
+
 ## Release 2.1.1
 
 ### Added
