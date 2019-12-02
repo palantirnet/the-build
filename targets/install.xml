@@ -164,14 +164,16 @@
         <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build.php" todir="${application.startdir}/.the-build/drupal" />
 
         <!-- Copy Drush configuration and aliases file templates. -->
-        <copy file="${phing.dir.install}/../defaults/install/drush/drushrc.php" tofile="${application.startdir}/drush/drushrc.php" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/drush/drush.yml" tofile="${application.startdir}/drush/drush.yml" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
-        <copy file="${phing.dir.install}/../defaults/install/drush/projectname.aliases.drushrc.php" tofile="${application.startdir}/drush/${projectname}.aliases.drushrc.php" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/drush/sites/projectname.site.yml" tofile="${application.startdir}/drush/sites/${projectname}.site.yml" overwrite="true">
             <filterchain>
-                <expandproperties />
+                <replacetokens>
+                    <token key="uri" value="${drupal.sites.default.uri}" />
+                </replacetokens>
             </filterchain>
         </copy>
 
