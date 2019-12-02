@@ -27,7 +27,7 @@
         Validate that the Drupal config directory doesn't have local modifications,
         to ensure consistent installation.
     -->
-    <target name="drupal-validate-clean-config" depends="set-site">
+    <target name="drupal-validate-clean-config" depends="set-site" hidden="true">
       <!-- Assembling this property at run time. -->
       <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
@@ -87,7 +87,7 @@ ${modified_files}
           - The site in maintenance mode
           - Structure only for cache, search, and log tables
         -->
-    <target name="drupal-dump-db" depends="set-site" description="Generate a database dump.">
+    <target name="drupal-dump-db" depends="set-site" description="Generate a database dump of the site in maintenance mode with a new admin password.">
         <fail unless="drupal.site.admin_user" />
 
         <!-- prompt for a prod admin password -->
@@ -180,9 +180,9 @@ Or, you can specify the export file directly:
     <!-- Target: drupal-has-database-connection
 
          Check for a Drupal database connection. If the database doesn't exist and we have
-         the permissions, it will be created.
+         the permissions, the database will be created.
          -->
-    <target name="drupal-has-database-connection" depends="set-site">
+    <target name="drupal-has-database-connection" depends="set-site" hidden="true">
         <trycatch>
             <try>
                 <drush command="sql-query">
@@ -214,7 +214,7 @@ Or, you can specify the export file directly:
 
          Check for Drupal config, and if it's not present, offer to install Drupal.
          -->
-    <target name="drupal-install-if-no-config" depends="set-site">
+    <target name="drupal-install-if-no-config" depends="set-site" hidden="true">
         <if>
             <!-- Check for the core.extension.yml config file, which is present in any
                  complete exported Drupal configuration. -->
@@ -252,7 +252,7 @@ Or, you can specify the export file directly:
          of the places where this is called from code already have separate dependencies
          on that target.
          -->
-    <target name="drupal-first-install" depends="set-site">
+    <target name="drupal-first-install" depends="set-site" hidden="true">
         <fail unless="drupal.site.admin_user" />
 
         <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" />
