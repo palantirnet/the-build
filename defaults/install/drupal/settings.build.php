@@ -14,8 +14,7 @@ $databases['default']['default'] = array(
   'collation' => 'utf8mb4_general_ci',
 );
 
-$config_directories = array();
-$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
+$settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
 
 $settings['hash_salt'] = '${drupal.site.hash_salt}';
 $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';

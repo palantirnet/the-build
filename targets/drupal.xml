@@ -406,18 +406,13 @@ drupal:
         </if>
 
         <!-- Add a Drush alias for the multisite. -->
-        <property name="_multisite.drush_alias">@multisite_placeholder@
-  $aliases['local.${_multisite.key}'] = [
-    'uri' => '${_multisite.uri}',
-  ];</property>
-
-        <reflexive file="drush/${projectname}.aliases.drushrc.php">
+        <copy file="${build.thebuild.dir}/defaults/install/drush/sites/projectname.site.yml" tofile="${application.startdir}/drush/sites/${_multisite.key}.site.yml" overwrite="true">
             <filterchain>
                 <replacetokens>
-                    <token key="multisite_placeholder" value="${_multisite.drush_alias}" />
+                    <token key="uri" value="${_multisite.uri}" />
                 </replacetokens>
             </filterchain>
-        </reflexive>
+        </copy>
 
         <!-- Whitespace is intentional. -->
         <echo>

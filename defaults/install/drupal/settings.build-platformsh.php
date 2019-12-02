@@ -5,8 +5,7 @@
  * Drupal settings file template for use on Platform.sh environments.
  */
 
-$config_directories = [];
-$config_directories[CONFIG_SYNC_DIRECTORY] = '${drupal.site.config_sync_directory}';
+$settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
 
 // Enable/disable config_split configurations.
 if (isset($_ENV['PLATFORM_BRANCH'])) {
