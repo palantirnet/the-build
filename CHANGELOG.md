@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.2.1
+
+* Updated and loosened the version requirement for `drupal/coder`
+
 ## 2.2.0
 
 ### Changed
