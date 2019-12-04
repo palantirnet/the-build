@@ -13,7 +13,7 @@
     ],
     "require": {
         "palantirnet/phing-drush-task": "^1.1",
-        "drupal/coder": "~8.2.12",
+        "drupal/coder": "^8.3.6",
         "drush/drush": "^9.0",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
