@@ -22,6 +22,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.build.yml';
 
 $settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = '${drupal.site.settings.file_private_path}';
+$settings['file_temp_path'] = '${drupal.site.settings.file_temp_path}';
 
 // Enable/disable config_split configurations. To simulate other config split
 // environments, change "development" to either "staging" or "production", then run:
