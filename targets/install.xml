@@ -104,7 +104,7 @@
                     <filterchain>
                         <replaceregexp>
                             <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
-                            <regexp pattern='"(web-root|path)": "${drupal.root.old}/' replace='"\1": "${drupal.root}/' />
+                            <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
                         </replaceregexp>
                     </filterchain>
                 </reflexive>
