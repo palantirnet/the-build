@@ -103,7 +103,8 @@
                     <fileset dir="${build.dir}" includes="composer.json" />
                     <filterchain>
                         <replaceregexp>
-                            <regexp pattern='"${drupal.root.old}/(core|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                            <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                            <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
                         </replaceregexp>
                     </filterchain>
                 </reflexive>
