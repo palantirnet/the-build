@@ -138,7 +138,7 @@
         <property name="drupal.site.database.database" value="${build.site}" />
         <property name="drupal.site.settings.file_public_path" value="sites/${drupal.site.dir}/files" />
         <property name="drupal.site.settings.file_private_path" value="../artifacts/private/${drupal.site.dir}" />
-        <property name="drupal.site.settings.file_temp_path" value="{$_ENV['TEMP']}" />
+        <property name="drupal.site.settings.file_temp_path" value="/tmp" />
         <property name="drupal.site.build.settings_dest" value="${drupal.root}/sites/${drupal.site.dir}/settings.build.php" />
         <property name="drupal.site.build.services_dest" value="${drupal.root}/sites/${drupal.site.dir}/services.build.yml" />
 

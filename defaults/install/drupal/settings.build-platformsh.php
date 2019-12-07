@@ -6,6 +6,7 @@
  */
 
 $settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
+$settings['file_temp_path'] = '${drupal.site.settings.file_temp_path}';
 
 // Enable/disable config_split configurations.
 if (isset($_ENV['PLATFORM_BRANCH'])) {
