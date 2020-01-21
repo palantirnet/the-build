@@ -10,7 +10,7 @@ $settings['trusted_host_patterns'][] = "^{$_ENV['AH_SITE_ENVIRONMENT']}stg.prod.
 
 $settings['file_public_path'] = '${drupal.site.settings.file_public_path}';
 $settings['file_private_path'] = "/mnt/gfs/{$_ENV['AH_SITE_GROUP']}.{$_ENV['AH_SITE_ENVIRONMENT']}/files-private";
-$config['system.file']['path']['temporary'] = $_ENV['TEMP'];
+$settings['file_temp_path'] = $_ENV['TEMP'];
 
 $settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
 

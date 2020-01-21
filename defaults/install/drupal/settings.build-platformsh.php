@@ -7,6 +7,9 @@
 
 $settings['config_sync_directory'] = '${drupal.site.config_sync_directory}';
 
+// Use the temporary directory set up in .platform.app.yaml
+$settings['file_temp_path'] = '/tmp';
+
 // Enable/disable config_split configurations.
 if (isset($_ENV['PLATFORM_BRANCH'])) {
   if ($_ENV['PLATFORM_BRANCH'] == 'master') {
