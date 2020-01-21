@@ -269,28 +269,11 @@ Or, you can specify the export file directly:
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>standard</param>
+            <param>${drupal.site.profile}</param>
         </drush>
 
         <drush command="pm-enable" assume="yes">
             <param>the_build_utility</param>
-        </drush>
-
-        <drush command="config-delete" assume="yes">
-            <param>core.extension</param>
-            <param>module.standard</param>
-        </drush>
-
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>module.config_installer</param>
-            <param>1000</param>
-        </drush>
-
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>profile</param>
-            <param>config_installer</param>
         </drush>
 
         <drush command="pm-uninstall" assume="yes">
@@ -302,7 +285,7 @@ Or, you can specify the export file directly:
         <!-- Whitespace is intentional. -->
         <echo>
 
-             Drupal has been installed with the install profile "standard". Future installs will be run using config_installer.
+             Drupal has been installed with the install profile "${drupal.site.profile}". Future installs will be run using 'drush site:install --existing-config'.
 
              Your config has been exported to ${drupal.root}/${drupal.site.config_sync_directory}</echo>
     </target>
