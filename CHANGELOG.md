@@ -1,5 +1,11 @@
 # Change Log
 
+## UNRELEASED
+
+### Fixed
+
+* Added Drupal 8.8's `$settings['file_temp_path']` configuration to settings.*.php (#144)
+
 ## 2.2.1
 
 ### Changed
