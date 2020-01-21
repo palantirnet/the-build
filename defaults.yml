@@ -94,9 +94,6 @@ drupal:
       # `the-build`.
       hash_salt: temporary
 
-      # Drupal install profile to use for the drupal-install target.
-      profile: standard
-
       # Drupal admin username, if you feel inclined to change it.
       admin_user: admin
 
