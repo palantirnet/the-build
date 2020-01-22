@@ -228,9 +228,8 @@ phpcs:
   # Space-separated list of directories to review.
   directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom ${drupal.root}/profiles/custom"
 
-  # Comma-separated list of patterns for files and directories to exclude from the
-  # PHP_CodeSniffer review.
-  ignore: "*.md"
+  # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
+  extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml"
 
 
 # Configuration for using PHP Mess Detector to check for general PHP best practices,
