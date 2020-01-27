@@ -233,7 +233,7 @@ phpcs:
   ignore: "*.md"
   
   # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
-  extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml"
+  extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml,js"
 
 
 # Configuration for using PHP Mess Detector to check for general PHP best practices,
