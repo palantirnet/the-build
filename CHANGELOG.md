@@ -5,6 +5,17 @@
 ### Fixed
 
 * Added Drupal 8.8's `$settings['file_temp_path']` configuration to settings.*.php (#144)
+* Updated phpcs usage to fix an issue where some Drupal code was no longer subject to review, because the latest release of Coder changed the default file extensions (#148)
+
+### Updating to this version
+
+* If your `build.xml` uses phpcs, make the following change:
+
+   ```
+          <!-- Run PHP Code Sniffer. -->
+   -     <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+   +     <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
+   ```
 
 ## 2.2.1
 
