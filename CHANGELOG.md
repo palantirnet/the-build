@@ -9,10 +9,11 @@
 
 ### Updating
 
+* This release has settings.php configuration specific to Drupal 8.8, but these changes will only be applied to new installations of Drupal.
 * If your `build.xml` uses phpcs, make the following change:
 
    ```
-          <!-- Run PHP Code Sniffer. -->
+         <!-- Run PHP Code Sniffer. -->
    -     <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
    +     <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
    ```
