@@ -23,7 +23,7 @@ elseif (isset($_ENV['AH_NON_PRODUCTION']) && $_ENV['AH_NON_PRODUCTION']) {
 }
 
 //// Add an htaccess prompt on dev and staging environments.
-//// @see https://docs.acquia.com/articles/password-protect-your-non-production-environments-acquia-hosting#phpfpm
+//// @see https://docs.acquia.com/acquia-cloud/arch/security/nonprod/#cloud-set-basicauth
 
 // Make sure Drush keeps working.
 // Modified from function drush_verify_cli()
