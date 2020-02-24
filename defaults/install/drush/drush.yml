@@ -16,3 +16,7 @@ sql:
       - 'search_*'
       - 'sessions'
       - 'watchdog'
+
+options:
+  # Set the default site URI.
+  uri: https://project.local
