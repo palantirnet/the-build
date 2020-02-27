@@ -15,7 +15,6 @@
 
 // This is the core set of defaults from default.settings.php. They will be overridden
 // as necessary by the includes below.
-$config_directories = [];
 $settings['hash_salt'] = '';
 $settings['update_free_access'] = FALSE;
 $settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';
