@@ -16,3 +16,11 @@ sql:
       - 'search_*'
       - 'sessions'
       - 'watchdog'
+
+# Uncomment the following and change the URL to your site's preferred hostname.
+# This allows URLs to be generated that don't include `default` when no alias is
+# used.
+#
+# options:
+#   # Set the default site URI.
+#   uri: https://project.local
