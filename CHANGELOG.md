@@ -4,7 +4,16 @@
 
 ### Changed
 
-* Allow using Drush 9 or Drush 10
+* Allow using Drush 9 or Drush 10 ([PR #150](https://github.com/palantirnet/the-build/pull/150))
+
+### Fixed
+
+* Fix drupal-check installation on CircleCI ([PR #153](https://github.com/palantirnet/the-build/pull/153), [PR #154](https://github.com/palantirnet/the-build/pull/154))
+
+### Updating
+
+* If you want to use Drush 10, you can now run `composer update palantirnet/the-build --with-dependencies`.
+* This release changes the default `.circleci/config.yml` to install drupal-check. If you want this change in your project, compare your CircleCI config file to `defaults/install/.circleci/config.yml`.
 
 ## 2.3.0
 
