@@ -51,6 +51,7 @@ jobs:
       # rather than as part of the virtual environment, but this will have to do
       # for now. Also note, drupal-check is added as part of the-vagrant so it
       # is available to run within our VM.
+      # Note 2: drupal-check is pinned to a known stable version.
       - run:
           name: Install drupal-check
           command: |
