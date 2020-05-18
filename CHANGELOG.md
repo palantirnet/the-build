@@ -1,6 +1,6 @@
 # Change Log
 
-## UNRELEASED
+## 2.3.1
 
 ### Changed
 
