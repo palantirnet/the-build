@@ -90,16 +90,6 @@ jobs:
           paths:
             - ".git"
 
-
-      # Composer package cache - update when the contents of the Composer cache directory
-      # change
-      - run: ls -1R ~/.composer/cache/ > /tmp/composer-cache.txt
-      - save_cache:
-          key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
-          paths:
-              - ~/.composer
-
-
       # Install the-build
       - run:
           name: Install the-build in the project
@@ -114,6 +104,15 @@ jobs:
       - run:
           name: Install Drupal
           command: printf 'y' | vendor/bin/phing install -Ddrupal.validate_clean_config.bypass=yes
+
+      # Composer package cache - update when the contents of the Composer cache directory
+      # change. This cache is saved after installing Drupal, as the install process uses
+      # composer to add a few modules.
+      - run: ls -1R ~/.composer/cache/ > /tmp/composer-cache.txt
+      - save_cache:
+          key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
+          paths:
+              - ~/.composer
 
       # Add a multisite
       - run:
