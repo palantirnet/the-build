@@ -9,7 +9,7 @@
 
 <project name="install" default="install">
 
-    <!-- This is required to set ${composer.composer} for installing for Platform.sh
+    <!-- This is required to set ${composer.composer} for installing for Platform.sh -->
     <import file="the-build.xml" />
 
     <property name="build.dir" value="${application.startdir}" />
