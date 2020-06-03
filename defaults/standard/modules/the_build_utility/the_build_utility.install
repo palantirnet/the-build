@@ -62,7 +62,6 @@ function the_build_utility_install() {
   // Begin Comment module.
   // Remove the comment fields.
   $fields = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'comment']);
-  $fields = entity_load_multiple_by_properties('field_storage_config', ['type' => 'comment']);
   foreach ($fields as $field) {
     $field->delete();
   }
