@@ -269,28 +269,11 @@ Or, you can specify the export file directly:
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>standard</param>
+            <param>minimal</param>
         </drush>
 
         <drush command="pm-enable" assume="yes">
             <param>the_build_utility</param>
-        </drush>
-
-        <drush command="config-delete" assume="yes">
-            <param>core.extension</param>
-            <param>module.standard</param>
-        </drush>
-
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>module.config_installer</param>
-            <param>1000</param>
-        </drush>
-
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>profile</param>
-            <param>config_installer</param>
         </drush>
 
         <drush command="pm-uninstall" assume="yes">
