@@ -269,7 +269,7 @@ Or, you can specify the export file directly:
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>newstandard</param>
+            <param>standard</param>
         </drush>
 
         <drush command="pm-enable" assume="yes">
