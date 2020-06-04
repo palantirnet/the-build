@@ -72,7 +72,7 @@
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>${drupal.site.profile}</param>
+            <option name="existing-config" />
         </drush>
     </target>
 
