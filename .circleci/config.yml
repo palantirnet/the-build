@@ -73,7 +73,7 @@ jobs:
       # Create a new project using the drupal-skeleton project
       - run:
           name: Create a new Drupal project
-          command: composer create-project palantirnet/drupal-skeleton example dev-drupal8 --no-interaction
+          command: composer create-project palantirnet/drupal-skeleton example dev-drupal9 --no-interaction
           working_directory: ~/
 
       # Use this copy of the-build
