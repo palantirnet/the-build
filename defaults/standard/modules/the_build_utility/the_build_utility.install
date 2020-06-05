@@ -17,36 +17,6 @@ use Drupal\shortcut\Entity\Shortcut;
  * @see system_install()
  */
 function the_build_utility_install() {
-  // hook_install() from standard profile.
-
-  // Assign user 1 the "administrator" role.
-  $user = User::load(1);
-  $user->roles[] = 'administrator';
-  $user->save();
-
-  // We install some menu links, so we have to rebuild the router, to ensure the
-  // menu links are valid.
-  \Drupal::service('router.builder')->rebuildIfNeeded();
-
-  // Populate the default shortcut set.
-  $shortcut = Shortcut::create([
-    'shortcut_set' => 'default',
-    'title' => t('Add content'),
-    'weight' => -20,
-    'link' => ['uri' => 'internal:/node/add'],
-  ]);
-  $shortcut->save();
-
-  $shortcut = Shortcut::create([
-    'shortcut_set' => 'default',
-    'title' => t('All content'),
-    'weight' => -19,
-    'link' => ['uri' => 'internal:/admin/content'],
-  ]);
-  $shortcut->save();
-
-  // Customizations from this module.
-
   // Allow visitor account creation with administrative approval.
   $user_settings = \Drupal::configFactory()->getEditable('user.settings');
   $user_settings->set('register', 'admin_only')->save(TRUE);
