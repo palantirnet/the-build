@@ -55,7 +55,7 @@ function the_build_utility_install() {
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Manage Taxonomy'),
-    'weight' => -20,
+    'weight' => -18,
     'link' => ['uri' => 'internal:/admin/structure/taxonomy'],
   ]);
   $shortcut->save();
@@ -63,7 +63,7 @@ function the_build_utility_install() {
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Manage Menus'),
-    'weight' => -19,
+    'weight' => -17,
     'link' => ['uri' => 'internal:/admin/structure/menu'],
   ]);
   $shortcut->save();
@@ -71,7 +71,7 @@ function the_build_utility_install() {
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Status Report'),
-    'weight' => -18,
+    'weight' => -16,
     'link' => ['uri' => 'internal:/admin/reports/status'],
   ]);
   $shortcut->save();
