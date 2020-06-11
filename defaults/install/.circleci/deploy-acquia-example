@@ -28,9 +28,9 @@
       - ACQUIA_PUBKEY: "svn-23450.prod.hosting.acquia.com,54.245.120.237 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDit0Rj8j59i9Gj2vOg2TXjIbPswIc27PwncapyBLi9R3FtECXq+md1BfykBJjME83m78CtqkTlWwNZu+LyhF+IYlshKo82JXQzV4kWwi5L9H7KpdyFDMDLVCNVYmU4EQY9ngRq1cwbMBYsfWxv4sSlbsvZv2C8U7luNoc4SiBY4sGpgiMJLFOHWRw6YvhOamLTKfxSoJUT8uRbfkamxas1EK21XjvrdUSN0Bf5LmTdvs/9iIaUH4AlYr0SW0tc2IbIuoFVxuvSzZj2GJjmtCcW1poDMQLTGq+EuO4Mk1WyoUSJC9L8CFonKH7++EPHopvIbPMinO4r2zLEot3lL5TH"
 
     steps:
-      - add_ssh_keys
       - attach_workspace:
           at: ..
+      - add_ssh_keys
       - run:
           name: Install packages
           command: sudo apt-get install -y libpng-dev
@@ -58,6 +58,7 @@
       - run:
           name: Add public keys to known hosts file.
           command: |
+            mkdir -p ~/.ssh
             echo $GITHUB_PUBKEY  >> ~/.ssh/known_hosts
             echo $ACQUIA_PUBKEY  >> ~/.ssh/known_hosts
       - run:
