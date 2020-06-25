@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.3.2
+
+### Fixed
+
+* Fix the-build installation for platformsh ([PR #154](https://github.com/palantirnet/the-build/pull/155))
+
 ## 2.3.1
 
 ### Changed
