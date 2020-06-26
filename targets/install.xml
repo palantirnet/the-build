@@ -9,6 +9,8 @@
 
 <project name="install" default="install">
 
+    <!-- This is required to set ${composer.composer} for installing for Platform.sh -->
+    <import file="the-build.xml" />
 
     <property name="build.dir" value="${application.startdir}" />
     <property name="build.env" value="default" />
@@ -268,6 +270,7 @@
 
             <case value="platformsh">
                 <composer command="require" composer="${composer.composer}">
+                    <arg line="--working-dir ${application.startdir}" />
                     <arg value="platformsh/config-reader:^2.1" />
                 </composer>
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />

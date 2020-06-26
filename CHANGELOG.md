@@ -10,6 +10,12 @@
 
 * The `drupal.site.profile` property is no longer used by the default `install` target in `build.xml`. It will be removed in the 3.0 release. (#145)
 
+## 2.3.2
+
+### Fixed
+
+* Fix the-build installation for platformsh ([PR #154](https://github.com/palantirnet/the-build/pull/155))
+
 ## 2.3.1
 
 ### Changed
