@@ -1,5 +1,15 @@
 # Change Log
 
+## UNRELEASED
+
+### Changed
+
+* `phing install` now uses `drush site-install --existing-config` instead of the [config_installer profile](https://www.drupal.org/project/config_installer) (#145)
+
+### Deprecated
+
+* The `drupal.site.profile` property is no longer used by the default `install` target in `build.xml`. It will be removed in the 3.0 release. (#145)
+
 ## 2.3.2
 
 ### Fixed

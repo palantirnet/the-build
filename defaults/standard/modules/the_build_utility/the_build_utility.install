@@ -19,13 +19,13 @@ use Drupal\shortcut\Entity\Shortcut;
 function the_build_utility_install() {
   // Allow visitor account creation with administrative approval.
   $user_settings = \Drupal::configFactory()->getEditable('user.settings');
-  $user_settings->set('register', USER_REGISTER_ADMINISTRATORS_ONLY)->save(TRUE);
+  $user_settings->set('register', 'admin_only')->save(TRUE);
 
   // Populate the default shortcut set.
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Manage Taxonomy'),
-    'weight' => -20,
+    'weight' => -18,
     'link' => ['uri' => 'internal:/admin/structure/taxonomy'],
   ]);
   $shortcut->save();
@@ -33,7 +33,7 @@ function the_build_utility_install() {
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Manage Menus'),
-    'weight' => -19,
+    'weight' => -17,
     'link' => ['uri' => 'internal:/admin/structure/menu'],
   ]);
   $shortcut->save();
@@ -41,7 +41,7 @@ function the_build_utility_install() {
   $shortcut = Shortcut::create([
     'shortcut_set' => 'default',
     'title' => t('Status Report'),
-    'weight' => -18,
+    'weight' => -16,
     'link' => ['uri' => 'internal:/admin/reports/status'],
   ]);
   $shortcut->save();
@@ -61,7 +61,7 @@ function the_build_utility_install() {
 
   // Begin Comment module.
   // Remove the comment fields.
-  $fields = entity_load_multiple_by_properties('field_storage_config', ['type' => 'comment']);
+  $fields = \Drupal::entityTypeManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'comment']);
   foreach ($fields as $field) {
     $field->delete();
   }

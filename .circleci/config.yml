@@ -6,7 +6,7 @@ jobs:
   build:
     working_directory: ~/example
     docker:
-      - image: circleci/php:7.2-node-browsers
+      - image: circleci/php:7.3-node-browsers
       - image: circleci/mysql:5.7-ram
         command: --max_allowed_packet=16M
         environment:
@@ -73,7 +73,7 @@ jobs:
       # Create a new project using the drupal-skeleton project
       - run:
           name: Create a new Drupal project
-          command: composer create-project palantirnet/drupal-skeleton example dev-drupal8 --no-interaction
+          command: composer create-project palantirnet/drupal-skeleton example dev-drupal9 --no-interaction
           working_directory: ~/
 
       # Use this copy of the-build
