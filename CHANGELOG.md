@@ -18,6 +18,8 @@ This release introduces Drupal 9 compatibility by removing the dependency on the
 
 ### Updating
 
+When you update to Drupal 9, you will need to update your project to remove the dependency on the `drupal/config_installer` package. In Drupal 8, these steps are optional.
+
 1. Change your site's profile to `minimal`, because the `--existing-config` install option only works with profiles that don't implement `hook_install()`. There's a new phing command in the-build to do this:
 
   ```
