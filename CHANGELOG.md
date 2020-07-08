@@ -1,6 +1,6 @@
 # Change Log
 
-## UNRELEASED
+## 3.0.0 - July 8, 2020
 
 This release introduces Drupal 9 compatibility by removing the dependency on the `drupal/config_installer` package. You will need to update existing sites manually (see the "Updating" section below).
 
