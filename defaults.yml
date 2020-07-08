@@ -262,6 +262,7 @@ phpmd:
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 
+# DEPRECATED - to be removed in 3.2
 # Configuration for checking the site with the Drupal Checker code linter.
 #
 # @see https://github.com/mglaman/drupal-check

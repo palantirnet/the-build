@@ -51,13 +51,6 @@ drupal:
 behat:
   args: "--suite=default --strict"
 
-# Configuration for checking the site with the Drupal Checker code linter.
-drupal-check:
-  # Location of the drupal-check script. This script is currently installed globally
-  # on the-vagrant because of repository-level composer conflicts.
-  bin: "~/bin/drupal-check"
-
-
 # To build an artifact from your code, add the URL to your artifact git repository.
 # @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.yml
 #

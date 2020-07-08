@@ -1,5 +1,23 @@
 # Change Log
 
+## UNRELEASED
+
+### Removed
+
+* `drupal-check` is no longer installed in the default CircleCI configuration, or used in the default code-review task. The [upgrade_status module](https://www.drupal.org/project/upgrade_status) is recommended instead.
+* The `drupal_check.bin` and `drupal_check.directories` properties will be removed in the 3.2 release.
+
+### Updating
+
+Recommended: remove `drupal-check` usage from your project:
+
+1. Remove the "Install drupal-check" step from your `.circleci/config.yml`
+2. Update your `build.xml` to:
+ 1. Edit the `code-review` target to remove the call to the `drupal-check` target.
+ 2. Remove the `drupal-check` target itself (starts with `<target name="drupal-check" ...`)
+
+You may also choose to continue using `drupal-check`. In this case, ensure that the `drupal_check.bin` and `drupal_check.directories` properties are fully declared in your build configuration at `.the-build/build.yml`.
+
 ## 3.0.0 - July 8, 2020
 
 This release introduces Drupal 9 compatibility by removing the dependency on the `drupal/config_installer` package. You will need to update existing sites manually (see the "Updating" section below).
