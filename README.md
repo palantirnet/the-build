@@ -73,4 +73,4 @@ $> vendor/bin/phing -l
 * [Developing on the-build](docs/development.md)
 
 ----
-Copyright 2016, 2017, 2018, 2019 Palantir.net, Inc.
+Copyright 2016-2020 Palantir.net, Inc.
