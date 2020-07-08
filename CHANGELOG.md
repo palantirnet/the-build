@@ -2,6 +2,12 @@
 
 ## UNRELEASED
 
+This release introduces Drupal 9 compatibility by removing the dependency on the `drupal/config_installer` package. You will need to update existing sites manually (see the "Updating" section below).
+
+### Added
+
+* New example CircleCI configuration to deploy to Acquia or Pantheon in `defaults/install/.circleci`
+
 ### Changed
 
 * `phing install` now uses `drush site-install --existing-config` instead of the [config_installer profile](https://www.drupal.org/project/config_installer) (#145)
@@ -9,6 +15,27 @@
 ### Deprecated
 
 * The `drupal.site.profile` property is no longer used by the default `install` target in `build.xml`. It will be removed in the 3.0 release. (#145)
+
+### Updating
+
+1. Change your site's profile to `minimal`, because the `--existing-config` install option only works with profiles that don't implement `hook_install()`. There's a new phing command in the-build to do this:
+
+  ```
+  phing drupal-change-profile -Dnew_profile=minimal
+  ```
+2. Export your config:
+
+  ```
+  drush cex
+  ```
+3. Update the `install` target in your `build.xml`:
+ * Change `<param>${drupal.site.profile}</param>` to `<option name="existing-config" />`
+ * See the [build.xml diff](https://github.com/palantirnet/the-build/pull/156/files#diff-3895e49cbca4d72f37a94c0656b0c772) for details
+4. Remove the `drupal/config_installer` package from your project:
+
+  ```
+  composer remove drupal/config_installer
+  ```
 
 ## 2.3.2
 
