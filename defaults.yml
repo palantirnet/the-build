@@ -96,7 +96,7 @@ drupal:
 
       # Drupal install profile to use for the drupal-install target.
       #
-      # DEPRECATED - to be removed in 3.0
+      # DEPRECATED - to be removed in 3.1
       # This property was used in the 'install' target in the default build.xml, until
       # we switched from the config_installer profile to using
       # 'drush site-install --existing-config`.
