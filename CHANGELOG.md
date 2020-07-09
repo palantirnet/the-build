@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.1 - July 9, 2020
+
+### Removed
+
+* Removed default installation of the "kint" Drupal module, which has been removed from the 4.0 release of [devel](https://www.drupal.org/project/devel) ([see discussion here](https://gitlab.com/drupalspoons/devel/-/issues/223#note_365147798)).
+
+### Updating
+
+This change does not affect existing projects.
+
 ## 3.0.0 - July 8, 2020
 
 This release introduces Drupal 9 compatibility by removing the dependency on the `drupal/config_installer` package. You will need to update existing sites manually (see the "Updating" section below).
