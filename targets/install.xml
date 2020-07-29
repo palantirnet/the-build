@@ -262,6 +262,15 @@
         <switch value="${build.host}">
             <case value="acquia">
                 <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+                <!--
+                     As of July 2020, Acquia only provides MySQL 5.6. Drupal 9 requires an
+                     additional driver to use this older version.
+                     @see https://docs.acquia.com/acquia-cloud/create/install/drupal9/
+                     -->
+                <composer command="require" composer="${composer.composer}">
+                    <arg line="--working-dir ${application.startdir}" />
+                    <arg value="drupal/mysql56" />
+                </composer>
             </case>
 
             <case value="pantheon">
