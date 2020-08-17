@@ -1,5 +1,15 @@
 # Change Log
 
+## 3.0.2 - August 17, 2020
+
+### Changed
+
+* The artifact process now runs `composer install` with the `--ignore-platform-reqs` flag so that not all PHP extensions need to be installed when building the artifact on a CI environment
+
+### Fixed
+
+* Updated default CI file to run `sudo apt-get update` before installing apt dependencies
+
 ## 3.0.1 - July 9, 2020
 
 ### Removed
