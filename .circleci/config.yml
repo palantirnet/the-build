@@ -114,7 +114,7 @@ jobs:
       - save_cache:
           key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
           paths:
-              - ~/.composer
+              - ~/.cache/composer
 
       # Add a multisite
       - run:
