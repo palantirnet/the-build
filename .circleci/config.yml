@@ -110,11 +110,11 @@ jobs:
       # Composer package cache - update when the contents of the Composer cache directory
       # change. This cache is saved after installing Drupal, as the install process uses
       # composer to add a few modules.
-      - run: ls -1R ~/.composer/cache/ > /tmp/composer-cache.txt
+      - run: ls -1R ~/.cache/composer/ > /tmp/composer-cache.txt
       - save_cache:
           key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
           paths:
-              - ~/.composer
+              - ~/.cache/composer
 
       # Add a multisite
       - run:
