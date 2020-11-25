@@ -18,6 +18,7 @@
 #              only:
 #                - develop
 #                - master
+#                - /multidev-.*/
 
   deploy:
     working_directory: ~/project
@@ -67,4 +68,7 @@
           command: chmod u+w web/sites/default
       - run:
           name: Build and deploy an artifact
-          command: vendor/bin/phing artifact -Dpush=y -Dartifact.prefix=''
+          command: |
+            # Shorten multidev branch names from 'multidev-foo' to 'foo', max 11 characters
+            ARTIFACT_BRANCH=$(echo ${CIRCLE_BRANCH} | sed -E 's/^(multidev-)?(.{1,11}).*/\2/')
+            vendor/bin/phing artifact -Dartifact.result=push -Dartifact.git.remote_branch=${ARTIFACT_BRANCH}
