@@ -1,5 +1,16 @@
 # Change Log
 
+## 3.0.3 - November 25, 2020
+
+### Fixed
+
+* Updated composer cache location in CircleCI config
+
+### Changed
+
+* Expanded Pantheon automated deployment example
+* Updated default `.gitignore` for artifacts to exclude node dependencies
+
 ## 3.0.2 - August 17, 2020
 
 ### Changed
