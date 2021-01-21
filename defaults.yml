@@ -109,9 +109,9 @@ drupal:
       database:
         # This value is required, but a default is set in the-build.xml.
         # database: drupal
-        username: root
-        password: root
-        host: 127.0.0.1
+        username: db
+        password: db
+        host: db
 
       # Configuration used by the default 'build' target.
       build:
