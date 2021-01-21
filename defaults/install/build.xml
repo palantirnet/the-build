@@ -175,7 +175,7 @@
 
     <!-- Default target: list -->
     <target name="list" hidden="true">
-        <exec command="phing -q -f ${phing.file} -l" passthru="true"/>
+        <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
         <echo>Find more documentation for palantirnet/the-build on GitHub:
 
             https://github.com/palantirnet/the-build#using-the-build</echo>
