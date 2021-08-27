@@ -159,7 +159,7 @@
     <!-- Target: code-fix -->
     <target name="code-fix" description="Run the automated code fixer.">
         <!-- Run PHP Code Beautifier and Fixer. -->
-        <property name="phpcbf.command" value="vendor/bin/phpcbf --standard=${phpcs.standard} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+        <property name="phpcbf.command" value="vendor/bin/phpcbf --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
         <echo msg="$> ${phpcbf.command}" />
         <exec command="${phpcbf.command}" logoutput="true" checkreturn="false" />
     </target>
