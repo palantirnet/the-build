@@ -20,7 +20,8 @@ build:
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
   # configuration in your `composer.json`. Use caution when changing this value.
-  root: web
+  # **This is a required value but must be set in a project's own build.yml file**
+  #root: web
 
   # Comma-separated list of directories that should be present for Drupal development.
   create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,config/config_split/development,config/config_split/staging,config/config_split/production"

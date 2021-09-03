@@ -88,38 +88,35 @@
             </filterchain>
         </copy>
 
-        <!-- Move the drupal root, if it's not drupal.root.old -->
-        <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
-        <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+        <!-- If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
+             docroot). -->
+        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
 
         <if>
-            <not><equals arg1="${drupal.root}" arg2="${drupal.root.old}" /></not>
-            <then>
-                <if>
-                    <and>
-                        <available file="${build.dir}/${drupal.root.old}" type="dir" />
-                        <not><available file="${build.dir}/${drupal.root}" type="dir" /></not>
-                    </and>
-                    <then>
-                        <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                        <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
-                    </then>
-                </if>
+          <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
+          <then>
+            <!-- The one that's available is the location we're moving from. -->
+            <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
+            <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
 
-                <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
-                <reflexive>
-                    <fileset dir="${build.dir}" includes="composer.json" />
-                    <filterchain>
-                        <replaceregexp>
-                            <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
-                            <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
-                        </replaceregexp>
-                    </filterchain>
-                </reflexive>
+            <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+            <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
 
-                <echo msg="Updating your composer.lock hash" />
-                <exec command="composer update --lock" dir="${application.startdir}" />
-            </then>
+            <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
+            <reflexive>
+              <fileset dir="${build.dir}" includes="composer.json" />
+              <filterchain>
+                <replaceregexp>
+                  <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                  <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
+                </replaceregexp>
+              </filterchain>
+            </reflexive>
+
+            <echo msg="Updating your composer.lock hash" />
+            <exec command="composer update --lock" dir="${application.startdir}" />
+
+          </then>
         </if>
 
         <!-- Copy templates into place.
