@@ -14,7 +14,7 @@
 build:
   # The destination host, either 'acquia', 'pantheon', 'platformsh', or 'other'. This is
   # currently only used when setting up the settings.php file for a Drupal site.
-  host: other
+  host: acquia
 
 # Drupal configuration used by targets/drupal.xml
 drupal:
@@ -240,7 +240,7 @@ phpcs:
   # use the extensions option (below). This option should not be used with Coder >= 8.3.7, which only
   # checks php, inc, css, and js by default.
   ignore: "*.md"
-  
+
   # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
   extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml,js"
 

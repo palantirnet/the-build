@@ -48,6 +48,12 @@
             <case value="acquia">
                 <property name="drupal.root" value="docroot" />
             </case>
+            <case value="pantheon">
+              <property name="drupal.root" value="web" />
+            </case>
+            <case value="platformsh">
+              <property name="drupal.root" value="web" />
+            </case>
             <default />
         </switch>
 
@@ -137,34 +143,8 @@
         <!-- Copy the CircleCI properties. -->
         <copy file="${phing.dir.install}/../defaults/install/the-build/build.circleci.yml" tofile="${application.startdir}/.the-build/build.circleci.yml" overwrite="true" />
 
-        <!-- Add host-specific files for settings.php templates, the-build properties, and hosting configuration. -->
-        <switch value="${build.host}">
-            <case value="acquia">
-                <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build-acquia.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${phing.dir.install}/../defaults/install/the-build/build.acquia.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-            </case>
-
-            <case value="pantheon">
-                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-pantheon.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.pantheon.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
-            </case>
-
-            <case value="platformsh">
-                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-platformsh.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.platformsh.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
-                <copy todir="${application.startdir}/.platform" overwrite="true">
-                    <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
-                </copy>
-                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
-            </case>
-            <default />
-        </switch>
-
-        <!-- Copy Drupal configuration templates (used by the 'build' target). -->
-        <copy file="${phing.dir.install}/../defaults/install/drupal/services.build.yml" todir="${application.startdir}/.the-build/drupal" />
-        <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build.php" todir="${application.startdir}/.the-build/drupal" />
+        <!-- Add host-specific configuration files. -->
+        <phingcall target="configure-host" />
 
         <!-- Copy Drush configuration and aliases file templates. -->
         <copy file="${phing.dir.install}/../defaults/install/drush/drush.yml" tofile="${application.startdir}/drush/drush.yml" overwrite="true">
@@ -181,9 +161,9 @@
         </copy>
 
         <!-- Set up the Drupal sites directory. -->
-        <phingcall target="drupal-sites-directory">
-            <property name="drupal.site.dir" value="default" />
-        </phingcall>
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
 
         <!-- Run the first build. -->
         <phing dir="${application.startdir}" target="build" inheritAll="false" />
@@ -224,55 +204,37 @@
               $> phing test</echo>
     </target>
 
+  <target name="configure-host" description="Add host-specific configuration files.">
+    <fail unless="build.host" />
 
-    <target name="drupal-sites-directory" hidden="true">
-        <fail unless="drupal.site.dir" />
-        <fail unless="build.host" />
-        <fail unless="drupal.root" />
-        <fail unless="build.dir" />
+    <switch value="${build.host}">
+      <case value="pantheon">
+        <!-- Project-level setup -->
+        <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
 
-        <!-- Make sure the sites directory exists. This is not necessary for the 'default' site, but is required for creating additional multisites. -->
-        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+        <!-- Site-level setup -->
+        <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+      </case>
 
-        <!-- Use our own basic Drupal settings.php file. -->
-        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
-        <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.php" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/settings.php" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
+      <case value="platformsh">
+        <!-- Project-level setup -->
+        <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
+        <copy todir="${application.startdir}/.platform" overwrite="true">
+          <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
         </copy>
+        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
 
-        <!-- Use the default Drupal services.yml file. -->
-        <copy file="${build.dir}/${drupal.root}/sites/default/default.services.yml" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/services.yml" overwrite="true">
-            <filterchain>
-                <striplinecomments>
-                    <comment value="#" />
-                </striplinecomments>
-            </filterchain>
-        </copy>
+        <!-- Site-level setup -->
+        <composer command="require" composer="${composer.composer}">
+          <arg line="--working-dir ${application.startdir}" />
+          <arg value="platformsh/config-reader:^2.1" />
+        </composer>
+        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+      </case>
 
-        <!-- Add host-specific settings.php and deployment files. -->
-        <switch value="${build.host}">
-            <case value="acquia">
-                <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
+      <default />
+    </switch>
 
-            <case value="pantheon">
-                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
-
-            <case value="platformsh">
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}" />
-                    <arg value="platformsh/config-reader:^2.1" />
-                </composer>
-                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
-            <default />
-        </switch>
-
-        <echo msg="Set up the Drupal sites directory at '${drupal.root}/sites/${drupal.site.dir}/'" />
-    </target>
-
+  </target>
 
 </project>
