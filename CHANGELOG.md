@@ -1,5 +1,9 @@
 # Change Log
 
+## LITE
+
+* Removed gitignore template
+
 ## 3.0.3 - November 25, 2020
 
 ### Fixed

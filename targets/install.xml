@@ -180,13 +180,6 @@
             </filterchain>
         </copy>
 
-        <!-- Configure the .gitignore for our settings.php structure. -->
-        <copy file="${phing.dir.install}/../defaults/install/gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
         <!-- Set up the Drupal sites directory. -->
         <phingcall target="drupal-sites-directory">
             <property name="drupal.site.dir" value="default" />

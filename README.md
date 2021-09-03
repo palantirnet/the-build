@@ -21,7 +21,6 @@ $> vendor/bin/the-build-installer
 This will trigger an interactive prompt to configure your basic build properties, adding the following templated files and directories:
 
 * `.circleci/`
-* `.gitignore`
 * `.the-build/`
 * `behat.yml`
 * `build.xml`
