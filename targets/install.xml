@@ -28,6 +28,7 @@
              -->
         <echo message="Configure the default environment..." />
 
+        <property file="${application.startdir}/.the-build/build.yml" prefix="default" />
         <property file="${build.thebuild.dir}/defaults.yml" prefix="default" />
         <mkdir dir="${application.startdir}/.the-build" />
 
