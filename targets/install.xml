@@ -28,7 +28,14 @@
              -->
         <echo message="Configure the default environment..." />
 
-        <property file="${application.startdir}/.the-build/build.yml" prefix="default" />
+        <!-- Use existing configuration first (e.g. reinstalling the-build) -->
+        <if>
+            <available file="${application.startdir}/.the-build/build.yml" />
+            <then>
+                <property file="${application.startdir}/.the-build/build.yml" prefix="default" />
+            </then>
+        </if>
+        <!-- ... then load the defaults. -->
         <property file="${build.thebuild.dir}/defaults.yml" prefix="default" />
         <mkdir dir="${application.startdir}/.the-build" />
 
