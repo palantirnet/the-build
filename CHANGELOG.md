@@ -2,7 +2,10 @@
 
 ## LITE
 
+The goal of this release is to remove some of the templating functionality that makes the-build and drupal-skeleton harder to use and maintain.
+
 * Removed gitignore template
+* Removed settings.php templating
 
 ## 3.0.3 - November 25, 2020
 
