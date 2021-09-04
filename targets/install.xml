@@ -41,6 +41,7 @@
 
         <!-- Generate a hash salt for Drupal. -->
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
+        <mkdir dir="${application.startdir}/config" />
         <echo message="${hash_salt}" file="${application.startdir}/config/salt.txt" />
 
         <!-- Prompt for the Drupal URI. -->
