@@ -34,7 +34,7 @@
 
         <!-- Generate a hash salt for Drupal. -->
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-        <property name="drupal.sites.default.hash_salt" value="${hash_salt}" override="true" />
+        <echo message="${hash_salt}" file="${application.startdir}/config/salt.txt" />
 
         <!-- Prompt for the Drupal URI. -->
         <propertyprompt propertyName="drupal.sites.default.uri" defaultValue="${default.drupal.sites.default.uri}" promptText="Drupal URI" promptCharacter=":" />
