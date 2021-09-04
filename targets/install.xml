@@ -158,6 +158,7 @@
         </copy>
 
         <!-- Set up the Drupal sites directory. -->
+        <property name="drupal.site.dir" value="default" />
         <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
         <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
         <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
