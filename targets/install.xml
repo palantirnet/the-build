@@ -44,7 +44,12 @@
         <mkdir dir="${application.startdir}/config" />
         <echo message="${hash_salt}" file="${application.startdir}/config/salt.txt" />
 
+        <!-- Prompt for the site name. -->
+        <propertyprompt propertyName="projectname.new" defaultValue="${projectname}" promptText="Machine name for this project" promptCharacter=":" />
+        <property name="projectname" value="${projectname.new}" override="true" />
+
         <!-- Prompt for the Drupal URI. -->
+        <property name="default.drupal.sites.default.uri" value="https://${projectname}.ddev.site" />
         <propertyprompt propertyName="drupal.sites.default.uri" defaultValue="${default.drupal.sites.default.uri}" promptText="Drupal URI" promptCharacter=":" />
 
         <!-- Prompt for the web host. -->

@@ -53,8 +53,9 @@ drupal:
       dir: default
 
       # REQUIRED: Your site's URI; the default should be the URI of your local
-      # development environment.
-      uri: "https://${projectname}.ddev.site"
+      # development environment. This must be present in your
+      # .the-build/build.yml file.
+#      uri: "https://${projectname}.ddev.site"
 
       # Customizing the following values is OPTIONAL. If these values are not
       # explicitly configured, they will be set in the-build.xml based on the
