@@ -215,6 +215,12 @@
     <fail unless="build.host" />
 
     <switch value="${build.host}">
+      <case value="acquia">
+        <!-- Site-level setup -->
+        <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
+        <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php" />
+      </case>
+
       <case value="pantheon">
         <!-- Project-level setup -->
         <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
