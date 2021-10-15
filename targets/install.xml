@@ -164,7 +164,7 @@
 
 
     <!-- Target: setup-templates -->
-    <target name="setup-templates" depends="set-site" />
+    <target name="setup-templates" depends="set-site">
         <!-- Copy the build file template.
 
              This doesn't do any property substitution except for the "projectname",
@@ -223,7 +223,7 @@
         <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
         <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
         <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
-    </project>
+    </target>
 
     <!-- Target: setup-host -->
   <target name="setup-host" depends="set-site" description="Add host-specific configuration files.">
