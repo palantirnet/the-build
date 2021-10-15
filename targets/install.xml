@@ -76,114 +76,16 @@
         <!-- Copy defaults to fill in the sites array. -->
         <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.sites.default" override="false" />
 
-
-        <!-- Copy the build file template.
-
-             This doesn't do any property substitution except for the "projectname",
-             which is the name of the install directory, and the "host", set by prompt
-             above.
-
-             We can't do general property substitution here because this is a phing
-             project file that uses phing variables.
-             -->
-        <copy file="${phing.dir.install}/../defaults/install/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
-            <filterchain>
-                <replacetokens>
-                    <token key="projectname" value="${projectname}" />
-                    <token key="host" value="${build.host}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-        <!-- Create the default properties file. -->
+        <!-- Write the default properties file. -->
         <copy file="${phing.dir.install}/../defaults/install/the-build/build.yml" tofile="${application.startdir}/.the-build/build.yml" overwrite="true">
             <filterchain>
                 <expandproperties />
             </filterchain>
         </copy>
 
-        <!-- Set up the drupal.site.* properties the way that the set-site target usually
-             does, so that we can use them below. -->
-        <property name="build.site" value="default" />
-        <!-- Copy defaults in first. -->
-        <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
-        <!-- Override defaults with any site-specific values. -->
-        <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
-
-        <!-- If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
-             docroot). -->
-        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
-
-        <if>
-          <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
-          <then>
-            <!-- The one that's available is the location we're moving from. -->
-            <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
-            <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
-
-            <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-            <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
-
-            <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
-            <reflexive>
-              <fileset dir="${build.dir}" includes="composer.json" />
-              <filterchain>
-                <replaceregexp>
-                  <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
-                  <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
-                </replaceregexp>
-              </filterchain>
-            </reflexive>
-
-            <echo msg="Updating your composer.lock hash" />
-            <exec command="composer update --lock" dir="${application.startdir}" />
-
-          </then>
-        </if>
-
-        <!-- Copy templates into place.
-             These copy commands use <expandproperties /> for property substitution.
-             -->
-        <!-- Copy the behat template. -->
-        <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
-        <!-- Copy the CircleCI configuration -->
-        <copy todir="${application.startdir}/" overwrite="true">
-            <fileset dir="${phing.dir.install}/../defaults/install" includes=".circleci/" />
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
-        <!-- Copy the CircleCI properties. -->
-        <copy file="${phing.dir.install}/../defaults/install/the-build/build.circleci.yml" tofile="${application.startdir}/.the-build/build.circleci.yml" overwrite="true" />
-
-        <!-- Add host-specific configuration files. -->
-        <phingcall target="configure-host" />
-
-        <!-- Copy Drush configuration and aliases file templates. -->
-        <copy file="${phing.dir.install}/../defaults/install/drush/drush.yml" tofile="${application.startdir}/drush/drush.yml" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-        <copy file="${phing.dir.install}/../defaults/install/drush/sites/projectname.site.yml" tofile="${application.startdir}/drush/sites/${projectname}.site.yml" overwrite="true">
-            <filterchain>
-                <replacetokens>
-                    <token key="uri" value="${drupal.sites.default.uri}" />
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-        <!-- Set up the Drupal sites directory. -->
-        <property name="drupal.site.dir" value="default" />
-        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
-        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
+        <phingcall target="setup-web-root" />
+        <phingcall target="setup-templates" />
+        <phingcall target="setup-host" />
 
         <!-- Run the first build. -->
         <phing dir="${application.startdir}" target="build" inheritAll="false" />
@@ -224,7 +126,107 @@
               $> phing test</echo>
     </target>
 
-  <target name="configure-host" description="Add host-specific configuration files.">
+
+    <!-- Target: setup-web-root
+
+         If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
+         docroot).-->
+    <target name="setup-web-root" depends="set-site">
+        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
+
+        <if>
+            <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
+            <then>
+                <!-- The one that's available is the location we're moving from. -->
+                <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
+                <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+
+                <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+                <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+
+                <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
+                <reflexive>
+                    <fileset dir="${build.dir}" includes="composer.json" />
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                            <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
+                        </replaceregexp>
+                    </filterchain>
+                </reflexive>
+
+                <echo msg="Updating your composer.lock hash" />
+                <exec command="composer update --lock" dir="${application.startdir}" />
+
+            </then>
+        </if>
+    </target>
+
+
+    <!-- Target: setup-templates -->
+    <target name="setup-templates" depends="set-site" />
+        <!-- Copy the build file template.
+
+             This doesn't do any property substitution except for the "projectname",
+             which is the name of the install directory, and the "host", set by prompt
+             above.
+
+             We can't do general property substitution here because this is a phing
+             project file that uses phing variables.
+             -->
+        <copy file="${phing.dir.install}/../defaults/install/build.xml" tofile="${application.startdir}/build.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}" />
+                    <token key="host" value="${build.host}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+         <!-- Copy other templates into place.
+             These copy commands use <expandproperties /> for property substitution.
+             -->
+        <!-- Copy the behat template. -->
+        <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Copy the CircleCI configuration -->
+        <copy todir="${application.startdir}/" overwrite="true">
+            <fileset dir="${phing.dir.install}/../defaults/install" includes=".circleci/" />
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <!-- Copy the CircleCI properties. -->
+        <copy file="${phing.dir.install}/../defaults/install/the-build/build.circleci.yml" tofile="${application.startdir}/.the-build/build.circleci.yml" overwrite="true" />
+
+        <!-- Copy Drush configuration and aliases file templates. -->
+        <copy file="${phing.dir.install}/../defaults/install/drush/drush.yml" tofile="${application.startdir}/drush/drush.yml" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+        <copy file="${phing.dir.install}/../defaults/install/drush/sites/projectname.site.yml" tofile="${application.startdir}/drush/sites/${projectname}.site.yml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="uri" value="${drupal.sites.default.uri}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <!-- Set up the Drupal sites directory. -->
+        <property name="drupal.site.dir" value="default" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
+    </project>
+
+    <!-- Target: setup-host -->
+  <target name="setup-host" depends="set-site" description="Add host-specific configuration files.">
     <fail unless="build.host" />
 
     <switch value="${build.host}">
