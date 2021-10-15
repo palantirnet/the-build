@@ -225,44 +225,44 @@
         <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
     </target>
 
+
     <!-- Target: setup-host -->
-  <target name="setup-host" depends="set-site" description="Add host-specific configuration files.">
-    <fail unless="build.host" />
+    <target name="setup-host" depends="set-site" description="Add host-specific configuration files.">
+        <fail unless="build.host"/>
 
-    <switch value="${build.host}">
-      <case value="acquia">
-        <!-- Site-level setup -->
-        <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
-        <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php" />
-      </case>
+        <switch value="${build.host}">
+            <case value="acquia">
+                <!-- Site-level setup -->
+                <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
+                <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php"/>
+            </case>
 
-      <case value="pantheon">
-        <!-- Project-level setup -->
-        <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
+            <case value="pantheon">
+                <!-- Project-level setup -->
+                <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>
 
-        <!-- Site-level setup -->
-        <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-      </case>
+                <!-- Site-level setup -->
+                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
+            </case>
 
-      <case value="platformsh">
-        <!-- Project-level setup -->
-        <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
-        <copy todir="${application.startdir}/.platform" overwrite="true">
-          <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
-        </copy>
-        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
+            <case value="platformsh">
+                <!-- Project-level setup -->
+                <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true"/>
+                <copy todir="${application.startdir}/.platform" overwrite="true">
+                    <fileset dir="${build.thebuild.dir}/defaults/install/.platform"/>
+                </copy>
+                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/"/>
 
-        <!-- Site-level setup -->
-        <composer command="require" composer="${composer.composer}">
-          <arg line="--working-dir ${application.startdir}" />
-          <arg value="platformsh/config-reader:^2.1" />
-        </composer>
-        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-      </case>
+                <!-- Site-level setup -->
+                <composer command="require" composer="${composer.composer}">
+                    <arg line="--working-dir ${application.startdir}"/>
+                    <arg value="platformsh/config-reader:^2.1"/>
+                </composer>
+                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
+            </case>
 
-      <default />
-    </switch>
-
-  </target>
+            <default/>
+        </switch>
+    </target>
 
 </project>
