@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.0-alpha4
+
+### Changed
+
+* Reverted update to Phing 3, since it has a dependency conflict with `drupal/core:9.2.7`
+
 ## 4.0-alpha3
 
 ### Changed
