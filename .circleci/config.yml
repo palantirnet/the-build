@@ -86,7 +86,7 @@ jobs:
       # Install the-build
       - run:
           name: Install the-build in the project
-          command: printf 'http://the-build.local\nother\nn' | vendor/bin/the-build-installer
+          command: printf 'the-build\nhttp://the-build.local\nacquia\nn' | vendor/bin/the-build-installer
 
       - run:
           name: Wait for DB
