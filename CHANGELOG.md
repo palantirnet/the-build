@@ -1,11 +1,16 @@
 # Change Log
 
-## LITE
+## 4.0-alpha1
 
-The goal of this release is to remove some of the templating functionality that makes the-build and drupal-skeleton harder to use and maintain.
+The goal of this release is to remove some of the templating functionality that makes `planaitrnet/the-build` and `palantirnet/drupal-skeleton` harder to use and maintain.
 
 * Removed gitignore template
 * Removed settings.php templating
+* Changed how host-specific settings files are managed
+
+`palantirnet/drupal-skeleton` now contains the `settings.php` scaffolding for Drupal.
+
+The plan is to remove more templating/wrapping before releasing 4.0.
 
 ## 3.0.3 - November 25, 2020
 
