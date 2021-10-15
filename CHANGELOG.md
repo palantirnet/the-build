@@ -1,8 +1,22 @@
 # Change Log
 
+## 4.0-alpha3
+
+### Changed
+
+* Updated to Phing 3
+
+## 4.0-alpha2
+
+### Changed
+
+* Fixed a bug where some properties weren't available to install tasks
+
 ## 4.0-alpha1
 
 The goal of this release is to remove some of the templating functionality that makes `planaitrnet/the-build` and `palantirnet/drupal-skeleton` harder to use and maintain.
+
+### Changed
 
 * Removed gitignore template
 * Removed settings.php templating
