@@ -48,10 +48,8 @@ jobs:
       - run:
           name: Install drupal-check
           command: |
-            curl -O -L https://github.com/mglaman/drupal-check/releases/download/1.1.10/drupal-check.phar
-            mkdir --parents ~/bin
-            mv drupal-check.phar ~/bin/drupal-check
-            chmod +x ~/bin/drupal-check
+            composer global require mglaman/drupal-check
+            ln -s ~/.config/composer/vendor/bin ~/bin
 
       # Composer package cache
       - restore_cache:
