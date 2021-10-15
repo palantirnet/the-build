@@ -102,6 +102,14 @@
             </filterchain>
         </copy>
 
+        <!-- Set up the drupal.site.* properties the way that the set-site target usually
+             does, so that we can use them below. -->
+        <property name="build.site" value="default" />
+        <!-- Copy defaults in first. -->
+        <copyproperties fromPrefix="drupal.sites._defaults" toPrefix="drupal.site" override="true" />
+        <!-- Override defaults with any site-specific values. -->
+        <copyproperties fromPrefix="drupal.sites.${build.site}" toPrefix="drupal.site" override="true" />
+
         <!-- If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
              docroot). -->
         <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
