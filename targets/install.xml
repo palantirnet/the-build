@@ -190,6 +190,11 @@
         <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
             <filterchain>
                 <expandproperties />
+                <!-- Sometimes behat has issues with HTTPS, especially when
+                     using the php built-in webserver on CI. -->
+                <replaceregexp>
+                    <regexp pattern="https:" replace="http:" />
+                </replaceregexp>
             </filterchain>
         </copy>
 
