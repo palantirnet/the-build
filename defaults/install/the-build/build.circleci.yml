@@ -5,7 +5,6 @@ drupal:
     debug: false
   sites:
     default:
-      uri: http://example.ddev.site
       database:
         database: circle_test
         username: root
