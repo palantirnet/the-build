@@ -16,7 +16,7 @@ jobs:
 
     environment:
       - PALANTIR_ENVIRONMENT: circleci
-      - DRUPAL_ROOT: web
+      - DRUPAL_ROOT: docroot
 
     steps:
       - run:
