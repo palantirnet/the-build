@@ -28,14 +28,28 @@
              -->
         <echo message="Configure the default environment..." />
 
+        <!-- Use existing configuration first (e.g. reinstalling the-build) -->
+        <if>
+            <available file="${application.startdir}/.the-build/build.yml" />
+            <then>
+                <property file="${application.startdir}/.the-build/build.yml" prefix="default" />
+            </then>
+        </if>
+        <!-- ... then load the defaults. -->
         <property file="${build.thebuild.dir}/defaults.yml" prefix="default" />
         <mkdir dir="${application.startdir}/.the-build" />
 
         <!-- Generate a hash salt for Drupal. -->
         <php expression="hash('sha256', print_r($_SERVER, TRUE))" returnProperty="hash_salt" />
-        <property name="drupal.sites.default.hash_salt" value="${hash_salt}" override="true" />
+        <mkdir dir="${application.startdir}/config" />
+        <echo message="${hash_salt}" file="${application.startdir}/config/salt.txt" />
+
+        <!-- Prompt for the site name. -->
+        <propertyprompt propertyName="projectname.new" defaultValue="${projectname}" promptText="Machine name for this project" promptCharacter=":" />
+        <property name="projectname" value="${projectname.new}" override="true" />
 
         <!-- Prompt for the Drupal URI. -->
+        <property name="default.drupal.sites.default.uri" value="https://${projectname}.ddev.site" />
         <propertyprompt propertyName="drupal.sites.default.uri" defaultValue="${default.drupal.sites.default.uri}" promptText="Drupal URI" promptCharacter=":" />
 
         <!-- Prompt for the web host. -->
@@ -47,6 +61,12 @@
         <switch value="${build.host}">
             <case value="acquia">
                 <property name="drupal.root" value="docroot" />
+            </case>
+            <case value="pantheon">
+              <property name="drupal.root" value="web" />
+            </case>
+            <case value="platformsh">
+              <property name="drupal.root" value="web" />
             </case>
             <default />
         </switch>
@@ -82,38 +102,35 @@
             </filterchain>
         </copy>
 
-        <!-- Move the drupal root, if it's not drupal.root.old -->
-        <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
-        <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+        <!-- If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
+             docroot). -->
+        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
 
         <if>
-            <not><equals arg1="${drupal.root}" arg2="${drupal.root.old}" /></not>
-            <then>
-                <if>
-                    <and>
-                        <available file="${build.dir}/${drupal.root.old}" type="dir" />
-                        <not><available file="${build.dir}/${drupal.root}" type="dir" /></not>
-                    </and>
-                    <then>
-                        <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                        <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
-                    </then>
-                </if>
+          <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
+          <then>
+            <!-- The one that's available is the location we're moving from. -->
+            <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
+            <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
 
-                <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
-                <reflexive>
-                    <fileset dir="${build.dir}" includes="composer.json" />
-                    <filterchain>
-                        <replaceregexp>
-                            <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
-                            <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
-                        </replaceregexp>
-                    </filterchain>
-                </reflexive>
+            <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+            <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
 
-                <echo msg="Updating your composer.lock hash" />
-                <exec command="composer update --lock" dir="${application.startdir}" />
-            </then>
+            <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
+            <reflexive>
+              <fileset dir="${build.dir}" includes="composer.json" />
+              <filterchain>
+                <replaceregexp>
+                  <regexp pattern='"${drupal.root.old}/(core|libraries|modules|profiles|themes)' replace='"${drupal.root}/\1' />
+                  <regexp pattern='"web-root": "${drupal.root.old}/"' replace='"web-root": "${drupal.root}/"' />
+                </replaceregexp>
+              </filterchain>
+            </reflexive>
+
+            <echo msg="Updating your composer.lock hash" />
+            <exec command="composer update --lock" dir="${application.startdir}" />
+
+          </then>
         </if>
 
         <!-- Copy templates into place.
@@ -137,34 +154,8 @@
         <!-- Copy the CircleCI properties. -->
         <copy file="${phing.dir.install}/../defaults/install/the-build/build.circleci.yml" tofile="${application.startdir}/.the-build/build.circleci.yml" overwrite="true" />
 
-        <!-- Add host-specific files for settings.php templates, the-build properties, and hosting configuration. -->
-        <switch value="${build.host}">
-            <case value="acquia">
-                <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build-acquia.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${phing.dir.install}/../defaults/install/the-build/build.acquia.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-            </case>
-
-            <case value="pantheon">
-                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-pantheon.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.pantheon.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
-            </case>
-
-            <case value="platformsh">
-                <copy file="${build.thebuild.dir}/defaults/install/drupal/settings.build-platformsh.php" todir="${application.startdir}/.the-build/drupal" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/the-build/build.platformsh.yml" todir="${application.startdir}/.the-build" overwrite="true" />
-                <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
-                <copy todir="${application.startdir}/.platform" overwrite="true">
-                    <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
-                </copy>
-                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
-            </case>
-            <default />
-        </switch>
-
-        <!-- Copy Drupal configuration templates (used by the 'build' target). -->
-        <copy file="${phing.dir.install}/../defaults/install/drupal/services.build.yml" todir="${application.startdir}/.the-build/drupal" />
-        <copy file="${phing.dir.install}/../defaults/install/drupal/settings.build.php" todir="${application.startdir}/.the-build/drupal" />
+        <!-- Add host-specific configuration files. -->
+        <phingcall target="configure-host" />
 
         <!-- Copy Drush configuration and aliases file templates. -->
         <copy file="${phing.dir.install}/../defaults/install/drush/drush.yml" tofile="${application.startdir}/drush/drush.yml" overwrite="true">
@@ -180,17 +171,11 @@
             </filterchain>
         </copy>
 
-        <!-- Configure the .gitignore for our settings.php structure. -->
-        <copy file="${phing.dir.install}/../defaults/install/gitignore" tofile="${application.startdir}/.gitignore" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
         <!-- Set up the Drupal sites directory. -->
-        <phingcall target="drupal-sites-directory">
-            <property name="drupal.site.dir" value="default" />
-        </phingcall>
+        <property name="drupal.site.dir" value="default" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
+        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/files" />
 
         <!-- Run the first build. -->
         <phing dir="${application.startdir}" target="build" inheritAll="false" />
@@ -231,55 +216,43 @@
               $> phing test</echo>
     </target>
 
+  <target name="configure-host" description="Add host-specific configuration files.">
+    <fail unless="build.host" />
 
-    <target name="drupal-sites-directory" hidden="true">
-        <fail unless="drupal.site.dir" />
-        <fail unless="build.host" />
-        <fail unless="drupal.root" />
-        <fail unless="build.dir" />
+    <switch value="${build.host}">
+      <case value="acquia">
+        <!-- Site-level setup -->
+        <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
+        <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php" />
+      </case>
 
-        <!-- Make sure the sites directory exists. This is not necessary for the 'default' site, but is required for creating additional multisites. -->
-        <mkdir dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+      <case value="pantheon">
+        <!-- Project-level setup -->
+        <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true" />
 
-        <!-- Use our own basic Drupal settings.php file. -->
-        <chmod mode="750" file="${build.dir}/${drupal.root}/sites/default/" />
-        <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.php" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/settings.php" overwrite="true">
-            <filterchain>
-                <expandproperties />
-            </filterchain>
+        <!-- Site-level setup -->
+        <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+      </case>
+
+      <case value="platformsh">
+        <!-- Project-level setup -->
+        <copy file="${build.thebuild.dir}/defaults/install/.platform.app.yaml" todir="${application.startdir}" overwrite="true" />
+        <copy todir="${application.startdir}/.platform" overwrite="true">
+          <fileset dir="${build.thebuild.dir}/defaults/install/.platform" />
         </copy>
+        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/" />
 
-        <!-- Use the default Drupal services.yml file. -->
-        <copy file="${build.dir}/${drupal.root}/sites/default/default.services.yml" tofile="${build.dir}/${drupal.root}/sites/${drupal.site.dir}/services.yml" overwrite="true">
-            <filterchain>
-                <striplinecomments>
-                    <comment value="#" />
-                </striplinecomments>
-            </filterchain>
-        </copy>
+        <!-- Site-level setup -->
+        <composer command="require" composer="${composer.composer}">
+          <arg line="--working-dir ${application.startdir}" />
+          <arg value="platformsh/config-reader:^2.1" />
+        </composer>
+        <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
+      </case>
 
-        <!-- Add host-specific settings.php and deployment files. -->
-        <switch value="${build.host}">
-            <case value="acquia">
-                <copy file="${build.thebuild.dir}/defaults/install_site/drupal/settings.acquia.php" todir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
+      <default />
+    </switch>
 
-            <case value="pantheon">
-                <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
-
-            <case value="platformsh">
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}" />
-                    <arg value="platformsh/config-reader:^2.1" />
-                </composer>
-                <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" />
-            </case>
-            <default />
-        </switch>
-
-        <echo msg="Set up the Drupal sites directory at '${drupal.root}/sites/${drupal.site.dir}/'" />
-    </target>
-
+  </target>
 
 </project>

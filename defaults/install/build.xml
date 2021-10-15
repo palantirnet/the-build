@@ -43,21 +43,6 @@
         <mkdir dir="${drupal.root}/${drupal.site.settings.file_private_path}" />
         <chmod file="${drupal.root}/${drupal.site.settings.file_private_path}" mode="640" />
 
-        <!-- Copy the settings.build.php and services.build.php templates into place. -->
-        <copy todir="${build.dir}" overwrite="true" mode="544">
-            <!-- Copy the template files -->
-            <filelist dir="${build.dir}" files="${drupal.site.build.settings_template},${drupal.site.build.services_template}" />
-            <!-- Map templates to their destinations -->
-            <mapper type="firstmatch">
-                <mapper type="glob" from="${drupal.site.build.settings_template}" to="${drupal.site.build.settings_dest}" />
-                <mapper type="glob" from="${drupal.site.build.services_template}" to="${drupal.site.build.services_dest}" />
-            </mapper>
-            <!-- Substitute property values -->
-            <filterchain>
-                <expandproperties />
-            </filterchain>
-        </copy>
-
         <!-- Include styleguide resources in the theme. This approach will symlink
              resources in development environments, and copy them for artifact builds. -->
         <!-- <includeresource source="styleguide/source/assets/css" dest="${drupal.root}/themes/custom/example_theme/css" /> -->
@@ -175,7 +160,7 @@
 
     <!-- Default target: list -->
     <target name="list" hidden="true">
-        <exec command="phing -q -f ${phing.file} -l" passthru="true"/>
+        <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
         <echo>Find more documentation for palantirnet/the-build on GitHub:
 
             https://github.com/palantirnet/the-build#using-the-build</echo>

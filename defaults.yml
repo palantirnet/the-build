@@ -14,13 +14,14 @@
 build:
   # The destination host, either 'acquia', 'pantheon', 'platformsh', or 'other'. This is
   # currently only used when setting up the settings.php file for a Drupal site.
-  host: other
+  host: acquia
 
 # Drupal configuration used by targets/drupal.xml
 drupal:
   # Relative path to the Drupal web root. This is co-dependent with the composer installer
   # configuration in your `composer.json`. Use caution when changing this value.
-  root: web
+  # **This is a required value but must be set in a project's own build.yml file**
+  #root: web
 
   # Comma-separated list of directories that should be present for Drupal development.
   create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,config/config_split/development,config/config_split/staging,config/config_split/production"
@@ -52,8 +53,9 @@ drupal:
       dir: default
 
       # REQUIRED: Your site's URI; the default should be the URI of your local
-      # development environment.
-      uri: "https://${projectname}.local"
+      # development environment. This must be present in your
+      # .the-build/build.yml file.
+#      uri: "https://${projectname}.ddev.site"
 
       # Customizing the following values is OPTIONAL. If these values are not
       # explicitly configured, they will be set in the-build.xml based on the
@@ -109,9 +111,9 @@ drupal:
       database:
         # This value is required, but a default is set in the-build.xml.
         # database: drupal
-        username: root
-        password: root
-        host: 127.0.0.1
+        username: db
+        password: db
+        host: db
 
       # Configuration used by the default 'build' target.
       build:
@@ -240,7 +242,7 @@ phpcs:
   # use the extensions option (below). This option should not be used with Coder >= 8.3.7, which only
   # checks php, inc, css, and js by default.
   ignore: "*.md"
-  
+
   # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
   extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml,js"
 

@@ -5,6 +5,8 @@
 # found in the-build's repository.
 # @see https://github.com/palantirnet/the-build/blob/release-2.0/defaults.yml
 
+projectname: ${projectname}
+
 # These properties are used when building the settings.php and settings.yml for your
 # Drupal site, and by some of the targets in the default build.xml file.
 # @see .the-build/drupal/services.build.yml
