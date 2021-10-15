@@ -37,7 +37,7 @@ jobs:
           command: mkdir /tmp/artifacts
       - run:
           name: Configure URL in /etc/hosts
-          command: echo 127.0.0.1 ${CIRCLE_PROJECT_REPONAME}.local | sudo tee -a /etc/hosts
+          command: echo 127.0.0.1 example.local | sudo tee -a /etc/hosts
 
       # Note: phing and drupal-check have mutually exclusive requirements.
       # It'd be better to add drupal-check as a dependency of the drupal project
@@ -86,7 +86,7 @@ jobs:
       # Install the-build
       - run:
           name: Install the-build in the project
-          command: printf 'the-build\nhttp://the-build.local\nacquia\nn' | vendor/bin/the-build-installer
+          command: printf '\n\n\nn' | vendor/bin/the-build-installer
 
       - run:
           name: Wait for DB
@@ -110,12 +110,12 @@ jobs:
       # Add a multisite
       - run:
           name: Add a multisite to the project
-          command: printf 'intranet\nintranet.the-build.local' | vendor/bin/phing drupal-add-multisite
+          command: printf 'intranet\nintranet.example.local' | vendor/bin/phing drupal-add-multisite
 
       - run:
           name: Run Behat tests
           command: |
-              nohup php -S ${CIRCLE_PROJECT_REPONAME}.local:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
+              nohup php -S example.local:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
               vendor/bin/phing test -Dbuild.env=circleci
 
       - store_artifacts:
