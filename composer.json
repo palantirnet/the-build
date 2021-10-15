@@ -12,15 +12,14 @@
         "bin/the-build-installer"
     ],
     "require": {
+        "palantirnet/phing-drush-task": "^1.1",
         "drupal/coder": "^8.3.6",
         "drush/drush": "^9 || ^10",
-        "palantirnet/phing-drush-task": "^2",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "^3",
+        "phing/phing": "^2.14",
         "phpmd/phpmd": "^2.4"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-0": {
             "TheBuild\\": "src/"
