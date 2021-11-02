@@ -127,5 +127,36 @@
         </if>
     </target>
 
+    <!--
+        Target: yarn-safe
+
+        Add this as a dependency of targets before running yarn commands (other than install).
+        -->
+    <target name="yarn-safe" hidden="true">
+      <fail unless="styleguide.root" message="Must be called with the 'styleguide.root' variable." />
+      <if>
+        <or>
+          <and>
+            <equals arg1="${env.IS_DDEV_PROJECT}" arg2="TRUE" />
+            <isfileselected file="${styleguide.root}/node_modules/.yarn-integrity">
+              <contains text="linux-x64" />
+            </isfileselected>
+          </and>
+          <and>
+            <not><isset property="env.IS_DDEV_PROJECT" /></not>
+            <isfileselected file="${styleguide.root}/node_modules/.yarn-integrity">
+              <contains text="darwin-x64" />
+            </isfileselected>
+          </and>
+          <isset property="env.CIRCLECI" />
+        </or>
+        <then>
+          <echo message="Safe to run yarn commands in ${styleguide.root}: yarn dependencies match this environment" />
+        </then>
+        <else>
+          <fail message="NOT safe to run yarn commands in ${styleguide.root}: yarn dependencies DO NOT MATCH this environment" />
+        </else>
+      </if>
+    </target>
 
 </project>
