@@ -91,6 +91,9 @@
         Target: styleguide-install
 
         Install the styleguide dependencies with composer and yarn.
+
+        To force a reinstall of the styleguide dependencies, use:
+          phing styleguide-install -Dyarn_install.reinstall=true
         -->
     <target name="styleguide-install" depends="styleguide-exists-or-else" hidden="true">
         <!-- Run composer install in the styleguide. -->
@@ -110,7 +113,12 @@
                 <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
                 <or>
                   <not><available file="${styleguide.root.resolved}/node_modules/.yarn-integrity" type="file" /></not>
-                  <not><available file="${styleguide.root.resolved}/node_modules/node-sass/vendor/linux-x64-59/binding.node" type="file" /></not>
+                  <not>
+                      <isfileselected file="${styleguide.root}/node_modules/.yarn-integrity">
+                          <contains text="linux-x64" />
+                      </isfileselected>
+                  </not>
+                  <equals arg1="${yarn_install.reinstall}" arg2="TRUE" />
                 </or>
             </and>
             <then>
