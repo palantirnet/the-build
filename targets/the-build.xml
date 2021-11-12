@@ -87,11 +87,18 @@
     <!-- Use the project directory name as the project name, if it's not configured. -->
     <basename property="projectname" file="${build.dir}" suffix="local" />
 
-    <!-- Configure the 'drush' Phing task. -->
+    <!-- Configure the 'drush' Phing task. By default, we run the installed drush. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
-    <property name="drush.root" value="${build.dir}/${drupal.root}" />
-    <property name="drush.config" value="${build.dir}/drush/drushrc.php" />
-
+    <!-- If this is a ddev project, and we're outside of ddev, run ddev's drush command instead.  -->
+    <if>
+        <and>
+            <available file="${build.dir}/.ddev/config.yaml" />
+            <not><isset property="env.IS_DDEV_PROJECT" /></not>
+        </and>
+        <then>
+            <property name="drush.bin" value="ddev drush" override="true" />
+        </then>
+    </if>
 
     <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
     <exec command="command -v composer" outputProperty="composer.path.composer" />
