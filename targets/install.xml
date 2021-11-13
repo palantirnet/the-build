@@ -165,6 +165,9 @@
 
     <!-- Target: setup-templates -->
     <target name="setup-templates" depends="set-site">
+        <!-- Set the project name in the ddev config. -->
+        <replaceregexp match="name: .*" replace="name: ${projectname}" file=".ddev/config.yaml" />
+
         <!-- Copy the build file template.
 
              This doesn't do any property substitution except for the "projectname",
