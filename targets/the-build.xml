@@ -90,9 +90,11 @@
     <!-- Configure the 'drush' Phing task. By default, we run the installed drush. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
     <!-- If this is a ddev project, and we're outside of ddev, run ddev's drush command instead.  -->
+    <exec command="which ddev" returnProperty="which_ddev" />
     <if>
         <and>
             <available file="${build.dir}/.ddev/config.yaml" />
+            <equals arg1="${which_ddev}" arg2="0" />
             <not><isset property="env.IS_DDEV_PROJECT" /></not>
         </and>
         <then>
