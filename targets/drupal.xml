@@ -31,11 +31,8 @@
       <!-- Assembling this property at run time. -->
       <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
-        <!-- Use git to list local (not yet committed) changes to the config
-             directory. Suppress errors so that this command will run even if
-             the project isn't a git directory (e.g. on the-build's CircleCI
-             test!) -->
-        <exec command="git status --porcelain ${drupal.validate_clean_config.dir} 2>/dev/null" outputProperty="modified_files" />
+        <!-- Use git to list local (not yet committed) changes to the config directory. -->
+        <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
 
         <if>
             <and>
