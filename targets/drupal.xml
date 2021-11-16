@@ -179,23 +179,34 @@ Or, you can specify the export file directly:
 
     <!-- Target: drupal-has-database-connection
 
-         Check for a Drupal database connection.
+         Check for a Drupal database connection. If the database doesn't exist and we have
+         the permissions, the database will be created.
          -->
     <target name="drupal-has-database-connection" depends="set-site" hidden="true">
-        <drush command="status" returnProperty="drupal_has_database_connection">
-            <option name="fields" value="db-status" />
-            <option name="format" value="string" />
-        </drush>
-
-        <if>
-            <equals arg1="${drupal_has_database_connection}" arg2="Connected" />
-            <then>
+        <trycatch>
+            <try>
+                <drush command="sql-query">
+                    <param>SELECT 1</param>
+                </drush>
                 <echo msg="Drupal database connection available." />
-            </then>
-            <else>
-                <fail msg="Drupal database connection not available." />
-            </else>
-        </if>
+            </try>
+            <catch>
+                <trycatch>
+                    <try>
+                        <!-- If there's a database and it is accessible, this code will
+                             not be run. This code can help with setting up new
+                             multisites, since they will use new databases that may or may
+                             not exist yet.
+                             -->
+                        <drush command="sql-create" assume="yes" />
+                        <echo msg="Drupal database connection available." />
+                    </try>
+                    <catch>
+                        <fail msg="Drupal database connection not available." />
+                    </catch>
+                </trycatch>
+            </catch>
+        </trycatch>
     </target>
 
 
