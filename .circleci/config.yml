@@ -25,9 +25,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y libpng-dev default-mysql-client
       - run:
-          name: Install PHP extensions
-          command: sudo pecl install pdo_mysql gd
-      - run:
           name: Configure PHP
           command: |
             echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
