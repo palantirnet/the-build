@@ -24,7 +24,7 @@ drupal:
   #root: web
 
   # Comma-separated list of directories that should be present for Drupal development.
-  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,${drupal.root}/profiles/custom,config/config_split/development,config/config_split/staging,config/config_split/production"
+  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,config/config_split/development,config/config_split/staging,config/config_split/production"
 
   twig:
     # Whether to enable twig debugging.
@@ -233,7 +233,7 @@ phpcs:
   standard: "${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"
 
   # Space-separated list of directories to review.
-  directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom ${drupal.root}/profiles/custom"
+  directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom"
 
   # Comma-separated list of patterns for files and directories to exclude from the
   # PHP_CodeSniffer review.
@@ -256,7 +256,7 @@ phpcs:
 #   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}
 phpmd:
   # Comma-separated list of directories to review.
-  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/"
+  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/"
   # Output format for phpmd.
   format: text
   # Comma-separated list of ruleset paths or names.
@@ -273,7 +273,7 @@ drupal-check:
   # because of repository-level composer conflicts.
   bin: "~/bin/drupal-check"
   # Comma separated list of directories
-  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/,${drupal.root}/profiles/custom/"
+  directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/"
 
 # Configuration for running behat tests.
 #
