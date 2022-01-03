@@ -37,7 +37,7 @@ class IncludeResourceTask extends \Task {
    *
    * @var boolean
    */
-  private $relative = false;
+  private $relative = true;
 
   /**
    * Init tasks.
