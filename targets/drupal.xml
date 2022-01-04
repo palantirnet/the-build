@@ -260,7 +260,7 @@ Or, you can specify the export file directly:
         <composer command="require" composer="${composer.composer}">
             <arg value="drupal/admin_toolbar" />
             <arg value="drupal/config_split" />
-            <arg value="drupal/devel:^3.0@dev" />
+            <arg value="drupal/devel" />
             <arg value="drupal/workbench" />
             <arg value="drupal/workbench_tabs" />
         </composer>
