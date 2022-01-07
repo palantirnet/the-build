@@ -32,6 +32,12 @@ class IncludeResourceTask extends \Task {
    */
   protected $dest = NULL;
 
+  /**
+   * Whether to create relative symlinks
+   *
+   * @var boolean
+   */
+  protected $relative = true;
 
   /**
    * Init tasks.
@@ -43,6 +49,10 @@ class IncludeResourceTask extends \Task {
     $mode = $this->getProject()->getProperty('includeresource.mode');
     if (!is_null($mode)) {
       $this->setMode($mode);
+    }
+    $relative = $this->getProject()->getProperty('includeresource.relative');
+    if (!is_null($relative)) {
+      $this->setRelative($relative);
     }
   }
 
@@ -70,7 +80,11 @@ class IncludeResourceTask extends \Task {
     }
     else {
       $this->log(sprintf("Linking '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
-      FileSystem::getFileSystem()->symlink($this->source->getPath(), $this->dest->getPath());
+      $symlink_task = $this->project->createTask("symlink");
+      $symlink_task->setTarget($this->source->getPath());
+      $symlink_task->setLink($this->dest->getPath());
+      $symlink_task->setRelative($this->relative);
+      $symlink_task->main();
     }
   }
 
@@ -120,6 +134,14 @@ class IncludeResourceTask extends \Task {
    */
   public function setDest(PhingFile $dest) {
     $this->dest = $dest;
+  }
+
+  /**
+   * @param boolean $relative
+   */
+  public function setRelative($relative)
+  {
+      $this->relative = $relative;
   }
 
 }

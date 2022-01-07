@@ -45,7 +45,7 @@
 
         <!-- Include styleguide resources in the theme. This approach will symlink
              resources in development environments, and copy them for artifact builds. -->
-        <!-- <includeresource source="styleguide/source/assets/css" dest="${drupal.root}/themes/custom/example_theme/css" /> -->
+        <!-- <includeresource relative="true" source="${build.dir}/styleguide/source/assets/css" dest="${build.dir}/${drupal.root}/themes/custom/example_theme/css" /> -->
     </target>
 
 

@@ -270,7 +270,7 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site" hidden="true">
         <fail unless="drupal.site.admin_user" />
 
-        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" />
+        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" relative="true" />
 
         <composer command="require" composer="${composer.composer}">
             <arg value="drupal/admin_toolbar" />
