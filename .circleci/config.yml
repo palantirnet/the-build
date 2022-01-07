@@ -58,10 +58,7 @@ jobs:
       # Use this copy of the-build
       - run:
           name: Replace the default version of the-build with this one
-          command: rm -r vendor/palantirnet/the-build
-
-      - checkout:
-          path: ~/example/vendor/palantirnet/the-build
+          command: composer require --dev palantirnet/the-build:dev-${CIRCLE_BRANCH}
 
       # Source cache - update when branch changes
       - save_cache:
