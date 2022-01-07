@@ -183,10 +183,25 @@ Or, you can specify the export file directly:
          the permissions, the database will be created.
          -->
     <target name="drupal-has-database-connection" depends="set-site" hidden="true">
+
+        <!-- We have to format the test query differently when using "ddev drush" vs. when using "drush" directly. -->
+        <property name="test_query" value="SELECT 1" />
+        <exec command="which ddev" returnProperty="which_ddev" />
+        <if>
+            <and>
+                <available file="${build.dir}/.ddev/config.yaml" />
+                <equals arg1="${which_ddev}" arg2="0" />
+                <not><isset property="env.IS_DDEV_PROJECT" /></not>
+            </and>
+            <then>
+                <property name="test_query" override="true">\"SELECT 1\"</property>
+            </then>
+        </if>
+
         <trycatch>
             <try>
                 <drush command="sql-query">
-                    <param>SELECT 1</param>
+                    <param>${test_query}</param>
                 </drush>
                 <echo msg="Drupal database connection available." />
             </try>
@@ -255,7 +270,7 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site" hidden="true">
         <fail unless="drupal.site.admin_user" />
 
-        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" />
+        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" relative="true" />
 
         <composer command="require" composer="${composer.composer}">
             <arg value="drupal/admin_toolbar" />
