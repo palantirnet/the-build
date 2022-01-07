@@ -87,9 +87,11 @@
     <!-- Use the project directory name as the project name, if it's not configured. -->
     <basename property="projectname" file="${build.dir}" suffix="local" />
 
-    <!-- Configure the 'drush' Phing task. By default, we run the installed drush. -->
+    <!-- Configure binaries to run depending on whether we're inside of ddev or out. -->
     <property name="drush.bin" value="${build.dir}/vendor/bin/drush" />
-    <!-- If this is a ddev project, and we're outside of ddev, run ddev's drush command instead.  -->
+    <property name="behat.bin" value="${build.dir}/vendor/bin/behat" />
+
+    <!-- If this is a ddev project, and we're outside of ddev, run these commands within ddev.  -->
     <exec command="which ddev" returnProperty="which_ddev" />
     <if>
         <and>
@@ -99,6 +101,7 @@
         </and>
         <then>
             <property name="drush.bin" value="ddev drush" override="true" />
+            <property name="behat.bin" value="ddev . vendor/bin/behat" override="true" />
         </then>
     </if>
 

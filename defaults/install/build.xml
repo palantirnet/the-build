@@ -103,7 +103,7 @@
 
     <!-- Target: behat -->
     <target name="behat" description="Run the Behat tests.">
-        <property name="behat.command" value="vendor/bin/behat ${behat.args}" />
+        <property name="behat.command" value="${behat.bin} ${behat.args}" />
         <echo msg="$> ${behat.command}" />
         <exec command="${behat.command}" logoutput="true" checkreturn="true" />
     </target>
