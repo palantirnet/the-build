@@ -1,4 +1,10 @@
-version: 2
+version: 2.1
+# To use browsers on CircleCI, uncomment the lines below and add steps to install them.
+# For example, add these to `jobs.build.steps`:
+# - browser-tools/install-chrome
+# - browser-tools/install-chromedriver
+# orbs:
+#   browser-tools: circleci/browser-tools@1.2.3
 jobs:
   build:
     working_directory: ~/${projectname}
