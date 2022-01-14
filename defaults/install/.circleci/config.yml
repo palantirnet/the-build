@@ -20,7 +20,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo sudo apt-get update && apt-get install -y libpng-dev default-mysql-client
+            sudo apt-get update && apt-get install -y libpng-dev default-mysql-client
       - run:
           name: Install nvm
           command: |
