@@ -1,7 +1,7 @@
 # This CircleCI configuration is for testing the-build itself. For the configuration
 # installed in projects, see defaults/install/.circleci/config.yml
 
-version: 2
+version: 2.1
 jobs:
   build:
     working_directory: ~/example
