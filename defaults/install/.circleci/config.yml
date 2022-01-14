@@ -3,8 +3,8 @@ jobs:
   build:
     working_directory: ~/${projectname}
     docker:
-      - image: circleci/php:7.3-node-browsers
-      - image: circleci/mysql:5.7-ram
+      - image: cimg/php:7.4-node-browsers
+      - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -20,8 +20,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get update
-            sudo apt-get install -y libpng-dev default-mysql-client
+            sudo sudo apt-get update && apt-get install -y libpng-dev default-mysql-client
       - run:
           name: Install nvm
           command: |
@@ -31,13 +30,9 @@ jobs:
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
       - run:
-          name: Install PHP extensions
-          command: sudo docker-php-ext-install pdo_mysql gd
-      - run:
           name: Configure PHP
           command: |
-            echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
-            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
       - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
