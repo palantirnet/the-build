@@ -7,7 +7,7 @@ jobs:
     working_directory: ~/example
     docker:
       - image: cimg/php:7.4-browsers
-      - image: circleci/mysql:5.7-ram
+      - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -22,8 +22,7 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get update
-            sudo apt-get install -y libpng-dev default-mysql-client
+            sudo sudo apt-get update && apt-get install -y libpng-dev default-mysql-client
       - run:
           name: Configure PHP
           command: |
