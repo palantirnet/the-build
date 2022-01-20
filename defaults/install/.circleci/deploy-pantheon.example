@@ -35,7 +35,7 @@
       - add_ssh_keys
       - run:
           name: Install packages
-          command: sudo apt-get install -y libpng-dev
+          command: sudo apt-get update && sudo apt-get install -y libpng-dev
 
       - run:
           name: Install nvm
@@ -46,12 +46,9 @@
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
       - run:
-          name: Install PHP extensions
-          command: sudo docker-php-ext-install gd
-      - run:
           name: Configure PHP
           command: |
-            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
       - run:
           name: Configure Git
           command: |
