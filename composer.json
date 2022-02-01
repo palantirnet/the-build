@@ -20,7 +20,8 @@
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
-        "phpmd/phpmd": "^2.4"
+        "phpmd/phpmd": "^2.4",
+        "phpspec/prophecy-phpunit": "^2"
     },
     "autoload": {
         "psr-0": {
