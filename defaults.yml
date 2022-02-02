@@ -227,13 +227,17 @@ phplint:
 # @see https://www.drupal.org/project/coder
 #
 # These values are used in the defaults/build.xml template:
-#   $> phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}
+#   $> phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} --ignore=${phpcs.ignore} ${phpcs.directories}
 phpcs:
   # Path to a PHP_CodeSniffer standard file.
   standard: "${build.dir}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"
 
   # Space-separated list of directories to review.
   directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom"
+
+  # Comma-separated list of patterns for files and directories to exclude from the
+  # PHP_CodeSniffer review.
+  ignore: "*/vendor/*,*/node_modules/*"
 
   # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
   extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml,js"
