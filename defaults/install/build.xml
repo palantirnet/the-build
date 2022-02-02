@@ -117,7 +117,7 @@
         </phplint>
 
         <!-- Run PHP Code Sniffer. -->
-        <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} --ignore=${phpcs.ignore} ${phpcs.directories}" />
+        <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
         <echo msg="$> ${phpcs.command}" />
         <exec command="${phpcs.command}" logoutput="true" checkreturn="true" />
 
