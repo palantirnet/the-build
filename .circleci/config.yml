@@ -58,7 +58,7 @@ jobs:
       # Use this copy of the-build
       - run:
           name: Replace the default version of the-build with this one
-          command: composer require --dev palantirnet/the-build:dev-${CIRCLE_BRANCH}
+          command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH}
 
       # Source cache - update when branch changes
       - save_cache:
