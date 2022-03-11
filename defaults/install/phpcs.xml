@@ -14,7 +14,6 @@
   <!-- Warnings and errors should throw an exception. -->
   <config name="ignore_warnings_on_exit" value="0" />
   <config name="ignore_errors_on_exit" value="0" />
-  <config name="installed_paths" value="vendor/drupal/coder/coder_sniffer" />
 
   <!-- Set extensions to scan. -->
   <arg name="extensions" value="php,module,inc,install,test,profile,theme,info,yml,css,js"/>
