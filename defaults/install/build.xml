@@ -117,9 +117,8 @@
         </phplint>
 
         <!-- Run PHP Code Sniffer. -->
-        <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
-        <echo msg="$> ${phpcs.command}" />
-        <exec command="${phpcs.command}" logoutput="true" checkreturn="true" />
+        <echo msg="$> vendor/bin/phpcs" />
+        <exec command="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
         <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />

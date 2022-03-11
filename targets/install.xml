@@ -186,6 +186,17 @@
             </filterchain>
         </copy>
 
+        <!-- Copy the phpcs.xml file template.
+             This doesn't do any property substitution except for the "projectname".
+             -->
+        <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${application.startdir}/phpcs.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
          <!-- Copy other templates into place.
              These copy commands use <expandproperties /> for property substitution.
              -->
