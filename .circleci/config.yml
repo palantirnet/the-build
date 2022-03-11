@@ -34,18 +34,6 @@ jobs:
           name: Configure URL in /etc/hosts
           command: echo 127.0.0.1 example.ddev.site | sudo tee -a /etc/hosts
 
-      # Note: phing and drupal-check have mutually exclusive requirements.
-      # It'd be better to add drupal-check as a dependency of the drupal project
-      # rather than as part of the virtual environment, but this will have to do
-      # for now. Also note, drupal-check is added as part of the-vagrant so it
-      # is available to run within our VM.
-      # Note 2: drupal-check is pinned to a known stable version.
-      - run:
-          name: Install drupal-check
-          command: |
-            composer global require mglaman/drupal-check
-            ln -s ~/.config/composer/vendor/bin ~/bin
-
       # Composer package cache
       - restore_cache:
           keys:
@@ -65,10 +53,7 @@ jobs:
       # Use this copy of the-build
       - run:
           name: Replace the default version of the-build with this one
-          command: rm -r vendor/palantirnet/the-build
-
-      - checkout:
-          path: ~/example/vendor/palantirnet/the-build
+          command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH}
 
       # Source cache - update when branch changes
       - save_cache:
