@@ -2,9 +2,23 @@
 #
 # Wrapper for our install command; at least this way it's somewhat discoverable.
 #
-# Essentially, this runs:
+# The install command boils down to:
 #   vendor/bin/phing -f vendor/palantirnet/the-build/targets/install.xml
 #
-# This script assumes that the composer bin dir is at vendor/bin/.
+# This script is "weird", because:
+# * Script proxying was added in Composer 2.2.0
+# * The environment variable COMPOSER_BIN_DIR was added in Composer 2.2.2
+# * The environment variable was changed to COMPOSER_RUNTIME_BIN_DIR in Composer 2.2.7
+# * This script assumes the composer bin dir is at vendor/bin/
 
-(cd $COMPOSER_BIN_DIR/../../ && $COMPOSER_BIN_DIR/phing -f $COMPOSER_BIN_DIR/../palantirnet/the-build/targets/install.xml)
+# Composer 2.2.2 through 2.2.6
+if [ "$COMPOSER_BIN_DIR" != "" ]; then
+  COMPOSER_RUNTIME_BIN_DIR="$COMPOSER_BIN_DIR"
+fi
+
+if [ "$COMPOSER_RUNTIME_BIN_DIR" = "" ]; then
+  echo "Please update to at least Composer version 2.2.2"
+  exit 1
+fi
+
+(cd $COMPOSER_RUNTIME_BIN_DIR/../../ && $COMPOSER_RUNTIME_BIN_DIR/phing -f $COMPOSER_RUNTIME_BIN_DIR/../palantirnet/the-build/targets/install.xml)
