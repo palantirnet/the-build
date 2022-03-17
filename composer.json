@@ -12,6 +12,7 @@
         "bin/the-build-installer"
     ],
     "require": {
+        "composer-runtime-api": "^2.2.2",
         "cweagans/composer-patches": "^1.7",
         "drupal/coder": "^8.3.6",
         "drush/drush": "^9 || ^10",
@@ -29,7 +30,11 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "cweagans/composer-patches": true
+        }
     },
     "extra": {
         "patches": {
