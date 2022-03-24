@@ -24,7 +24,7 @@
         <if>
             <equals arg1="${styleguide.exists}" arg2="1" />
             <then>
-                <phingcall target="styleguide-build" />
+                <phing phingfile="styleguide.xml" target="styleguide-build" haltonfailure="true"/>
             </then>
             <else>
                 <echo>Skipping style guide build.</echo>
