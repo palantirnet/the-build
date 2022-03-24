@@ -40,6 +40,10 @@ jobs:
           command: |
             echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
       - run:
+          name: Update Composer
+          command: |
+            sudo composer self-update
+      - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
       - run:
