@@ -45,8 +45,6 @@
         <if>
             <and>
                 <available file="${styleguide.root.resolved}" type="dir" />
-                <available file="${styleguide.root.resolved}/composer.json" type="file" />
-                <available file="${styleguide.root.resolved}/composer.lock" type="file" />
                 <available file="${styleguide.root.resolved}/package.json" type="file" />
                 <available file="${styleguide.root.resolved}/yarn.lock" type="file" />
             </and>
