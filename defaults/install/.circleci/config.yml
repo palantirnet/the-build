@@ -9,7 +9,7 @@ jobs:
   build:
     working_directory: ~/${projectname}
     docker:
-      - image: cimg/php:7.4-node-browsers
+      - image: cimg/php:7.4-browsers
       - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
