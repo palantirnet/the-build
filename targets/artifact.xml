@@ -252,7 +252,7 @@
             - Override the "artifact mode" so that files managed with the
               <includeresource /> task are copied into the artifact instead of symlinked.
             -->
-        <phing target="build" phingfile="${phing.file}" inheritAll="false" dir=".">
+        <phing target="build" phingfile="${phing.file}" inheritAll="false" dir="." haltonfailure="true">
             <property name="build.site" value="${site_key}" />
             <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
             <property name="includeresource.mode" value="copy" override="true" />
