@@ -1,13 +1,13 @@
 # This CircleCI configuration is for testing the-build itself. For the configuration
 # installed in projects, see defaults/install/.circleci/config.yml
 
-version: 2
+version: 2.1
 jobs:
   build:
     working_directory: ~/example
     docker:
-      - image: circleci/php:7.4-node-browsers
-      - image: circleci/mysql:5.7-ram
+      - image: cimg/php:7.4-browsers
+      - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -22,34 +22,21 @@ jobs:
       - run:
           name: Install packages
           command: |
-            sudo apt-get update
-            sudo apt-get install -y libpng-dev default-mysql-client
-      - run:
-          name: Install PHP extensions
-          command: sudo docker-php-ext-install pdo_mysql gd
+            sudo apt-get update && sudo apt-get install -y libpng-dev default-mysql-client
       - run:
           name: Configure PHP
           command: |
-            echo "sendmail_path=/bin/true" | sudo tee -a "/usr/local/etc/php/php.ini"
-            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
+      - run:
+          name: Update Composer
+          command: |
+            sudo composer self-update
       - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
       - run:
           name: Configure URL in /etc/hosts
           command: echo 127.0.0.1 example.ddev.site | sudo tee -a /etc/hosts
-
-      # Note: phing and drupal-check have mutually exclusive requirements.
-      # It'd be better to add drupal-check as a dependency of the drupal project
-      # rather than as part of the virtual environment, but this will have to do
-      # for now. Also note, drupal-check is added as part of the-vagrant so it
-      # is available to run within our VM.
-      # Note 2: drupal-check is pinned to a known stable version.
-      - run:
-          name: Install drupal-check
-          command: |
-            composer global require mglaman/drupal-check
-            ln -s ~/.config/composer/vendor/bin ~/bin
 
       # Composer package cache
       - restore_cache:
@@ -70,10 +57,7 @@ jobs:
       # Use this copy of the-build
       - run:
           name: Replace the default version of the-build with this one
-          command: rm -r vendor/palantirnet/the-build
-
-      - checkout:
-          path: ~/example/vendor/palantirnet/the-build
+          command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH}
 
       # Source cache - update when branch changes
       - save_cache:

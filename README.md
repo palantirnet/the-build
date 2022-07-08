@@ -10,6 +10,8 @@ _Note: If you are starting a new a project, you may be looking for the [drupal-s
 $> composer require palantirnet/the-build
 ```
 
+Composer 2.2.2 or greater is required for the-build.
+
 ## Setting up
 
 Install the default templates and phing targets to your project:

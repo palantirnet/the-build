@@ -12,14 +12,17 @@
         "bin/the-build-installer"
     ],
     "require": {
+        "composer-runtime-api": "^2.2.2",
         "cweagans/composer-patches": "^1.7",
         "drupal/coder": "^8.3.6",
         "drush/drush": "^9 || ^10",
+        "mglaman/drupal-check": "^1.2",
         "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
-        "phpmd/phpmd": "^2.4"
+        "phpmd/phpmd": "^2.4",
+        "phpspec/prophecy-phpunit": "^2"
     },
     "autoload": {
         "psr-0": {
@@ -27,7 +30,11 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "cweagans/composer-patches": true
+        }
     },
     "extra": {
         "patches": {

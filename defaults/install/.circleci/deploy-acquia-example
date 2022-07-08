@@ -21,7 +21,7 @@
   deploy:
     working_directory: ~/project
     docker:
-      - image: circleci/php:7.2-node-browsers
+      - image: cimg/php:7.4-browsers
     environment:
       - NODE_VERSION: 8
       - GITHUB_PUBKEY: "github.com,192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="
@@ -33,7 +33,7 @@
       - add_ssh_keys
       - run:
           name: Install packages
-          command: sudo apt-get install -y libpng-dev
+          command: sudo apt-get update && sudo apt-get install -y libpng-dev
 
       - run:
           name: Install nvm
@@ -44,12 +44,9 @@
             echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
             echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
       - run:
-          name: Install PHP extensions
-          command: sudo docker-php-ext-install gd
-      - run:
           name: Configure PHP
           command: |
-            echo "memory_limit=-1" | sudo tee -a "/usr/local/etc/php/php.ini"
+            echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
       - run:
           name: Configure Git
           command: |
