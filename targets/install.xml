@@ -134,16 +134,17 @@
          If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
          docroot).-->
     <target name="setup-web-root" depends="set-site">
-        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
+        <available file="${build.dir}/${drupal.root}/core" type="dir" property="drupal.root.exists" value="true" />
 
         <if>
             <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
             <then>
                 <!-- The one that's available is the location we're moving from. -->
-                <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
-                <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
+                <available file="${build.dir}/web/core" type="dir" property="drupal.root.old" value="web" />
+                <available file="${build.dir}/docroot/core" type="dir" property="drupal.root.old" value="docroot" />
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
                 <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
