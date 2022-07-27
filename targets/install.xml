@@ -68,7 +68,9 @@
             <case value="platformsh">
               <property name="drupal.root" value="web" />
             </case>
-            <default />
+            <default>
+              <property name="drupal.root" value="web" />
+            </default>
         </switch>
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
