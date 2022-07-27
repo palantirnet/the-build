@@ -140,8 +140,8 @@
             <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
             <then>
                 <!-- The one that's available is the location we're moving from. -->
-                <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
                 <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+                <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
                 <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
