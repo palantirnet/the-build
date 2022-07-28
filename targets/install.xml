@@ -144,7 +144,7 @@
                 <available file="${build.dir}/docroot/core" type="dir" property="drupal.root.old" value="docroot" />
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" />
                 <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
