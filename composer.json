@@ -20,7 +20,7 @@
         "palantirnet/phing-drush-task": "dev-drupal-10",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "3.0.0-RC3",
+        "phing/phing": "dev-main",
         "phpmd/phpmd": "^2.4",
         "phpspec/prophecy-phpunit": "^2"
     },
