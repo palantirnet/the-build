@@ -222,6 +222,9 @@ phplint:
 # Configuration for using PHP_CodeSniffer to review code according to the Drupal coding
 # standards.
 #
+# DEPRECATED - to be removed in the-build 4.2
+# This configuration is replaced by defaults/install/phpcs.xml.
+#
 # @see https://www.drupal.org/docs/develop/standards
 # @see https://github.com/squizlabs/PHP_CodeSniffer
 # @see https://www.drupal.org/project/coder
@@ -234,14 +237,6 @@ phpcs:
 
   # Space-separated list of directories to review.
   directories: "${drupal.root}/modules/custom ${drupal.root}/themes/custom"
-
-  # Comma-separated list of patterns for files and directories to exclude from the
-  # PHP_CodeSniffer review.
-  #
-  # This is deprecated and will be removed in 3.0, and build.xml will need to be updated then to
-  # use the extensions option (below). This option should not be used with Coder >= 8.3.7, which only
-  # checks php, inc, css, and js by default.
-  ignore: "*.md"
 
   # Comma-separated list of extensions to check in the PHP_CodeSniffer review.
   extensions: "php,module,inc,install,test,profile,theme,css,info,txt,yml,js"
