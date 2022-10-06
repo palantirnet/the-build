@@ -60,16 +60,16 @@
              that can vary, especially around the host-specific settings.php files. -->
         <switch value="${build.host}">
             <case value="acquia">
-                <property name="drupal.root" value="docroot" />
+                <property name="drupal.root" value="docroot" override="true" />
             </case>
             <case value="pantheon">
-              <property name="drupal.root" value="web" />
+              <property name="drupal.root" value="web" override="true" />
             </case>
             <case value="platformsh">
-              <property name="drupal.root" value="web" />
+              <property name="drupal.root" value="web" override="true" />
             </case>
             <default>
-              <property name="drupal.root" value="web" />
+              <property name="drupal.root" value="web" override="true" />
             </default>
         </switch>
 
