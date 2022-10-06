@@ -60,15 +60,17 @@
              that can vary, especially around the host-specific settings.php files. -->
         <switch value="${build.host}">
             <case value="acquia">
-                <property name="drupal.root" value="docroot" />
+                <property name="drupal.root" value="docroot" override="true" />
             </case>
             <case value="pantheon">
-              <property name="drupal.root" value="web" />
+              <property name="drupal.root" value="web" override="true" />
             </case>
             <case value="platformsh">
-              <property name="drupal.root" value="web" />
+              <property name="drupal.root" value="web" override="true" />
             </case>
-            <default />
+            <default>
+              <property name="drupal.root" value="web" override="true" />
+            </default>
         </switch>
 
         <!-- Load the defaults into the global namespace, which won't overwrite the properties the user just set. -->
@@ -132,16 +134,17 @@
          If the drupal.root directory doesn't exist, then we need to move it from the other location (web /
          docroot).-->
     <target name="setup-web-root" depends="set-site">
-        <available file="${build.dir}/${drupal.root}" type="dir" property="drupal.root.exists" value="true" />
+        <available file="${build.dir}/${drupal.root}/core" type="dir" property="drupal.root.exists" value="true" />
 
         <if>
             <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
             <then>
                 <!-- The one that's available is the location we're moving from. -->
-                <available file="${build.dir}/web" type="dir" property="drupal.root.old" value="web" />
-                <available file="${build.dir}/docroot" type="dir" property="drupal.root.old" value="docroot" />
+                <available file="${build.dir}/web/core" type="dir" property="drupal.root.old" value="web" />
+                <available file="${build.dir}/docroot/core" type="dir" property="drupal.root.old" value="docroot" />
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
+                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" />
                 <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
