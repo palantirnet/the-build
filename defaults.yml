@@ -216,7 +216,7 @@ acquia:
 # defaults/build.xml template.
 phplint:
   # Path to a file where each line is a pattern matching files to lint.
-  includesfile: "${build.thebuild.dir}/defaults/standard/phplint.txt"
+  includesfile: "phplint.txt"
 
 
 # Configuration for using PHP_CodeSniffer to review code according to the Drupal coding
@@ -255,7 +255,7 @@ phpmd:
   # Output format for phpmd.
   format: text
   # Comma-separated list of ruleset paths or names.
-  rulesets: "${build.thebuild.dir}/defaults/standard/phpmd.xml"
+  rulesets: "phpmd.xml"
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 

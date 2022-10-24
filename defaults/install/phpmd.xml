@@ -7,6 +7,9 @@
   <!--
     Include each rule explicitly so we know what we have.
     @see https://github.com/phpmd/phpmd/blob/master/src/main/resources/rulesets/
+
+    These checks can be run with "phing code-review".
+    @see "code-review" target in build.xml
   -->
 
   <!-- Clean Code -->
@@ -71,7 +74,6 @@
   <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod"/>
   <!--
   Hooks often have unused parameters, so ignore this warning.
-  @todo is there a way to allow unused parameters in hooks but not elsewhere?
   <rule ref="rulesets/unusedcode.xml/UnusedFormalParameter"/>
   -->
 
