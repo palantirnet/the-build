@@ -1,22 +1,10 @@
 <?php
-/**
- * @file ForeachKeyTask.php
- *
- * Iterate over property values.
- *
- * @code
- *   <foreachkey prefix="drupal.sites" omitKeys="_defaults" target="mytarget" keyParam="key" prefixParam="prefix" />
- * @endcode
- *
- * @copyright 2018 Palantir.net, Inc.
- */
 
 namespace TheBuild;
 
-use BuildException;
-use StringHelper;
-
-
+/**
+ *
+ */
 class ForeachKeyTask extends \Task {
 
   /**
@@ -73,8 +61,8 @@ class ForeachKeyTask extends \Task {
     $this->validate();
 
     $this->callee->setTarget($this->target);
-    $this->callee->setInheritAll(true);
-    $this->callee->setInheritRefs(true);
+    $this->callee->setInheritAll(TRUE);
+    $this->callee->setInheritRefs(TRUE);
 
     // Extract matching keys from the properties array.
     $keys = [];
@@ -82,7 +70,7 @@ class ForeachKeyTask extends \Task {
     foreach ($project->getProperties() as $name => $value) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
-        list($key, $property_grandchildren) = explode('.', $property_children, 2);
+        [$key, $property_grandchildren] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }
@@ -93,12 +81,12 @@ class ForeachKeyTask extends \Task {
     // Iterate over each extracted key.
     foreach ($keys as $key => $prefix) {
       $prop = $this->callee->createProperty();
-      $prop->setOverride(true);
+      $prop->setOverride(TRUE);
       $prop->setName($this->keyParam);
       $prop->setValue($key);
 
       $prop = $this->callee->createProperty();
-      $prop->setOverride(true);
+      $prop->setOverride(TRUE);
       $prop->setName($this->prefixParam);
       $prop->setValue($this->prefix);
 
@@ -106,24 +94,22 @@ class ForeachKeyTask extends \Task {
     }
   }
 
-
   /**
    * Verify that the required attributes are set.
    */
   public function validate() {
     foreach (['prefix', 'target', 'keyParam', 'prefixParam'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
+        throw new \BuildException("$attribute attribute is required.", $this->location);
       }
     }
   }
-
 
   /**
    * @param string $value
    */
   public function setPrefix($value) {
-    if (!StringHelper::endsWith(".", $value)) {
+    if (!\StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 

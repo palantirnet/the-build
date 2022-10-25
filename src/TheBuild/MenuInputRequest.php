@@ -1,37 +1,37 @@
 <?php
-/**
- * @file MenuInputRequest.php
- *
- * Handles input as a multiple choice menu.
- *
- * @copyright 2018 Palantir.net, Inc.
- */
 
 namespace TheBuild;
-use InputRequest;
 
-
-class MenuInputRequest extends InputRequest {
+/**
+ *
+ */
+class MenuInputRequest extends \InputRequest {
 
   /**
-   * @var string $prompt
+   * @var string
    */
   protected $prompt;
 
   /**
-   * @var array $options
+   * @var array
    */
   protected $options;
 
   /**
-   * @var int $defaultValue
+   * @var int
    */
   protected $defaultValue = 0;
 
+  /**
+   *
+   */
   public function setOptions($options) {
     $this->options = array_values($options);
   }
 
+  /**
+   *
+   */
   public function getPrompt() {
     $prompt = $this->prompt . $this->getPromptChar() . "\r\n";
     foreach ($this->options as $i => $option) {
@@ -40,10 +40,16 @@ class MenuInputRequest extends InputRequest {
     return $prompt;
   }
 
+  /**
+   *
+   */
   public function isInputValid() {
     return (isset($this->options[$this->input]));
   }
 
+  /**
+   *
+   */
   public function getInput() {
     return $this->options[$this->input];
   }
