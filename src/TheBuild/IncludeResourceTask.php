@@ -3,25 +3,28 @@
 namespace TheBuild;
 
 /**
- *
+ * Copy or symlink a file or directory, depending on a flag.
  */
 class IncludeResourceTask extends \Task {
 
   /**
-   * @var string
    * Either 'symlink' or 'copy'.
+   *
+   * @var string
    */
   protected $mode = 'symlink';
 
   /**
-   * @var \PhingFile
    * The source file or directory to include.
+   *
+   * @var \PhingFile
    */
   protected $source;
 
   /**
-   * @var \PhingFile
    * The location to link the file to.
+   *
+   * @var \PhingFile
    */
   protected $dest = NULL;
 
@@ -96,10 +99,10 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the artifact mode.
    *
-   * @param $mode
+   * @param string $mode
    *   Use 'symlink' to link resources, and 'copy' to copy them.
    */
-  public function setMode($mode) {
+  public function setMode(string $mode) {
     $this->mode = $mode;
   }
 
@@ -107,6 +110,7 @@ class IncludeResourceTask extends \Task {
    * Set the source of the resource to include.
    *
    * @param \PhingFile $source
+   *   Source file.
    */
   public function setSource(\PhingFile $source) {
     if (!$source->exists()) {
@@ -120,13 +124,17 @@ class IncludeResourceTask extends \Task {
    * Set the destination for the resource.
    *
    * @param \PhingFile $dest
+   *   File destination.
    */
   public function setDest(\PhingFile $dest) {
     $this->dest = $dest;
   }
 
   /**
+   * See SymlinkTask.
+   *
    * @param bool $relative
+   *   Whether to make relative symlinks.
    */
   public function setRelative($relative) {
     $this->relative = $relative;

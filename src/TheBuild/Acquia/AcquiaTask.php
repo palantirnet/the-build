@@ -3,37 +3,40 @@
 namespace TheBuild\Acquia;
 
 /**
- *
+ * Phing task for making queries against the Acquia Cloud v1 API.
  */
 abstract class AcquiaTask extends \Task {
 
   /**
-   * Required. The Acquia Cloud credentials file containing a json array with
-   * 'mail' and 'key' values.
+   * Required. The Acquia Cloud credentials file.
+   *
+   * This file can be downloaded from your Acquia user account area and contains
+   * a json array with 'mail' and 'key' values.
    *
    * @var \PhingFile
    */
   protected $credentialsFile;
 
   /**
-   * Email address associated with the Acquia Cloud access. This value is set
-   * from the credentials file.
+   * Email address associated with the Acquia Cloud access.
+   *
+   * This value is set from the credentials file.
    *
    * @var string
    */
   protected $mail;
 
   /**
-   * Secure key associated with the Acquia Cloud access. This value is set from
-   * the credentials file.
+   * Secure key associated with the Acquia Cloud access.
+   *
+   * This value is set from the credentials file.
    *
    * @var string
    */
   protected $key;
 
   /**
-   * The Acquia Cloud API endpoint. This code is specific to version 1 of the
-   * API.
+   * The Acquia Cloud API v1 endpoint.
    *
    * @var string
    */
@@ -70,11 +73,13 @@ abstract class AcquiaTask extends \Task {
   /**
    * Build an HTTP request object against the Acquia Cloud API.
    *
-   * @param $path
+   * @param string $path
+   *   Acquia Cloud API path.
    *
    * @return \HTTP_Request2
+   *   Request object.
    */
-  protected function createRequest($path) {
+  protected function createRequest(string $path) : \HTTP_Request2 {
     $this->loadCredentials();
 
     $uri = $this->endpoint . '/' . ltrim($path, '/');
@@ -89,13 +94,13 @@ abstract class AcquiaTask extends \Task {
   /**
    * Example of how to query the Acquia Cloud API.
    *
-   * @param $path
+   * @param string $path
+   *   Acquia Cloud API path.
    *
    * @return string
-   *
-   * @throws \HTTP_Request2_Exception
+   *   API response.
    */
-  protected function getApiResponseBody($path) {
+  protected function getApiResponseBody(string $path) : string {
     $request = $this->createRequest($path);
 
     $this->log('GET ' . $request->getUrl());
@@ -104,7 +109,11 @@ abstract class AcquiaTask extends \Task {
   }
 
   /**
+   * Set the Acquia credentials file.
+   *
    * @param \PhingFile $file
+   *   Acquia credentials file.
+   *
    * @throws \IOException
    * @throws \NullPointerException
    */

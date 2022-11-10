@@ -3,29 +3,34 @@
 namespace TheBuild;
 
 /**
- *
+ * Interactively select an option from an array of property keys.
  */
 class SelectPropertyKeyTask extends \Task {
 
   /**
-   * @var string
    * Required. Prefix for properties to copy.
+   *
+   * @var string
    */
   protected $prefix = '';
 
   /**
-   * @var string
    * Required. Property to populate with the selected value.
+   *
+   * @var string
    */
   protected $propertyName = '';
 
   /**
-   * @var string
    * Message to display to the user when more than one key is available.
+   *
+   * @var string
    */
   protected $message = 'Select one:';
 
   /**
+   * Keys to ignore.
+   *
    * @var array
    */
   protected $omitKeys = [];
@@ -47,6 +52,7 @@ class SelectPropertyKeyTask extends \Task {
     foreach ($project->getProperties() as $name => $value) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
+        // phpcs:ignore
         [$key, $property_grandchildren] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
@@ -89,7 +95,10 @@ class SelectPropertyKeyTask extends \Task {
   }
 
   /**
+   * Set the prefix for which options will be shown.
+   *
    * @param string $value
+   *   Keys with this prefix will be provided as options.
    */
   public function setPrefix($value) {
     if (!\StringHelper::endsWith(".", $value)) {
@@ -100,21 +109,30 @@ class SelectPropertyKeyTask extends \Task {
   }
 
   /**
+   * Set the destination property.
+   *
    * @param string $value
+   *   Property name for the selection result.
    */
   public function setPropertyName($value) {
     $this->propertyName = $value;
   }
 
   /**
+   * Set the message.
+   *
    * @param string $value
+   *   Message to display with the options.
    */
   public function setMessage($value) {
     $this->message = $value;
   }
 
   /**
+   * Exclude some of the property keys from the options.
+   *
    * @param string $value
+   *   A comma-separated list of keys to exclude.
    */
   public function setOmitKeys($value) {
     $this->omitKeys = array_map('trim', explode(',', $value));

@@ -3,68 +3,61 @@
 namespace TheBuild\Acquia;
 
 /**
- *
+ * Fetch a recent backup from Acquia.
  */
 class GetLatestBackupTask extends AcquiaTask {
 
   /**
-   * Directory for storing downloaded database backups.
-   *
-   * Required parameter.
+   * Required. Directory for storing downloaded database backups.
    *
    * @var \PhingFile
    */
   protected $dir;
 
   /**
-   * The Acquia Cloud hosting realm where the site is running.
+   * Required. The Acquia Cloud hosting realm where the site is running.
+   *
+   * This also appears in a site's server names, as
+   * 'sitename.REALM.hosting.acquia.com'.
    *   - Acquia Cloud Enterprise: 'prod'
    *   - Acquia Cloud Professional: 'devcloud'
-   *
-   * This also appears in a site's server names, as 'sitename.REALM.hosting.acquia.com'.
-   *
-   * Required parameter.
    *
    * @var string
    */
   protected $realm;
 
   /**
-   * The Acquia Cloud site account name.
-   *
-   * Required parameter.
+   * Required. The Acquia Cloud site account name.
    *
    * @var string
    */
   protected $site;
 
   /**
-   * The Acquia Cloud environment. Generally 'dev', 'test', or 'prod', unless
-   * a site has RA or other additional environments.
+   * Required. The Acquia Cloud environment.
    *
-   * Required parameter.
+   * Generally 'dev', 'test', or 'prod', unless a site has RA or other
+   * additional environments.
    *
    * @var string
    */
   protected $env;
 
   /**
-   * The name of the database whose backup to download. This will correspond
-   * with the site name unless your site uses multiple databases or you are
-   * running Drupal multisites.
+   * Optional. The name of the database whose backup to download.
    *
-   * Optional parameter; defaults to matching $site.
+   * This will correspond with the site name unless your site uses multiple
+   * databases or you are running Drupal multisites.
    *
    * @var string
    */
   protected $database;
 
   /**
-   * Maximum age of the database backup in hours. If there is no backup matching
-   * this age in the current backups.json, the backups.json will be refreshed
-   * and the newest backup will be downloaded.
+   * Optional. Maximum age of the database backup in hours.
    *
-   * Optional parameter.
+   * If there is no backup matching this age in the current backups.json, the
+   * backups.json will be refreshed and the newest backup will be downloaded.
    *
    * @var int
    */
@@ -80,14 +73,18 @@ class GetLatestBackupTask extends AcquiaTask {
   protected $propertyName;
 
   /**
-   * Where to store the JSON list of database backups downloaded from the Acquia
-   * Cloud API. This is set to 'backups.json' in the directory specified by $dir.
+   * Where to store the JSON list of database backups.
+   *
+   * This info is downloaded from the Acquia Cloud API. The file is set to
+   * 'backups.json' in the directory specified by $dir.
    *
    * @var \PhingFile
    */
   protected $backupsFile;
 
   /**
+   * {@inheritdoc}
+   *
    * @throws \IOException
    * @throws \NullPointerException
    */
@@ -100,7 +97,7 @@ class GetLatestBackupTask extends AcquiaTask {
     }
 
     // Store the Acquia Cloud API JSON database backup records in our backups
-    // directory.
+    // directory..
     $this->backupsFile = new \PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
 
     // Check the database backup records for entries within our time window.
@@ -139,8 +136,8 @@ class GetLatestBackupTask extends AcquiaTask {
       $this->log("Using backup from " . $this->formatBackupTime($newest_backup) . " ({$newest_backup['id']})");
     }
 
-    // This means that we didn't have a current record in our backups json, and the Acquia Cloud API returned empty or
-    // malformed JSON.
+    // This means that we didn't have a current record in our backups json, and
+    // the Acquia Cloud API returned empty or malformed JSON.
     if (empty($newest_backup)) {
       throw new \BuildException('Failed to find a backup record.');
     }
@@ -167,10 +164,9 @@ class GetLatestBackupTask extends AcquiaTask {
    * Download a backup from Acquia Cloud.
    *
    * @param array $backup
+   *   Acquia backup info array.
    * @param \PhingFile $destination
-   *
-   * @throws \HTTP_Request2_Exception
-   * @throws \HTTP_Request2_LogicException
+   *   Destination file for the downloaded backup.
    */
   protected function downloadBackup(array $backup, \PhingFile $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
@@ -198,6 +194,7 @@ class GetLatestBackupTask extends AcquiaTask {
    * Get backup records that are within the desired time window.
    *
    * @return array
+   *   Array of available backups within the specified timeframe.
    */
   protected function getCurrentBackupRecords() {
     try {
@@ -223,16 +220,19 @@ class GetLatestBackupTask extends AcquiaTask {
   }
 
   /**
-   * Get the array of backup records from the Acquia Cloud API JSON output,
-   * sorted from oldest to newest.
+   * Get the array of backup records from the Acquia Cloud API JSON output.
    *
-   * @param $file
+   * Sorts records from oldest to newest.
+   *
+   * @param \PhingFile $file
+   *   Temp file containing the Acquia Cloud API response.
    *
    * @return array
+   *   Acquia backup info array.
    *
    * @throws \BuildException
    */
-  protected function getBackupRecords($file) {
+  protected function getBackupRecords(\PhingFile $file) {
     if ($file->exists()) {
       $backups = json_decode($file->contents(), TRUE);
 
@@ -260,6 +260,9 @@ class GetLatestBackupTask extends AcquiaTask {
 
   /**
    * Download the latest list of backup records from the Acquia Cloud API.
+   *
+   * @param \PhingFile $backups_file
+   *   The file where the downloaded backup should be stored.
    */
   protected function downloadBackupRecords(\PhingFile $backups_file) {
     $json = $this->getApiResponseBody("/sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->database}/backups.json");
@@ -271,62 +274,85 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Format the backup time to display in log messages.
    *
-   * @param $backup
+   * @param array $backup
+   *   Acquia backup info array.
    *
    * @return string
+   *   A human-readable date.
    */
-  protected function formatBackupTime($backup) {
+  protected function formatBackupTime(array $backup) {
     $time = new \DateTime('now');
     $time->setTimestamp($backup['started']);
     return $time->format(DATE_RFC850);
   }
 
   /**
-   * Setter functions.
+   * Set the Acquia realm.
+   *
+   * @param string $value
+   *   Acquia realm.
    */
-  public function setRealm($value) {
+  public function setRealm(string $value) {
     $this->realm = $value;
   }
 
   /**
+   * Set the Acquia site name.
    *
+   * @param string $value
+   *   Acquia site name.
    */
-  public function setSite($value) {
+  public function setSite(string $value) {
     $this->site = $value;
   }
 
   /**
+   * Set the Acquia environment name.
    *
+   * @param string $value
+   *   Acquia environment name.
    */
-  public function setEnv($value) {
+  public function setEnv(string $value) {
     $this->env = $value;
   }
 
   /**
+   * Set the Acquia database name.
    *
+   * @param string $value
+   *   Set the database name.
    */
-  public function setDatabase($value) {
+  public function setDatabase(string $value) {
     $this->database = $value;
   }
 
   /**
+   * Set the destination directory.
    *
+   * @param string $value
+   *   Directory path.
    */
-  public function setDir($value) {
+  public function setDir(string $value) {
     $this->dir = new \PhingFile($value);
   }
 
   /**
+   * Set the max age.
    *
+   * @param int|string $value
+   *   Max age in hours.
    */
-  public function setMaxAge($value) {
+  public function setMaxAge(int|string $value) {
     $this->maxAge = (int) $value;
   }
 
   /**
+   * Set the property name.
    *
+   * @param string $value
+   *   Property name to use for the result.
    */
-  public function setPropertyName($value) {
+  public function setPropertyName(string $value) {
     $this->propertyName = $value;
   }
 

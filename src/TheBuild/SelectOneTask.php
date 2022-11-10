@@ -3,31 +3,35 @@
 namespace TheBuild;
 
 /**
- *
+ * Allow the user to select one option from a list.
  */
 class SelectOneTask extends \Task {
 
   /**
-   * @var string
    * Required. List of values to select among.
+   *
+   * @var string
    */
   protected $list = '';
 
   /**
-   * @var string
    * String to split the list by.
+   *
+   * @var string
    */
   protected $delimiter = ',';
 
   /**
-   * @var string
    * Required. Property to populate with the selected value.
+   *
+   * @var string
    */
   protected $propertyName = '';
 
   /**
-   * @var string
    * Message to display to the user when more than one key is available.
+   *
+   * @var string
    */
   protected $message = 'Select one:';
 
@@ -77,30 +81,42 @@ class SelectOneTask extends \Task {
   }
 
   /**
+   * Set the list of options.
+   *
    * @param string $value
+   *   List of options.
    */
   public function setList($value) {
     $this->list = $value;
   }
 
   /**
+   * Set the options delimiter.
+   *
    * @param string $value
+   *   A delimiter.
    */
-  public function setDelimiter($value) {
+  public function setDelimiter(string $value) {
     $this->delimiter = $value;
   }
 
   /**
+   * Set the name of the result property.
+   *
    * @param string $value
+   *   Property name for the result.
    */
-  public function setPropertyName($value) {
+  public function setPropertyName(string $value) {
     $this->propertyName = $value;
   }
 
   /**
+   * Set the message.
+   *
    * @param string $value
+   *   Message to present with the options.
    */
-  public function setMessage($value) {
+  public function setMessage(string $value) {
     $this->message = $value;
   }
 

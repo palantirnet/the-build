@@ -3,29 +3,34 @@
 namespace TheBuild;
 
 /**
- *
+ * Copy properties matching a prefix to properties with a different prefix.
  */
 class CopyPropertiesTask extends \Task {
 
   /**
-   * @var string
    * Prefix for properties to copy.
+   *
+   * @var string
    */
   protected $fromPrefix = '';
 
   /**
-   * @var string
    * Prefix for properties to create/update.
+   *
+   * @var string
    */
   protected $toPrefix = '';
 
   /**
-   * @var bool
    * Whether to overwrite the existing properties.
+   *
+   * @var bool
    */
   protected $override = TRUE;
 
   /**
+   * Internal method to use for creating/updating properties.
+   *
    * @var string
    */
   protected $propertyMethod = 'setProperty';
@@ -63,7 +68,10 @@ class CopyPropertiesTask extends \Task {
   }
 
   /**
+   * Set the source property prefix.
+   *
    * @param string $prefix
+   *   Prefix to copy properties from.
    */
   public function setFromPrefix($prefix) {
     if (!\StringHelper::endsWith(".", $prefix)) {
@@ -74,7 +82,10 @@ class CopyPropertiesTask extends \Task {
   }
 
   /**
+   * Set the destination property prefix.
+   *
    * @param string $prefix
+   *   Prefix to copy properties into.
    */
   public function setToPrefix($prefix) {
     if (!\StringHelper::endsWith(".", $prefix)) {
@@ -85,7 +96,10 @@ class CopyPropertiesTask extends \Task {
   }
 
   /**
+   * Set override.
+   *
    * @param bool $override
+   *   Whether to override existing values.
    */
   public function setOverride($override) {
     $this->override = $override;

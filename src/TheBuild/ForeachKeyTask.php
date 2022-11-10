@@ -3,46 +3,54 @@
 namespace TheBuild;
 
 /**
- *
+ * Phing task to run a target for each property in an array.
  */
 class ForeachKeyTask extends \Task {
 
   /**
-   * @var string
    * Prefix of properties to iterate over.
+   *
+   * @var string
    */
   protected $prefix = '';
 
   /**
-   * @var string
    * Name of target to execute.
+   *
+   * @var string
    */
   protected $target = '';
 
   /**
-   * @var string
    * Name of parameter to use for the key.
+   *
+   * @var string
    */
   protected $keyParam = '';
 
   /**
-   * @var string
    * Name of parameter to use for the prefix.
+   *
+   * @var string
    */
   protected $prefixParam = '';
 
   /**
+   * Keys to ignore.
+   *
    * @var array
    */
   protected $omitKeys = [];
 
   /**
+   * Instance of PhingCallTask to use/run.
+   *
    * @var \PhingCallTask
    */
   protected $callee;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function init() {
     parent::init();
@@ -70,6 +78,7 @@ class ForeachKeyTask extends \Task {
     foreach ($project->getProperties() as $name => $value) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
+        // phpcs:ignore
         [$key, $property_grandchildren] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
@@ -106,7 +115,10 @@ class ForeachKeyTask extends \Task {
   }
 
   /**
+   * Use only keys with a certain prefix.
+   *
    * @param string $value
+   *   The key prefix.
    */
   public function setPrefix($value) {
     if (!\StringHelper::endsWith(".", $value)) {
@@ -117,28 +129,40 @@ class ForeachKeyTask extends \Task {
   }
 
   /**
+   * Set the target to run for each item.
+   *
    * @param string $value
+   *   Name of the target to run for each item.
    */
   public function setTarget($value) {
     $this->target = $value;
   }
 
   /**
+   * Set the parameter name to pass to the target.
+   *
    * @param string $value
+   *   Name of the parameter to pass to the target.
    */
   public function setKeyParam($value) {
     $this->keyParam = $value;
   }
 
   /**
+   * Name of the parameter where we can find the prefix.
+   *
    * @param string $value
+   *   The parameter name.
    */
   public function setPrefixParam($value) {
     $this->prefixParam = $value;
   }
 
   /**
+   * Remove a list of keys from the set of properties.
+   *
    * @param string $value
+   *   A comma-separated list of keys to remove from the array.
    */
   public function setOmitKeys($value) {
     $this->omitKeys = array_map('trim', explode(',', $value));
