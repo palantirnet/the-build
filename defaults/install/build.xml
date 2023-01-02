@@ -117,9 +117,8 @@
         </phplint>
 
         <!-- Run PHP Code Sniffer. -->
-        <property name="phpcs.command" value="vendor/bin/phpcs --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
-        <echo msg="$> ${phpcs.command}" />
-        <exec command="${phpcs.command}" logoutput="true" checkreturn="true" />
+        <echo msg="$> vendor/bin/phpcs" />
+        <exec command="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
         <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
@@ -153,7 +152,7 @@
 
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
-        <phing phingfile="build.xml" target="artifact-main" inheritAll="false">
+        <phing phingfile="build.xml" target="artifact-main" inheritAll="false" haltonfailure="true">
             <property name="build.env" value="@host@" />
         </phing>
     </target>

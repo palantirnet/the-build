@@ -1,5 +1,6 @@
-# Example snippet for deploy job in config.yml. Add this code to deploy to Pantheon. Update PANTHEON_PUBKEY
-# with the entry from your known_hosts file for the code server.
+# Example snippet for deploy job in config.yml. Add this code to deploy to Pantheon.
+# Update PANTHEON_PUBKEY with the entry from your known_hosts file for the code server.
+# (To get the known_hosts entry, git clone the SSH URL of the Pantheon repository.)
 #
 # You will also need to add a step to the build job to persist to workspace:
 #
@@ -23,7 +24,7 @@
   deploy:
     working_directory: ~/project
     docker:
-      - image: cimg/php:7.4-browsers
+      - image: cimg/php:8.1-browsers
     environment:
       - NODE_VERSION: 8
       - GITHUB_PUBKEY: "github.com,192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="

@@ -33,6 +33,10 @@
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
         <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
+        <!-- @TODO Handle the case when this command outputs "HEAD". This happens when
+             building a repo from a detatched head state (e.g. you've checked out a tag),
+             and it causes pushing the artifact to fail because "HEAD" is not a branch you
+             can push to. -->
         <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="artifact.git.branch" checkreturn="true" />
         <exec command="git log -1 --oneline" outputProperty="artifact.git.commit_message" />
         <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="artifact.git.no_tag" />
@@ -252,7 +256,7 @@
             - Override the "artifact mode" so that files managed with the
               <includeresource /> task are copied into the artifact instead of symlinked.
             -->
-        <phing target="build" phingfile="${phing.file}" inheritAll="false" dir=".">
+        <phing target="build" phingfile="${phing.file}" inheritAll="false" dir="." haltonfailure="true">
             <property name="build.site" value="${site_key}" />
             <property name="drupal.root" value="${artifact.directory}/${drupal.root}" override="true" />
             <property name="includeresource.mode" value="copy" override="true" />
