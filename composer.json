@@ -17,10 +17,10 @@
         "drupal/coder": "^8.3.6",
         "drush/drush": ">=9",
         "mglaman/drupal-check": "^1.2",
-        "palantirnet/phing-drush-task": "dev-drupal-10",
+        "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "dev-main",
+        "phing/phing": "^2.14",
         "phpmd/phpmd": "^2.4",
         "phpspec/prophecy-phpunit": "^2"
     },
