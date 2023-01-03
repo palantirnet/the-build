@@ -67,11 +67,8 @@ jobs:
 
       # Run code quality checks
       - run:
-          name: PHP CBF
-          command: vendor/bin/phpcbf src
-      - run:
           name: PHP CS
-          command: vendor/bin/phpcs src
+          command: vendor/bin/phpcs
       - run:
           name: PHP STAN
           command: vendor/bin/phpstan analyse src
