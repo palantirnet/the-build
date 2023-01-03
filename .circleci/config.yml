@@ -69,9 +69,9 @@ jobs:
       - run:
           name: Run code reviews
           command: |
-            vendor/bin/phpcs src --standard="Drupal,DrupalPractice"
-            vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
-            vendor/bin/phpstan analyse src
+            vendor/bin/phpcs ../../src --standard="Drupal,DrupalPractice"
+            vendor/bin/phpmd ../../src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            vendor/bin/phpstan analyse ../../src
 
       # Install the-build
       - run:
