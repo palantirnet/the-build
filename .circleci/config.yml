@@ -38,9 +38,9 @@ jobs:
           name: Run code reviews
           command: |
             composer install
-            vendor/bin/phpcs ../../src --standard="Drupal,DrupalPractice"
-            vendor/bin/phpmd ../../src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
-            vendor/bin/phpstan analyse ../../src
+            vendor/bin/phpcs src --standard="Drupal,DrupalPractice"
+            vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            vendor/bin/phpstan analyse src
 
       # Install a drupal test project.
       - run:
