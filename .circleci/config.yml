@@ -65,6 +65,17 @@ jobs:
           paths:
             - ".git"
 
+      # Run code quality checks
+      - run:
+          name: PHP CBF
+          command: vendor/bin/phpcbf
+      - run:
+          name: PHP CS
+          command: vendor/bin/phpcs
+      - run:
+          name: PHP STAN
+          command: vendor/bin/phpstan analyse src
+
       # Install the-build
       - run:
           name: Install the-build in the project

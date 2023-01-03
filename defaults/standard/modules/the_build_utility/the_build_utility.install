@@ -5,8 +5,6 @@
  * Install, update and uninstall functions for the-build utility module.
  */
 
-use Drupal\user\Entity\User;
-use Drupal\user\RoleInterface;
 use Drupal\shortcut\Entity\Shortcut;
 
 /**
@@ -58,7 +56,6 @@ function the_build_utility_install() {
   \Drupal::service('module_installer')->install($install);
 
   // Remove any entity dependencies so we can uninstall modules.
-
   // Begin Comment module.
   // Remove the comment fields.
   $fields = \Drupal::entityTypeManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'comment']);
@@ -69,7 +66,6 @@ function the_build_utility_install() {
   // Remove state setting.
   \Drupal::state()->delete('comment.node_comment_statistics_scale');
   // End Comment module.
-
   // Uninstall the modules from the standard profile that we don't want.
   $uninstall = ['automated_cron', 'big_pipe', 'comment', 'contact', 'history', 'search', 'tour'];
   \Drupal::service('module_installer')->uninstall($uninstall);
