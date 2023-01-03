@@ -33,15 +33,21 @@ jobs:
             sudo composer self-update
 
       # Run code quality checks
+      - checkout
+      - run:
+          name: Move project repo to test directory
+          command:
+            - mv ~/examples/the-build ~/project
       - run:
           name: Run code reviews
           command: |
-            git clone -b "$CIRCLE_BRANCH" "$CIRCLE_REPOSITORY_URL"
             composer install
             vendor/bin/phpcs ../../src --standard="Drupal,DrupalPractice"
             vendor/bin/phpmd ../../src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
             vendor/bin/phpstan analyse ../../src
           working_directory: ~/project
+
+      # Install a drupal test project.
       - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
