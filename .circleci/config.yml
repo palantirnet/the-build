@@ -68,7 +68,10 @@ jobs:
       # Run code quality checks
       - run:
           name: PHP CS
-          command: vendor/bin/phpcs
+          command: vendor/bin/phpcs --standard=phpcs.xml
+      - run:
+          name: PHP MD
+          command: vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
       - run:
           name: PHP STAN
           command: vendor/bin/phpstan analyse src
