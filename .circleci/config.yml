@@ -36,8 +36,7 @@ jobs:
       - checkout
       - run:
           name: Move project repo to test directory
-          command:
-            - mv ~/examples/the-build ~/project
+          command: mv ~/examples/the-build ~/project
       - run:
           name: Run code reviews
           command: |
@@ -45,7 +44,7 @@ jobs:
             vendor/bin/phpcs ../../src --standard="Drupal,DrupalPractice"
             vendor/bin/phpmd ../../src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
             vendor/bin/phpstan analyse ../../src
-          working_directory: ~/project
+          working_directory: ~/project/the-build
 
       # Install a drupal test project.
       - run:
