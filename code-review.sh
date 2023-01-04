@@ -10,7 +10,7 @@ echo "-------------"
 vendor/bin/phpcs src --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
 echo "Running PHPMD on tasks"
 echo "-------------"
-vendor/bin/phpmd src ansi defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
 echo "Running PHPStan on tasks"
 echo "---------------"
 vendor/bin/phpstan analyse src --level=2
