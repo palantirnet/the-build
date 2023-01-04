@@ -53,7 +53,7 @@ class SelectPropertyKeyTask extends \Task {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
         // phpcs:ignore
-        [$key, $property_grandchildren] = explode('.', $property_children, 2);
+        [$key] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }

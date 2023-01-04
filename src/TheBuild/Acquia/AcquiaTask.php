@@ -47,6 +47,8 @@ abstract class AcquiaTask extends \Task {
    *
    * @throws \IOException
    * @throws \NullPointerException
+   *
+   * @SuppressWarnings(PHPMD.Superglobals)
    */
   protected function loadCredentials() {
     if (empty($this->mail) || empty($this->key)) {

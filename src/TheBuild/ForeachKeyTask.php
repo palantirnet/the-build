@@ -75,11 +75,11 @@ class ForeachKeyTask extends \Task {
     // Extract matching keys from the properties array.
     $keys = [];
     $project = $this->getProject();
-    foreach ($project->getProperties() as $name => $value) {
+    foreach (array_keys($project->getProperties()) as $name) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
         // phpcs:ignore
-        [$key, $property_grandchildren] = explode('.', $property_children, 2);
+        [$key] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }
@@ -88,7 +88,7 @@ class ForeachKeyTask extends \Task {
     $keys = array_diff($keys, $this->omitKeys);
 
     // Iterate over each extracted key.
-    foreach ($keys as $key => $prefix) {
+    foreach (array_keys($keys) as $key) {
       $prop = $this->callee->createProperty();
       $prop->setOverride(TRUE);
       $prop->setName($this->keyParam);
