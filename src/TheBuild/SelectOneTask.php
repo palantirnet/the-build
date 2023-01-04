@@ -50,6 +50,8 @@ class SelectOneTask extends \Task {
 
     $keys = array_map('trim', explode($this->delimiter, $this->list));
 
+    $value = NULL;
+
     if (count($keys) > 1) {
       // Prompt for input.
       $request = new MenuInputRequest($this->message);
