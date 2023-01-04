@@ -9,7 +9,7 @@ echo "-------------"
 vendor/bin/phpcs defaults/standard/modules --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
 echo "Running PHPMD on modules"
 echo "-------------"
-vendor/bin/phpmd defaults/standard/modules ansi defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+vendor/bin/phpmd defaults/standard/modules text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
 echo "Running PHPStan on modules"
 echo "---------------"
 vendor/bin/phpstan analyse defaults/standard/modules --level=2
