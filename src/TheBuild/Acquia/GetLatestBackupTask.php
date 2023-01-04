@@ -187,7 +187,7 @@ class GetLatestBackupTask extends AcquiaTask {
     $response = $request->send();
     fclose($stream);
 
-    $this->log("Downloaded " . $response->getHeader('content-length') / 1000000 . "MB to " . $destination->getAbsolutePath());
+    $this->log("Downloaded " . intval($response->getHeader('content-length')) / 1000000 . "MB to " . $destination->getAbsolutePath());
   }
 
   /**
