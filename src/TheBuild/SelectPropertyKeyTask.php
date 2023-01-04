@@ -61,6 +61,8 @@ class SelectPropertyKeyTask extends \Task {
     // Remove keys based on the 'omitKeys' attribute.
     $keys = array_diff($keys, $this->omitKeys);
 
+    $value = NULL;
+
     if (count($keys) > 1) {
       // Prompt for input.
       $request = new MenuInputRequest($this->message);
