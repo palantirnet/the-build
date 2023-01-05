@@ -1,5 +1,6 @@
-# Example snippet for deploy job in config.yml. Add this code to deploy to Pantheon. Update PANTHEON_PUBKEY
-# with the entry from your known_hosts file for the code server.
+# Example snippet for deploy job in config.yml. Add this code to deploy to Pantheon.
+# Update PANTHEON_PUBKEY with the entry from your known_hosts file for the code server.
+# (To get the known_hosts entry, git clone the SSH URL of the Pantheon repository.)
 #
 # You will also need to add a step to the build job to persist to workspace:
 #
