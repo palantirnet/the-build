@@ -1,56 +1,60 @@
 <?php
+/**
+ * @file ForeachKeyTask.php
+ *
+ * Iterate over property values.
+ *
+ * @code
+ *   <foreachkey prefix="drupal.sites" omitKeys="_defaults" target="mytarget" keyParam="key" prefixParam="prefix" />
+ * @endcode
+ *
+ * @copyright 2018 Palantir.net, Inc.
+ */
 
 namespace TheBuild;
 
-/**
- * Phing task to run a target for each property in an array.
- */
+use BuildException;
+use StringHelper;
+
+
 class ForeachKeyTask extends \Task {
 
   /**
-   * Prefix of properties to iterate over.
-   *
    * @var string
+   * Prefix of properties to iterate over.
    */
   protected $prefix = '';
 
   /**
-   * Name of target to execute.
-   *
    * @var string
+   * Name of target to execute.
    */
   protected $target = '';
 
   /**
-   * Name of parameter to use for the key.
-   *
    * @var string
+   * Name of parameter to use for the key.
    */
   protected $keyParam = '';
 
   /**
-   * Name of parameter to use for the prefix.
-   *
    * @var string
+   * Name of parameter to use for the prefix.
    */
   protected $prefixParam = '';
 
   /**
-   * Keys to ignore.
-   *
    * @var array
    */
   protected $omitKeys = [];
 
   /**
-   * Instance of PhingCallTask to use/run.
-   *
    * @var \PhingCallTask
    */
   protected $callee;
 
   /**
-   * {@inheritdoc}
+   *
    */
   public function init() {
     parent::init();
@@ -69,8 +73,8 @@ class ForeachKeyTask extends \Task {
     $this->validate();
 
     $this->callee->setTarget($this->target);
-    $this->callee->setInheritAll(TRUE);
-    $this->callee->setInheritRefs(TRUE);
+    $this->callee->setInheritAll(true);
+    $this->callee->setInheritRefs(true);
 
     // Extract matching keys from the properties array.
     $keys = [];
@@ -78,8 +82,7 @@ class ForeachKeyTask extends \Task {
     foreach (array_keys($project->getProperties()) as $name) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
-        // phpcs:ignore
-        [$key] = explode('.', $property_children, 2);
+        list($key, $property_grandchildren) = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }
@@ -90,12 +93,12 @@ class ForeachKeyTask extends \Task {
     // Iterate over each extracted key.
     foreach (array_keys($keys) as $key) {
       $prop = $this->callee->createProperty();
-      $prop->setOverride(TRUE);
+      $prop->setOverride(true);
       $prop->setName($this->keyParam);
       $prop->setValue($key);
 
       $prop = $this->callee->createProperty();
-      $prop->setOverride(TRUE);
+      $prop->setOverride(true);
       $prop->setName($this->prefixParam);
       $prop->setValue($this->prefix);
 
@@ -103,25 +106,24 @@ class ForeachKeyTask extends \Task {
     }
   }
 
+
   /**
    * Verify that the required attributes are set.
    */
   public function validate() {
     foreach (['prefix', 'target', 'keyParam', 'prefixParam'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->location);
       }
     }
   }
 
+
   /**
-   * Use only keys with a certain prefix.
-   *
    * @param string $value
-   *   The key prefix.
    */
   public function setPrefix($value) {
-    if (!\StringHelper::endsWith(".", $value)) {
+    if (!StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 
@@ -129,40 +131,28 @@ class ForeachKeyTask extends \Task {
   }
 
   /**
-   * Set the target to run for each item.
-   *
    * @param string $value
-   *   Name of the target to run for each item.
    */
   public function setTarget($value) {
     $this->target = $value;
   }
 
   /**
-   * Set the parameter name to pass to the target.
-   *
    * @param string $value
-   *   Name of the parameter to pass to the target.
    */
   public function setKeyParam($value) {
     $this->keyParam = $value;
   }
 
   /**
-   * Name of the parameter where we can find the prefix.
-   *
    * @param string $value
-   *   The parameter name.
    */
   public function setPrefixParam($value) {
     $this->prefixParam = $value;
   }
 
   /**
-   * Remove a list of keys from the set of properties.
-   *
    * @param string $value
-   *   A comma-separated list of keys to remove from the array.
    */
   public function setOmitKeys($value) {
     $this->omitKeys = array_map('trim', explode(',', $value));

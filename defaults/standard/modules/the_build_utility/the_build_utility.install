@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the-build utility module.
  */
 
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
 use Drupal\shortcut\Entity\Shortcut;
 
 /**
@@ -52,34 +54,23 @@ function the_build_utility_install() {
   $date_settings->save(TRUE);
 
   // Install modules that we want but are not included with standard profile.
-  $install = [
-    'admin_toolbar',
-    'admin_toolbar_tools',
-    'config_split',
-    'devel',
-    'workbench',
-    'workbench_tabs',
-  ];
+  $install = ['admin_toolbar', 'admin_toolbar_tools', 'config_split', 'devel', 'workbench', 'workbench_tabs'];
   \Drupal::service('module_installer')->install($install);
 
-  // Remove comment fields so that comment module can be uninstalled.
+  // Remove any entity dependencies so we can uninstall modules.
+
+  // Begin Comment module.
+  // Remove the comment fields.
   $fields = \Drupal::entityTypeManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'comment']);
   foreach ($fields as $field) {
     $field->delete();
   }
 
-  // Remove state variable from comment module.
+  // Remove state setting.
   \Drupal::state()->delete('comment.node_comment_statistics_scale');
+  // End Comment module.
 
   // Uninstall the modules from the standard profile that we don't want.
-  $uninstall = [
-    'automated_cron',
-    'big_pipe',
-    'comment',
-    'contact',
-    'history',
-    'search',
-    'tour',
-  ];
+  $uninstall = ['automated_cron', 'big_pipe', 'comment', 'contact', 'history', 'search', 'tour'];
   \Drupal::service('module_installer')->uninstall($uninstall);
 }

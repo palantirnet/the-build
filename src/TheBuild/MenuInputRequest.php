@@ -1,46 +1,37 @@
 <?php
+/**
+ * @file MenuInputRequest.php
+ *
+ * Handles input as a multiple choice menu.
+ *
+ * @copyright 2018 Palantir.net, Inc.
+ */
 
 namespace TheBuild;
+use InputRequest;
 
-/**
- * Input interface that prompts the user to select from a menu of options.
- */
-class MenuInputRequest extends \InputRequest {
+
+class MenuInputRequest extends InputRequest {
 
   /**
-   * Prompt to display with the menu.
-   *
-   * @var string
+   * @var string $prompt
    */
   protected $prompt;
 
   /**
-   * Array of menu option labels.
-   *
-   * @var array
+   * @var array $options
    */
   protected $options;
 
   /**
-   * Default menu option to select.
-   *
-   * @var int
+   * @var int $defaultValue
    */
   protected $defaultValue = 0;
 
-  /**
-   * Set the options to display in the menu.
-   *
-   * @param array $options
-   *   Menu options to display.
-   */
-  public function setOptions(array $options) {
+  public function setOptions($options) {
     $this->options = array_values($options);
   }
 
-  /**
-   * Generate the menu prompt.
-   */
   public function getPrompt() {
     $prompt = $this->prompt . $this->getPromptChar() . "\r\n";
     foreach ($this->options as $i => $option) {
@@ -49,16 +40,10 @@ class MenuInputRequest extends \InputRequest {
     return $prompt;
   }
 
-  /**
-   * Validate the menu selection.
-   */
   public function isInputValid() {
     return (isset($this->options[$this->input]));
   }
 
-  /**
-   * Return the menu selection.
-   */
   public function getInput() {
     return $this->options[$this->input];
   }

@@ -1,39 +1,55 @@
 <?php
+/**
+ * @file SelectPropertyKeyTask.php
+ *
+ * Interactively select a key from available property keys.
+ *
+ * - If the propertyName property is already set, the task does nothing
+ * - If there is only one key available, that key is used and the user is not
+ *   prompted
+ * - If no keys are available, the propertyName property is not set
+ * - If there are multiple keys available, the user will be prompted to select
+ *   one using a multiple choice menu
+ *
+ * @code
+ *   <selectpropertykey prefix="drupal.sites." omitKeys="_defaults" propertyName="build.site" message="Select a site to build:" />
+ * @endcode
+ *
+ * @copyright 2018 Palantir.net, Inc.
+ */
 
 namespace TheBuild;
 
-/**
- * Interactively select an option from an array of property keys.
- */
+use BuildException;
+use StringHelper;
+use Project;
+
+
 class SelectPropertyKeyTask extends \Task {
 
   /**
-   * Required. Prefix for properties to copy.
-   *
    * @var string
+   * Required. Prefix for properties to copy.
    */
   protected $prefix = '';
 
   /**
-   * Required. Property to populate with the selected value.
-   *
    * @var string
+   * Required. Property to populate with the selected value.
    */
   protected $propertyName = '';
-
+  
   /**
-   * Message to display to the user when more than one key is available.
-   *
    * @var string
+   * Message to display to the user when more than one key is available.
    */
   protected $message = 'Select one:';
 
   /**
-   * Keys to ignore.
-   *
    * @var array
    */
   protected $omitKeys = [];
+
 
   /**
    * Copy properties.
@@ -43,7 +59,7 @@ class SelectPropertyKeyTask extends \Task {
     $project = $this->getProject();
 
     if ($existing_value = $this->project->getProperty($this->propertyName)) {
-      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", Project::MSG_INFO);
       return;
     }
 
@@ -52,8 +68,7 @@ class SelectPropertyKeyTask extends \Task {
     foreach ($project->getProperties() as $name => $value) {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
-        // phpcs:ignore
-        [$key] = explode('.', $property_children, 2);
+        list($key, $property_grandchildren) = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }
@@ -74,10 +89,10 @@ class SelectPropertyKeyTask extends \Task {
     }
     elseif (count($keys) == 1) {
       $value = current($keys);
-      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", Project::MSG_INFO);
     }
     else {
-      $this->log("No properties found with prefix '{$this->prefix}'", \Project::MSG_WARN);
+      $this->log("No properties found with prefix '{$this->prefix}'", Project::MSG_WARN);
     }
 
     if ($value) {
@@ -85,25 +100,24 @@ class SelectPropertyKeyTask extends \Task {
     }
   }
 
+
   /**
    * Verify that the required attributes are set.
    */
   public function validate() {
     foreach (['prefix', 'propertyName'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->location);
       }
     }
   }
 
+
   /**
-   * Set the prefix for which options will be shown.
-   *
    * @param string $value
-   *   Keys with this prefix will be provided as options.
    */
   public function setPrefix($value) {
-    if (!\StringHelper::endsWith(".", $value)) {
+    if (!StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 
@@ -111,30 +125,21 @@ class SelectPropertyKeyTask extends \Task {
   }
 
   /**
-   * Set the destination property.
-   *
    * @param string $value
-   *   Property name for the selection result.
    */
   public function setPropertyName($value) {
     $this->propertyName = $value;
   }
 
   /**
-   * Set the message.
-   *
    * @param string $value
-   *   Message to display with the options.
    */
   public function setMessage($value) {
     $this->message = $value;
   }
 
   /**
-   * Exclude some of the property keys from the options.
-   *
    * @param string $value
-   *   A comma-separated list of keys to exclude.
    */
   public function setOmitKeys($value) {
     $this->omitKeys = array_map('trim', explode(',', $value));

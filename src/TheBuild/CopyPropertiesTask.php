@@ -1,39 +1,47 @@
 <?php
+/**
+ * @file CopyPropertiesTask.php
+ *
+ * Copy properties matching a prefix to another prefix.
+ *
+ * @code
+ *   <copyproperties fromPrefix="drupal.sites.default" toPrefix="drupal.site" override="true" />
+ * @endcode
+ *
+ * @copyright 2018 Palantir.net, Inc.
+ */
 
 namespace TheBuild;
 
-/**
- * Copy properties matching a prefix to properties with a different prefix.
- */
+use BuildException;
+use StringHelper;
+
+
 class CopyPropertiesTask extends \Task {
 
   /**
-   * Prefix for properties to copy.
-   *
    * @var string
+   * Prefix for properties to copy.
    */
   protected $fromPrefix = '';
 
   /**
-   * Prefix for properties to create/update.
-   *
    * @var string
+   * Prefix for properties to create/update.
    */
   protected $toPrefix = '';
-
+  
   /**
-   * Whether to overwrite the existing properties.
-   *
    * @var bool
+   * Whether to overwrite the existing properties.
    */
-  protected $override = TRUE;
+  protected $override = true;
 
   /**
-   * Internal method to use for creating/updating properties.
-   *
    * @var string
    */
   protected $propertyMethod = 'setProperty';
+
 
   /**
    * Copy properties.
@@ -54,27 +62,26 @@ class CopyPropertiesTask extends \Task {
     }
   }
 
+
   /**
    * Verify that the required attributes are set.
    */
   public function validate() {
     if (empty($this->fromPrefix)) {
-      throw new \BuildException("fromPrefix attribute is required.", $this->location);
+      throw new BuildException("fromPrefix attribute is required.", $this->location);
     }
 
     if (empty($this->toPrefix)) {
-      throw new \BuildException("toPrefix attribute is required.", $this->location);
+      throw new BuildException("toPrefix attribute is required.", $this->location);
     }
   }
 
+
   /**
-   * Set the source property prefix.
-   *
    * @param string $prefix
-   *   Prefix to copy properties from.
    */
   public function setFromPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 
@@ -82,13 +89,10 @@ class CopyPropertiesTask extends \Task {
   }
 
   /**
-   * Set the destination property prefix.
-   *
    * @param string $prefix
-   *   Prefix to copy properties into.
    */
   public function setToPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 
@@ -96,10 +100,7 @@ class CopyPropertiesTask extends \Task {
   }
 
   /**
-   * Set override.
-   *
    * @param bool $override
-   *   Whether to override existing values.
    */
   public function setOverride($override) {
     $this->override = $override;

@@ -1,64 +1,80 @@
 <?php
+/**
+ * @file GetLatestBackupTask.php
+ *
+ * Get the latest backup of a site from the Acquia Cloud API.
+ *
+ * @code
+ *   <!-- Required parameters only -->
+ *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" />
+ *   <!-- All parameters -->
+ *   <getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="test" database="multisite_db" maxAge="48" propertyName="database_backup_file" />
+ * @endcode
+ *
+ * @copyright 2018 Palantir.net, Inc.
+ */
 
 namespace TheBuild\Acquia;
 
-/**
- * Fetch a recent backup from Acquia.
- */
+use BuildException;
+use PhingFile;
+
+
 class GetLatestBackupTask extends AcquiaTask {
 
   /**
-   * Required. Directory for storing downloaded database backups.
+   * Directory for storing downloaded database backups.
    *
-   * @var \PhingFile
+   * Required parameter.
+   * @var PhingFile
    */
   protected $dir;
 
   /**
-   * Required. The Acquia Cloud hosting realm where the site is running.
-   *
-   * This also appears in a site's server names, as
-   * 'sitename.REALM.hosting.acquia.com'.
+   * The Acquia Cloud hosting realm where the site is running.
    *   - Acquia Cloud Enterprise: 'prod'
    *   - Acquia Cloud Professional: 'devcloud'
    *
+   * This also appears in a site's server names, as 'sitename.REALM.hosting.acquia.com'.
+   *
+   * Required parameter.
    * @var string
    */
   protected $realm;
 
   /**
-   * Required. The Acquia Cloud site account name.
+   * The Acquia Cloud site account name.
    *
+   * Required parameter.
    * @var string
    */
   protected $site;
 
   /**
-   * Required. The Acquia Cloud environment.
+   * The Acquia Cloud environment. Generally 'dev', 'test', or 'prod', unless
+   * a site has RA or other additional environments.
    *
-   * Generally 'dev', 'test', or 'prod', unless a site has RA or other
-   * additional environments.
-   *
+   * Required parameter.
    * @var string
    */
   protected $env;
 
   /**
-   * Optional. The name of the database whose backup to download.
+   * The name of the database whose backup to download. This will correspond
+   * with the site name unless your site uses multiple databases or you are
+   * running Drupal multisites.
    *
-   * This will correspond with the site name unless your site uses multiple
-   * databases or you are running Drupal multisites.
-   *
+   * Optional parameter; defaults to matching $site.
    * @var string
    */
   protected $database;
 
   /**
-   * Optional. Maximum age of the database backup in hours.
+   * Maximum age of the database backup in hours. If there is no backup matching
+   * this age in the current backups.json, the backups.json will be refreshed
+   * and the newest backup will be downloaded.
    *
-   * If there is no backup matching this age in the current backups.json, the
-   * backups.json will be refreshed and the newest backup will be downloaded.
-   *
+   * Optional parameter.
    * @var int
    */
   protected $maxAge = 24;
@@ -67,24 +83,18 @@ class GetLatestBackupTask extends AcquiaTask {
    * Name of a property to populate with the path to the latest database backup.
    *
    * Optional parameter.
-   *
    * @var string
    */
   protected $propertyName;
 
   /**
-   * Where to store the JSON list of database backups.
-   *
-   * This info is downloaded from the Acquia Cloud API. The file is set to
-   * 'backups.json' in the directory specified by $dir.
-   *
-   * @var \PhingFile
+   * Where to store the JSON list of database backups downloaded from the Acquia
+   * Cloud API. This is set to 'backups.json' in the directory specified by $dir.
+   * @var PhingFile
    */
   protected $backupsFile;
 
   /**
-   * {@inheritdoc}
-   *
    * @throws \IOException
    * @throws \NullPointerException
    */
@@ -92,8 +102,8 @@ class GetLatestBackupTask extends AcquiaTask {
     $this->validate();
 
     // Store the Acquia Cloud API JSON database backup records in our backups
-    // directory..
-    $this->backupsFile = new \PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
+    // directory.
+    $this->backupsFile = new PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
 
     // Check the database backup records for entries within our time window.
     $backups = $this->getCurrentBackupRecords();
@@ -102,7 +112,7 @@ class GetLatestBackupTask extends AcquiaTask {
     $downloaded_backups = [];
     foreach ($backups as $backup) {
       $filename = basename($backup['path']);
-      $file = new \PhingFile($this->dir, $filename);
+      $file = new PhingFile($this->dir, $filename);
 
       if ($file->exists()) {
         $downloaded_backups[] = $backup;
@@ -131,15 +141,15 @@ class GetLatestBackupTask extends AcquiaTask {
       $this->log("Using backup from " . $this->formatBackupTime($newest_backup) . " ({$newest_backup['id']})");
     }
 
-    // This means that we didn't have a current record in our backups json, and
-    // the Acquia Cloud API returned empty or malformed JSON.
+    // This means that we didn't have a current record in our backups json, and the Acquia Cloud API returned empty or
+    // malformed JSON.
     if (empty($newest_backup)) {
-      throw new \BuildException('Failed to find a backup record.');
+      throw new BuildException('Failed to find a backup record.');
     }
 
     // Download the backup if it does not yet exist on the filesystem.
     $filename = basename($newest_backup['path']);
-    $file = new \PhingFile($this->dir, $filename);
+    $file = new PhingFile($this->dir, $filename);
     if (!$file->exists()) {
       $this->log("Downloading the backup to " . $file->getAbsolutePath());
       $this->downloadBackup($newest_backup, $file);
@@ -159,14 +169,14 @@ class GetLatestBackupTask extends AcquiaTask {
    * Download a backup from Acquia Cloud.
    *
    * @param array $backup
-   *   Acquia backup info array.
-   * @param \PhingFile $destination
-   *   Destination file for the downloaded backup.
+   * @param PhingFile $destination
+   * @throws \HTTP_Request2_Exception
+   * @throws \HTTP_Request2_LogicException
    */
-  protected function downloadBackup(array $backup, \PhingFile $destination) {
+  protected function downloadBackup(array $backup, PhingFile $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
     if (!$stream) {
-      throw new \BuildException('Can not write to ' . $destination->getAbsolutePath());
+      throw new BuildException('Can not write to ' . $destination->getAbsolutePath());
     }
 
     // Use an HTTP_Request2 with the Observer pattern in order to download large
@@ -182,20 +192,18 @@ class GetLatestBackupTask extends AcquiaTask {
     $response = $request->send();
     fclose($stream);
 
-    $this->log("Downloaded " . intval($response->getHeader('content-length')) / 1000000 . "MB to " . $destination->getAbsolutePath());
+    $this->log("Downloaded " . $response->getHeader('content-length')/1000000 . "MB to " . $destination->getAbsolutePath());
   }
 
   /**
    * Get backup records that are within the desired time window.
-   *
    * @return array
-   *   Array of available backups within the specified timeframe.
    */
   protected function getCurrentBackupRecords() {
     try {
       $backups = $this->getBackupRecords($this->backupsFile);
     }
-    catch (\BuildException $e) {
+    catch (BuildException $e) {
       $backups = [];
     }
 
@@ -215,21 +223,14 @@ class GetLatestBackupTask extends AcquiaTask {
   }
 
   /**
-   * Get the array of backup records from the Acquia Cloud API JSON output.
+   * Get the array of backup records from the Acquia Cloud API JSON output,
+   * sorted from oldest to newest.
    *
-   * Sorts records from oldest to newest.
-   *
-   * @param \PhingFile $file
-   *   Temp file containing the Acquia Cloud API response.
-   *
+   * @param $file
    * @return array
-   *   Acquia backup info array.
-   *
-   * @throws \BuildException
-   *
-   * @SuppressWarnings(PHPMD.ShortVariable)
+   * @throws BuildException
    */
-  protected function getBackupRecords(\PhingFile $file) {
+  protected function getBackupRecords($file) {
     if ($file->exists()) {
       $backups = json_decode($file->contents(), TRUE);
 
@@ -238,10 +239,8 @@ class GetLatestBackupTask extends AcquiaTask {
       if (isset($backups[0]['started'])) {
 
         // Sort the backups by start time so that the newest is always last.
-        usort($backups, function ($a, $b) {
-          if ($a['started'] == $b['started']) {
-            return 0;
-          }
+        usort($backups, function($a, $b) {
+          if ($a['started'] == $b['started']) { return 0; }
           return ($a['started'] < $b['started']) ? -1 : 1;
         });
 
@@ -249,19 +248,16 @@ class GetLatestBackupTask extends AcquiaTask {
       }
       elseif (count($backups) === 0) {
         // The site might not have been backed up yet.
-        throw new \BuildException('No Acquia Cloud backups found: ' . $file->getCanonicalPath());
+        throw new BuildException('No Acquia Cloud backups found: ' . $file->getCanonicalPath());
       }
     }
-    throw new \BuildException('Acquia Cloud backup records could not be loaded from JSON: ' . $file->getCanonicalPath());
+    throw new BuildException('Acquia Cloud backup records could not be loaded from JSON: ' . $file->getCanonicalPath());
   }
 
   /**
    * Download the latest list of backup records from the Acquia Cloud API.
-   *
-   * @param \PhingFile $backups_file
-   *   The file where the downloaded backup should be stored.
    */
-  protected function downloadBackupRecords(\PhingFile $backups_file) {
+  protected function downloadBackupRecords(PhingFile $backups_file) {
     $json = $this->getApiResponseBody("/sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->database}/backups.json");
 
     $writer = new \FileWriter($backups_file);
@@ -271,85 +267,37 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Format the backup time to display in log messages.
    *
-   * @param array $backup
-   *   Acquia backup info array.
-   *
+   * @param $backup
    * @return string
-   *   A human-readable date.
    */
-  protected function formatBackupTime(array $backup) {
+  protected function formatBackupTime($backup) {
     $time = new \DateTime('now');
     $time->setTimestamp($backup['started']);
     return $time->format(DATE_RFC850);
   }
 
   /**
-   * Set the Acquia realm.
-   *
-   * @param string $value
-   *   Acquia realm.
+   * Setter functions.
    */
-  public function setRealm(string $value) {
+  public function setRealm($value) {
     $this->realm = $value;
   }
-
-  /**
-   * Set the Acquia site name.
-   *
-   * @param string $value
-   *   Acquia site name.
-   */
-  public function setSite(string $value) {
+  public function setSite($value) {
     $this->site = $value;
   }
-
-  /**
-   * Set the Acquia environment name.
-   *
-   * @param string $value
-   *   Acquia environment name.
-   */
-  public function setEnv(string $value) {
+  public function setEnv($value) {
     $this->env = $value;
   }
-
-  /**
-   * Set the Acquia database name.
-   *
-   * @param string $value
-   *   Set the database name.
-   */
-  public function setDatabase(string $value) {
+  public function setDatabase($value) {
     $this->database = $value;
   }
-
-  /**
-   * Set the destination directory.
-   *
-   * @param string $value
-   *   Directory path.
-   */
-  public function setDir(string $value) {
-    $this->dir = new \PhingFile($value);
+  public function setDir($value) {
+    $this->dir = new PhingFile($value);
   }
-
-  /**
-   * Set the max age.
-   *
-   * @param int|string $value
-   *   Max age in hours.
-   */
-  public function setMaxAge(int|string $value) {
+  public function setMaxAge($value) {
     $this->maxAge = (int) $value;
   }
-
-  /**
-   * Set the property name.
-   *
-   * @param string $value
-   *   Property name to use for the result.
-   */
-  public function setPropertyName(string $value) {
+  public function setPropertyName($value) {
     $this->propertyName = $value;
   }
 
@@ -364,7 +312,7 @@ class GetLatestBackupTask extends AcquiaTask {
     // Check the build attributes.
     foreach (['dir', 'realm', 'site', 'env'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->location);
       }
     }
   }
