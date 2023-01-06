@@ -4,7 +4,7 @@
 version: 2.1
 jobs:
   build:
-    working_directory: ~/example
+    working_directory: ~/project
     docker:
       - image: cimg/php:8.1-browsers
       - image: cimg/mysql:5.7
@@ -31,6 +31,27 @@ jobs:
           name: Update Composer
           command: |
             sudo composer self-update
+
+      # Run code quality checks
+      - checkout
+      - run:
+          name: Run code reviews
+          command: |
+            composer install
+            echo "phpcs for modules"
+            vendor/bin/phpcs defaults/standard/modules --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
+            echo "phpmd for modules"
+            vendor/bin/phpmd defaults/standard/modules text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            echo "phpstan for modules"
+            vendor/bin/phpstan analyse defaults/standard/modules --level=2
+            echo "phpcs for tasks"
+            vendor/bin/phpcs src --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
+            echo "phpmd for tasks"
+            vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            echo "phpstan for tasks"
+            vendor/bin/phpstan analyse src --level=2
+
+      # Install a drupal test project.
       - run:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
@@ -58,6 +79,7 @@ jobs:
       - run:
           name: Replace the default version of the-build with this one
           command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH}
+          working_directory: ~/example
 
       # Source cache - update when branch changes
       - save_cache:
@@ -69,16 +91,19 @@ jobs:
       - run:
           name: Install the-build in the project
           command: printf '\n\n\nn' | vendor/bin/the-build-installer
+          working_directory: ~/example
 
       - run:
           name: Wait for DB
           # Dockerize is preinstalled in circleci/* docker image
           command: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+          working_directory: ~/example
 
       # Install Drupal (separately, so that we can see it fail separately)
       - run:
           name: Install Drupal
           command: printf 'y' | vendor/bin/phing install -Ddrupal.validate_clean_config.bypass=yes
+          working_directory: ~/example
 
       # Composer package cache - update when the contents of the Composer cache directory
       # change. This cache is saved after installing Drupal, as the install process uses
@@ -87,18 +112,20 @@ jobs:
       - save_cache:
           key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
           paths:
-              - ~/.cache/composer
+            - ~/.cache/composer
 
       # Add a multisite
       - run:
           name: Add a multisite to the project
           command: printf 'intranet\nintranet.example.ddev.site' | vendor/bin/phing drupal-add-multisite
+          working_directory: ~/example
 
       - run:
           name: Run Behat tests
           command: |
-              nohup php -S example.ddev.site:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
-              vendor/bin/phing test -Dbuild.env=circleci
+            nohup php -S example.ddev.site:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
+            vendor/bin/phing test -Dbuild.env=circleci
+          working_directory: ~/example
 
       - store_artifacts:
           path: /tmp/artifacts

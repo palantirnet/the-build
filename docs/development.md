@@ -8,6 +8,16 @@ To develop and test changes to the-build, you'll generally need to have a Drupal
 
 The major thing to watch out for here is that your copy of the-build is temporary -- in certain cases (especially when switching branches) when you run composer commands, your repo may be replaced with a different version.
 
+## Running code reviews on the-build
+
+Our build tool should follow the same quality standards as our projects.
+
+We run automated tests using PHP Code Beautifier, PHP Code Sniffer, PHP MD, and PHPStan. You can invoke all of these with a single command from the project root:
+
+`./code-review.sh`
+
+These tests -- except for PHP Code Beautifier -- also run on CircleCI.
+
 ## Testing on an existing site
 
 You can clone the-build into the vendor directory of an existing site. If it doesn't have a version of the-build already installed, you'll need to require it with `composer require palantirnet/the-build:dev-release-2.0 --prefer-source --dev` first.
@@ -28,4 +38,4 @@ composer require palantirnet/the-build:dev-release-2.0 --prefer-source
 ```
 
 ----
-Copyright 2018 Palantir.net, Inc.
+Copyright 2018-2022 Palantir.net, Inc.
