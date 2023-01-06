@@ -53,13 +53,15 @@ class SelectPropertyKeyTask extends \Task {
       if (strpos($name, $this->prefix) === 0) {
         $property_children = substr($name, strlen($this->prefix));
         // phpcs:ignore
-        [$key, $property_grandchildren] = explode('.', $property_children, 2);
+        [$key] = explode('.', $property_children, 2);
         $keys[$key] = $key;
       }
     }
 
     // Remove keys based on the 'omitKeys' attribute.
     $keys = array_diff($keys, $this->omitKeys);
+
+    $value = NULL;
 
     if (count($keys) > 1) {
       // Prompt for input.

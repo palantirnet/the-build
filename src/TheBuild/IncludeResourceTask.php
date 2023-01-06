@@ -67,7 +67,7 @@ class IncludeResourceTask extends \Task {
       }
     }
 
-    // Link or copy the source artifact.
+    // Link or copy the source artifact. @phpstan-ignore-next-line
     $this->dest->getParentFile()->mkdirs();
     if ($this->mode == 'copy') {
       $this->log(sprintf("Copying '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
@@ -75,6 +75,7 @@ class IncludeResourceTask extends \Task {
     }
     else {
       $this->log(sprintf("Linking '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
+      /** @var \SymlinkTask $symlink_task */
       $symlink_task = $this->project->createTask("symlink");
       $symlink_task->setTarget($this->source->getPath());
       $symlink_task->setLink($this->dest->getPath());

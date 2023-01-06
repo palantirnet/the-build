@@ -91,11 +91,6 @@ class GetLatestBackupTask extends AcquiaTask {
   public function main() {
     $this->validate();
 
-    // If the Acquia database name isn't set, default to using the site name.
-    if (empty($this->database)) {
-      $this->database = $this->site;
-    }
-
     // Store the Acquia Cloud API JSON database backup records in our backups
     // directory..
     $this->backupsFile = new \PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
@@ -187,7 +182,7 @@ class GetLatestBackupTask extends AcquiaTask {
     $response = $request->send();
     fclose($stream);
 
-    $this->log("Downloaded " . $response->getHeader('content-length') / 1000000 . "MB to " . $destination->getAbsolutePath());
+    $this->log("Downloaded " . intval($response->getHeader('content-length')) / 1000000 . "MB to " . $destination->getAbsolutePath());
   }
 
   /**
@@ -231,6 +226,8 @@ class GetLatestBackupTask extends AcquiaTask {
    *   Acquia backup info array.
    *
    * @throws \BuildException
+   *
+   * @SuppressWarnings(PHPMD.ShortVariable)
    */
   protected function getBackupRecords(\PhingFile $file) {
     if ($file->exists()) {
@@ -360,6 +357,11 @@ class GetLatestBackupTask extends AcquiaTask {
    * Verify that the required parameters are available.
    */
   protected function validate() {
+    // If the Acquia database name isn't set, default to using the site name.
+    if (empty($this->database)) {
+      $this->database = $this->site;
+    }
+    // Check the build attributes.
     foreach (['dir', 'realm', 'site', 'env'] as $attribute) {
       if (empty($this->$attribute)) {
         throw new \BuildException("$attribute attribute is required.", $this->location);
