@@ -56,6 +56,7 @@ function the_build_utility_install() {
     'admin_toolbar',
     'admin_toolbar_tools',
     'config_split',
+    'config_ignore',
     'devel',
     'workbench',
     'workbench_tabs',
