@@ -1,4 +1,4 @@
-diff --git a/classes/phing/tasks/ext/SymlinkTask.php b/classes/phing/tasks/ext/SymlinkTask.php
+pwdiff --git a/classes/phing/tasks/ext/SymlinkTask.php b/classes/phing/tasks/ext/SymlinkTask.php
 index f132b4f747..87844a0d09 100644
 --- a/classes/phing/tasks/ext/SymlinkTask.php
 +++ b/classes/phing/tasks/ext/SymlinkTask.php

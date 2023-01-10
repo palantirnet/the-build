@@ -159,6 +159,8 @@
 
 
     <!-- Default target: list -->
+    <phingcall target="default-content" /> 
+
     <target name="list" hidden="true">
         <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
         <echo>Find more documentation for palantirnet/the-build on GitHub:
