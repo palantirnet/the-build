@@ -202,7 +202,16 @@
         <!-- Copy the phpcs.xml file template.
              This doesn't do any property substitution except for the "projectname".
              -->
-        <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${application.startdir}/phpcs.xml" overwrite="true">
+        <if>
+            <equals arg1="${build.host}" arg2="pantheon"/>
+            <then>
+                <property name="phpcs_dir" value="${application.startdir}/web"/>
+            </then>
+            <else>
+                <var name="phpcs_dir" value="${application.startdir}"/>
+            </else>
+        </if>
+        <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${phpcs_dir}/phpcs.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}" />
