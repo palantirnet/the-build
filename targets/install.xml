@@ -208,7 +208,7 @@
                 <property name="phpcs_dir" value="${application.startdir}/web"/>
             </then>
             <else>
-                <var name="phpcs_dir" value="${application.startdir}"/>
+                <property name="phpcs_dir" value="${application.startdir}"/>
             </else>
         </if>
         <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${phpcs_dir}/phpcs.xml" overwrite="true">
