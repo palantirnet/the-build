@@ -16,8 +16,10 @@
 
 namespace TheBuild\Acquia;
 
-use BuildException;
-use PhingFile;
+use Phing\Exception\BuildException;
+use Phing\Io\File;
+use Phing\Io\IOException;
+use Phing\Io\FileWriter;
 
 
 class GetLatestBackupTask extends AcquiaTask {
@@ -26,7 +28,7 @@ class GetLatestBackupTask extends AcquiaTask {
    * Directory for storing downloaded database backups.
    *
    * Required parameter.
-   * @var PhingFile
+   * @var File
    */
   protected $dir;
 
@@ -90,14 +92,13 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Where to store the JSON list of database backups downloaded from the Acquia
    * Cloud API. This is set to 'backups.json' in the directory specified by $dir.
-   * @var PhingFile
+   * @var File
    */
   protected $backupsFile;
 
-  /**
-   * @throws \IOException
-   * @throws \NullPointerException
-   */
+    /**
+     * @throws IOException
+     */
   public function main() {
     $this->validate();
 
@@ -108,7 +109,7 @@ class GetLatestBackupTask extends AcquiaTask {
 
     // Store the Acquia Cloud API JSON database backup records in our backups
     // directory.
-    $this->backupsFile = new PhingFile($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
+    $this->backupsFile = new File($this->dir, "backups-{$this->site}-{$this->database}-{$this->env}.json");
 
     // Check the database backup records for entries within our time window.
     $backups = $this->getCurrentBackupRecords();
@@ -117,7 +118,7 @@ class GetLatestBackupTask extends AcquiaTask {
     $downloaded_backups = [];
     foreach ($backups as $backup) {
       $filename = basename($backup['path']);
-      $file = new PhingFile($this->dir, $filename);
+      $file = new File($this->dir, $filename);
 
       if ($file->exists()) {
         $downloaded_backups[] = $backup;
@@ -154,7 +155,7 @@ class GetLatestBackupTask extends AcquiaTask {
 
     // Download the backup if it does not yet exist on the filesystem.
     $filename = basename($newest_backup['path']);
-    $file = new PhingFile($this->dir, $filename);
+    $file = new File($this->dir, $filename);
     if (!$file->exists()) {
       $this->log("Downloading the backup to " . $file->getAbsolutePath());
       $this->downloadBackup($newest_backup, $file);
@@ -174,11 +175,11 @@ class GetLatestBackupTask extends AcquiaTask {
    * Download a backup from Acquia Cloud.
    *
    * @param array $backup
-   * @param PhingFile $destination
+   * @param File $destination
    * @throws \HTTP_Request2_Exception
    * @throws \HTTP_Request2_LogicException
    */
-  protected function downloadBackup(array $backup, PhingFile $destination) {
+  protected function downloadBackup(array $backup, File $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
     if (!$stream) {
       throw new BuildException('Can not write to ' . $destination->getAbsolutePath());
@@ -262,10 +263,10 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Download the latest list of backup records from the Acquia Cloud API.
    */
-  protected function downloadBackupRecords(PhingFile $backups_file) {
+  protected function downloadBackupRecords(File $backups_file) {
     $json = $this->getApiResponseBody("/sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->database}/backups.json");
 
-    $writer = new \FileWriter($backups_file);
+    $writer = new FileWriter($backups_file);
     $writer->write($json);
   }
 
@@ -297,7 +298,7 @@ class GetLatestBackupTask extends AcquiaTask {
     $this->database = $value;
   }
   public function setDir($value) {
-    $this->dir = new PhingFile($value);
+    $this->dir = new File($value);
   }
   public function setMaxAge($value) {
     $this->maxAge = (int) $value;
@@ -312,7 +313,7 @@ class GetLatestBackupTask extends AcquiaTask {
   protected function validate() {
     foreach (['dir', 'realm', 'site', 'env'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }

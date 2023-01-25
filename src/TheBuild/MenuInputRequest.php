@@ -8,7 +8,8 @@
  */
 
 namespace TheBuild;
-use InputRequest;
+
+use Phing\Input\InputRequest;
 
 
 class MenuInputRequest extends InputRequest {

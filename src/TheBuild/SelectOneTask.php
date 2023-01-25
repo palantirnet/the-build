@@ -21,11 +21,12 @@
 
 namespace TheBuild;
 
-use BuildException;
-use Project;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Project;
 
 
-class SelectOneTask extends \Task {
+class SelectOneTask extends Task {
 
   /**
    * @var string
@@ -93,7 +94,7 @@ class SelectOneTask extends \Task {
   public function validate() {
     foreach (['list', 'propertyName'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }

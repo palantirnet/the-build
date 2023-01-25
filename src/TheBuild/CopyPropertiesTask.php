@@ -13,11 +13,12 @@
 
 namespace TheBuild;
 
-use BuildException;
-use StringHelper;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Util\StringHelper;
 
 
-class CopyPropertiesTask extends \Task {
+class CopyPropertiesTask extends Task {
 
   /**
    * @var string
@@ -68,11 +69,11 @@ class CopyPropertiesTask extends \Task {
    */
   public function validate() {
     if (empty($this->fromPrefix)) {
-      throw new BuildException("fromPrefix attribute is required.", $this->location);
+      throw new BuildException("fromPrefix attribute is required.", $this->getLocation());
     }
 
     if (empty($this->toPrefix)) {
-      throw new BuildException("toPrefix attribute is required.", $this->location);
+      throw new BuildException("toPrefix attribute is required.", $this->getLocation());
     }
   }
 

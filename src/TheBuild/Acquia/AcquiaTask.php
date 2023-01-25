@@ -22,16 +22,18 @@
 
 namespace TheBuild\Acquia;
 
-use BuildException;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Io\IOException;
 use HTTP_Request2;
-use PhingFile;
+use Phing\Io\File;
 
-abstract class AcquiaTask extends \Task {
+abstract class AcquiaTask extends Task {
 
   /**
    * Required. The Acquia Cloud credentials file containing a json array with
    * 'mail' and 'key' values.
-   * @var \PhingFile
+   * @var File
    */
   protected $credentialsFile;
 
@@ -56,16 +58,15 @@ abstract class AcquiaTask extends \Task {
    */
   protected $endpoint = 'https://cloudapi.acquia.com/v1';
 
-  /**
-   * Load the Acquia Cloud credentials from the cloudapi.conf JSON file.
-   *
-   * @throws \IOException
-   * @throws \NullPointerException
-   */
+    /**
+     * Load the Acquia Cloud credentials from the cloudapi.conf JSON file.
+     *
+     * @throws IOException
+     */
   protected function loadCredentials() {
     if (empty($this->mail) || empty($this->key)) {
       if (empty($this->credentialsFile)) {
-        $this->credentialsFile = new PhingFile($_SERVER['HOME'] . '/.acquia/cloudapi.conf');
+        $this->credentialsFile = new File($_SERVER['HOME'] . '/.acquia/cloudapi.conf');
       }
 
       if (!file_exists($this->credentialsFile) || !is_readable($this->credentialsFile)) {
@@ -99,6 +100,8 @@ abstract class AcquiaTask extends \Task {
     $request->setConfig('follow_redirects', TRUE);
     $request->setAuth($this->mail, $this->key);
 
+
+
     return $request;
   }
 
@@ -117,13 +120,12 @@ abstract class AcquiaTask extends \Task {
     return $response->getBody();
   }
 
-  /**
-   * @param PhingFile $file
-   * @throws \IOException
-   * @throws \NullPointerException
-   */
-  public function setCredentialsFile(PhingFile $file) {
-    $this->credentialsFile = new PhingFile($file);
+    /**
+     * @param File $file
+     * @throws IOException
+     */
+  public function setCredentialsFile(File $file) {
+    $this->credentialsFile = new File($file);
   }
 
 }

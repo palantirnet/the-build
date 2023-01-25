@@ -7,12 +7,13 @@
 
 namespace TheBuild;
 
-use PhingFile;
-use BuildException;
-use FileSystem;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Io\File;
+use Phing\Io\FileSystem;
 
 
-class IncludeResourceTask extends \Task {
+class IncludeResourceTask extends Task {
 
   /**
    * @var string
@@ -21,13 +22,13 @@ class IncludeResourceTask extends \Task {
   protected $mode = 'symlink';
 
   /**
-   * @var PhingFile
+   * @var File
    * The source file or directory to include.
    */
   protected $source;
   
   /**
-   * @var PhingFile
+   * @var File
    * The location to link the file to.
    */
   protected $dest = NULL;
@@ -94,7 +95,7 @@ class IncludeResourceTask extends \Task {
    */
   public function validate() {
     if (!in_array($this->mode, ['symlink', 'copy'])) {
-      throw new BuildException("mode attribute must be either 'symlink' or 'copy'", $this->location);
+      throw new BuildException("mode attribute must be either 'symlink' or 'copy'", $this->getLocation());
     }
 
     if (empty($this->source) || empty($this->dest)) {
@@ -117,9 +118,9 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the source of the resource to include.
    *
-   * @param \PhingFile $source
+   * @param File $source
    */
-  public function setSource(PhingFile $source) {
+  public function setSource(File $source) {
     if (!$source->exists()) {
       throw new BuildException("resource '$source' is not available'");
     }
@@ -130,9 +131,9 @@ class IncludeResourceTask extends \Task {
 
   /**
    * Set the destination for the resource.
-   * @param PhingFile $dest
+   * @param File $dest
    */
-  public function setDest(PhingFile $dest) {
+  public function setDest(File $dest) {
     $this->dest = $dest;
   }
 

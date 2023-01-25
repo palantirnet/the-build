@@ -13,11 +13,12 @@
 
 namespace TheBuild;
 
-use BuildException;
-use StringHelper;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Util\StringHelper;
 
 
-class ForeachKeyTask extends \Task {
+class ForeachKeyTask extends Task {
 
   /**
    * @var string
@@ -49,7 +50,7 @@ class ForeachKeyTask extends \Task {
   protected $omitKeys = [];
 
   /**
-   * @var \PhingCallTask
+   * @var PhingCallTask
    */
   protected $callee;
 
@@ -113,7 +114,7 @@ class ForeachKeyTask extends \Task {
   public function validate() {
     foreach (['prefix', 'target', 'keyParam', 'prefixParam'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }

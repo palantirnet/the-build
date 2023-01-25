@@ -20,12 +20,13 @@
 
 namespace TheBuild;
 
-use BuildException;
-use StringHelper;
-use Project;
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Util\StringHelper;
+use Phing\Project;
 
 
-class SelectPropertyKeyTask extends \Task {
+class SelectPropertyKeyTask extends Task {
 
   /**
    * @var string
@@ -105,7 +106,7 @@ class SelectPropertyKeyTask extends \Task {
   public function validate() {
     foreach (['prefix', 'propertyName'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }
