@@ -14,6 +14,7 @@
     "require": {
         "composer-runtime-api": "^2.2.2",
         "cweagans/composer-patches": "^1.7",
+        "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3.6",
         "drush/drush": ">=9",
         "mglaman/drupal-check": "^1.2",
