@@ -200,21 +200,22 @@
         </copy>
 
         <!-- Copy the phpcs.xml file template.
-             This doesn't do any property substitution except for the "projectname".
              -->
+        <echo>Updating pcpcs.xml file for project root.</echo>
         <if>
-            <equals arg1="${build.host}" arg2="pantheon"/>
+            <equals arg1="${build.host}" arg2="acquia"/>
             <then>
-                <property name="phpcs_dir" value="${application.startdir}/web"/>
+                <property name="phpcs_dir" value="docroot"/>
             </then>
             <else>
-                <property name="phpcs_dir" value="${application.startdir}"/>
+                <property name="phpcs_dir" value="web"/>
             </else>
         </if>
-        <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${phpcs_dir}/phpcs.xml" overwrite="true">
+        <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${application.startdir}/phpcs.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}" />
+                    <token key="webdocroot" value="${phpcs_dir}" />
                 </replacetokens>
             </filterchain>
         </copy>
