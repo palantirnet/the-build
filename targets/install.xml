@@ -215,7 +215,7 @@
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}" />
-                    <token key="webdocroot" value="${phpcs_dir}" />
+                    <token key="webroot" value="${phpcs_dir}" />
                 </replacetokens>
             </filterchain>
         </copy>
