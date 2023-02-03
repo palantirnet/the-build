@@ -29,8 +29,8 @@
   <rule ref="DrupalPractice"/>
 
   <!-- Directories to scan. -->
-  <file>docroot/modules/custom</file>
-  <file>docroot/themes/custom</file>
+  <file>@webroot@/modules/custom</file>
+  <file>@webroot@/themes/custom</file>
 
   <exclude-pattern>*/behat</exclude-pattern>
   <exclude-pattern>*/node_modules</exclude-pattern>
