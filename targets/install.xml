@@ -144,8 +144,12 @@
                 <available file="${build.dir}/docroot/core" type="dir" property="drupal.root.old" value="docroot" />
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" />
-                <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                <exec executable="rm" dir="${build.dir}">
+                    <arg line="-rf ${drupal.root}"/>
+                </exec>
+                <exec executable="mv" dir="${build.dir}" checkreturn="true" logoutput="true">
+                    <arg line="${drupal.root.old} ${drupal.root}"/>
+                </exec>
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
                 <reflexive>
@@ -159,7 +163,9 @@
                 </reflexive>
 
                 <echo msg="Updating your composer.lock hash" />
-                <exec command="composer update --lock" dir="${application.startdir}" />
+                <exec executable="composer" dir="${application.startdir}">
+                    <arg line="update --lock"/>
+                </exec>
 
             </then>
         </if>

@@ -32,7 +32,9 @@
       <property name="drupal.validate_clean_config.dir" value="${build.dir}/${drupal.root}/${drupal.site.config_sync_directory}" />
 
         <!-- Use git to list local (not yet committed) changes to the config directory. -->
-        <exec command="git status --porcelain ${drupal.validate_clean_config.dir}" outputProperty="modified_files" />
+        <exec executable="git" outputProperty="modified_files">
+            <arg line="status --porcelain ${drupal.validate_clean_config.dir}"/>
+        </exec>
 
         <if>
             <and>
@@ -145,7 +147,10 @@ ${modified_files}
             <not><isset property="drupal.site.load_db.file" /></not>
             <then>
                 <!-- Use the last listed file that matches the drupal.site.load_db.export_pattern property -->
-                <exec dir="${build.dir}" command="ls ${drupal.site.load_db.export_pattern} | tail -1" outputProperty="drupal.site.load_db.discovered_file" />
+                <exec dir="${build.dir}" executable="bash" outputProperty="drupal.site.load_db.discovered_file">
+                    <arg value="-c"/>
+                    <arg line="ls ${drupal.site.load_db.export_pattern} | tail -1"/>
+                </exec>
                 <!-- ... but respect drupal.site.load_db.file if it was already set. -->
                 <property name="drupal.site.load_db.file" value="${drupal.site.load_db.discovered_file}" />
             </then>
@@ -173,7 +178,10 @@ Or, you can specify the export file directly:
         <!-- Load the contents of the file into Drupal -->
         <property name="drupal.site.load_db.command" value="${drupal.site.load_db.contents_command} ${drupal.site.load_db.file} | ${drupal.site.load_db.mysql_command}" />
         <echo>$> ${drupal.site.load_db.command}</echo>
-        <exec dir="${build.dir}" command="${drupal.site.load_db.command}" checkreturn="true" logoutput="true" />
+        <exec dir="${build.dir}" executable="bash" checkreturn="true" logoutput="true">
+            <arg value="-c"/>
+            <arg line="${drupal.site.load_db.command}"/>
+        </exec>
     </target>
 
 
@@ -186,7 +194,9 @@ Or, you can specify the export file directly:
 
         <!-- We have to format the test query differently when using "ddev drush" vs. when using "drush" directly. -->
         <property name="test_query" value="SELECT 1" />
-        <exec command="which ddev" returnProperty="which_ddev" />
+        <exec executable="which" returnProperty="which_ddev">
+            <arg line="ddev"/>
+        </exec>
         <if>
             <and>
                 <available file="${build.dir}/.ddev/config.yaml" />
@@ -437,7 +447,9 @@ $sites['${_multisite.sites_php_domain}'] = '${_multisite.dir}';
 
         <!-- If the '@multisite_placeholder@' is missing from the default properties file, the developer will have to
              add the configuration manually. -->
-        <exec command="grep '@multisite_placeholder@' .the-build/build.yml" returnProperty="_multisite.placeholder_missing" />
+        <exec executable="grep" returnProperty="_multisite.placeholder_missing">
+            <arg line="'@multisite_placeholder@' .the-build/build.yml"/>
+        </exec>
         <if>
             <equals arg1="${_multisite.placeholder_missing}" arg2="1" />
             <then>
