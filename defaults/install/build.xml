@@ -105,7 +105,9 @@
     <target name="behat" description="Run the Behat tests.">
         <property name="behat.command" value="${behat.bin} ${behat.args}" />
         <echo msg="$> ${behat.command}" />
-        <exec command="${behat.command}" logoutput="true" checkreturn="true" />
+        <exec executable="${behat.bin}" logoutput="true" checkreturn="true">
+            <arg line="${behat.args}"/>
+        </exec>
     </target>
 
 
@@ -118,12 +120,14 @@
 
         <!-- Run PHP Code Sniffer. -->
         <echo msg="$> vendor/bin/phpcs" />
-        <exec command="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
+        <exec executable="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
         <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
         <echo msg="$> ${phpmd.command}" />
-        <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
+        <exec executable="vendor/bin/phpmd" logoutput="true" checkreturn="true">
+            <arg line="${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}"/>
+        </exec>
 
         <!-- Run Drupal Check. -->
         <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
@@ -137,7 +141,9 @@
         <property name="drupal-check.command" value="${drupal-check.bin} ${drupal-check.dir}" />
 
         <echo msg="$> ${drupal-check.command}" />
-        <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
+        <exec executable="${drupal-check.bin}" logoutput="true" checkreturn="true">
+            <arg line="${drupal-check.dir}"/>
+        </exec>
     </target>
 
 
@@ -146,7 +152,9 @@
         <!-- Run PHP Code Beautifier and Fixer. -->
         <property name="phpcbf.command" value="vendor/bin/phpcbf --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
         <echo msg="$> ${phpcbf.command}" />
-        <exec command="${phpcbf.command}" logoutput="true" checkreturn="false" />
+        <exec executable="vendor/bin/phpcbf" logoutput="true" checkreturn="false">
+            <arg line="--standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}"/>
+        </exec>
     </target>
 
 
@@ -160,7 +168,9 @@
 
     <!-- Default target: list -->
     <target name="list" hidden="true">
-        <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
+        <exec executable="${phing.home}/bin/phing" passthru="true">
+            <arg line="-q -f ${phing.file} -l"/>
+        </exec>
         <echo>Find more documentation for palantirnet/the-build on GitHub:
 
             https://github.com/palantirnet/the-build#using-the-build</echo>

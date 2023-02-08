@@ -2,10 +2,14 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Project;
+
 /**
  * Allow the user to select one option from a list.
  */
-class SelectOneTask extends \Task {
+class SelectOneTask extends Task {
 
   /**
    * Required. List of values to select among.
@@ -44,7 +48,7 @@ class SelectOneTask extends \Task {
     $project = $this->getProject();
 
     if ($existing_value = $this->project->getProperty($this->propertyName)) {
-      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", Project::MSG_INFO);
       return;
     }
 
@@ -63,7 +67,7 @@ class SelectOneTask extends \Task {
     }
     elseif (count($keys) == 1) {
       $value = current($keys);
-      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", Project::MSG_INFO);
     }
 
     if ($value) {
@@ -77,7 +81,7 @@ class SelectOneTask extends \Task {
   public function validate() {
     foreach (['list', 'propertyName'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }

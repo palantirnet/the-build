@@ -2,10 +2,14 @@
 
 namespace TheBuild\Acquia;
 
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Io\File;
+
 /**
  * Phing task for making queries against the Acquia Cloud v1 API.
  */
-abstract class AcquiaTask extends \Task {
+abstract class AcquiaTask extends Task {
 
   /**
    * Required. The Acquia Cloud credentials file.
@@ -13,7 +17,7 @@ abstract class AcquiaTask extends \Task {
    * This file can be downloaded from your Acquia user account area and contains
    * a json array with 'mail' and 'key' values.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $credentialsFile;
 
@@ -45,19 +49,18 @@ abstract class AcquiaTask extends \Task {
   /**
    * Load the Acquia Cloud credentials from the cloudapi.conf JSON file.
    *
-   * @throws \IOException
-   * @throws \NullPointerException
+   * @throws \Phing\Io\IOException;
    *
    * @SuppressWarnings(PHPMD.Superglobals)
    */
   protected function loadCredentials() {
     if (empty($this->mail) || empty($this->key)) {
       if (empty($this->credentialsFile)) {
-        $this->credentialsFile = new \PhingFile($_SERVER['HOME'] . '/.acquia/cloudapi.conf');
+        $this->credentialsFile = new File($_SERVER['HOME'] . '/.acquia/cloudapi.conf');
       }
 
       if (!file_exists($this->credentialsFile) || !is_readable($this->credentialsFile)) {
-        throw new \BuildException("Acquia Cloud credentials file '{$this->credentialsFile}' is not available.");
+        throw new BuildException("Acquia Cloud credentials file '{$this->credentialsFile}' is not available.");
       }
 
       $contents = file_get_contents($this->credentialsFile);
@@ -68,7 +71,7 @@ abstract class AcquiaTask extends \Task {
     }
 
     if (empty($this->mail) || empty($this->key)) {
-      throw new \BuildException('Missing Acquia Cloud API credentials.');
+      throw new BuildException('Missing Acquia Cloud API credentials.');
     }
   }
 
@@ -80,6 +83,9 @@ abstract class AcquiaTask extends \Task {
    *
    * @return \HTTP_Request2
    *   Request object.
+   *
+   * @throws \Phing\Io\IOException
+   * @throws \HTTP_Request2_LogicException
    */
   protected function createRequest(string $path) : \HTTP_Request2 {
     $this->loadCredentials();
@@ -101,6 +107,9 @@ abstract class AcquiaTask extends \Task {
    *
    * @return string
    *   API response.
+   *
+   * @throws \Phing\Io\IOException
+   * @throws \HTTP_Request2_Exception
    */
   protected function getApiResponseBody(string $path) : string {
     $request = $this->createRequest($path);
@@ -113,14 +122,13 @@ abstract class AcquiaTask extends \Task {
   /**
    * Set the Acquia credentials file.
    *
-   * @param \PhingFile $file
+   * @param \Phing\Io\File $file
    *   Acquia credentials file.
    *
-   * @throws \IOException
-   * @throws \NullPointerException
+   * @throws \Phing\Io\IOException
    */
-  public function setCredentialsFile(\PhingFile $file) {
-    $this->credentialsFile = new \PhingFile($file);
+  public function setCredentialsFile(File $file) {
+    $this->credentialsFile = new File($file);
   }
 
 }

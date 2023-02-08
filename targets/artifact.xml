@@ -32,14 +32,22 @@
 
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
-        <exec command="git rev-parse HEAD" outputProperty="artifact.git.commit" checkreturn="true" />
+        <exec executable="git" outputProperty="artifact.git.commit" checkreturn="true">
+            <arg line="rev-parse HEAD"/>
+        </exec>
         <!-- @TODO Handle the case when this command outputs "HEAD". This happens when
              building a repo from a detatched head state (e.g. you've checked out a tag),
              and it causes pushing the artifact to fail because "HEAD" is not a branch you
              can push to. -->
-        <exec command="git rev-parse --abbrev-ref HEAD" outputProperty="artifact.git.branch" checkreturn="true" />
-        <exec command="git log -1 --oneline" outputProperty="artifact.git.commit_message" />
-        <exec command="git describe --tags --exact-match" outputProperty="artifact.git.tag" returnProperty="artifact.git.no_tag" />
+        <exec executable="git" outputProperty="artifact.git.branch" checkreturn="true">
+            <arg line="rev-parse --abbrev-ref HEAD"/>
+        </exec>
+        <exec executable="git" outputProperty="artifact.git.commit_message">
+            <arg line="log -1 --oneline"/>
+        </exec>
+        <exec executable="git" outputProperty="artifact.git.tag" returnProperty="artifact.git.no_tag">
+            <arg line="describe --tags --exact-match"/>
+        </exec>
 
         <!-- Create a temporary branch name based on the commit for building the artifact,
              to avoid branch conflicts. -->
@@ -89,7 +97,9 @@
         <!-- Prevent an artifact from being built when there are changes that are not
              committed to git, since those changes wouldn't be replicable in later builds.
              -->
-        <exec command="git status --porcelain" outputProperty="modified_files" />
+        <exec executable="git" outputProperty="modified_files">
+            <arg line="status --porcelain"/>
+        </exec>
         <if>
             <not><equals arg1="${modified_files}" arg2="" /></not>
             <then>
@@ -103,7 +113,10 @@
         </if>
 
         <!-- Check that our artifact directory either doesn't exist or is the right repo -->
-        <exec command="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show ${artifact.git.remote_name} -n | grep '${artifact.git.remote}'" returnProperty="artifact_repo_has_remote.error" />
+        <exec executable="bash" returnProperty="artifact_repo_has_remote.error">
+            <arg value="-c"/>
+            <arg line="[ -d '${artifact.directory}' ] &amp;&amp; git -C '${artifact.directory}' remote show ${artifact.git.remote_name} -n | grep '${artifact.git.remote}'"/>
+        </exec>
         <if>
             <not><available file="${artifact.directory}" type="dir" /></not>
             <then><echo>Artifact repository:  does not exist (will be created)</echo></then>
@@ -160,29 +173,47 @@
         </if>
 
         <!-- Wipe out any local customizations. -->
-        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git reset --hard" checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" />
-        <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
+        <exec dir="${artifact.directory}" executable="chmod" checkreturn="true" logoutput="true">
+            <arg line="-R 750 ."/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="reset --hard"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="checkout ${artifact.git.remote_base_branch}"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="clean -ffd"/>
+        </exec>
     </target>
 
 
     <target name="artifact-setupBranch" hidden="true">
-        <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
+        <exec dir="${artifact.directory}" executable="git" returnProperty="remote_fetch.error">
+            <arg line="fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}"/>
+        </exec>
         <if>
             <not><equals arg1="${remote_fetch.error}" arg2="0" /></not>
             <then>
                 <echo>Remote branch does not exist. Creating '${artifact.git.remote_branch}' on remote repository...</echo>
-                <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_base_branch}" returnProperty="remote_fetch_base.error" />
+                <exec dir="${artifact.directory}" executable="git" returnProperty="remote_fetch_base.error">
+                    <arg line="fetch ${artifact.git.remote_name} ${artifact.git.remote_base_branch}"/>
+                </exec>
                 <if>
                     <not><equals arg1="${remote_fetch_base.error}" arg2="0" /></not>
                     <then><fail msg="Failed to create remote branch: base branch '${artifact.git.remote_base_branch}' could not be fetched." /></then>
                 </if>
 
                 <!-- The 'remote branch' should only exist on the remote, so we create, push, then delete the local copy. -->
-                <exec dir="${artifact.directory}" command="git branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}" checkreturn="true" />
-                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}" checkreturn="true" />
-                <exec dir="${artifact.directory}" command="git branch -d ${artifact.git.remote_branch}" checkreturn="true" />
+                <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+                    <arg line="branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}"/>
+                </exec>
+                <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+                    <arg line="push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}"/>
+                </exec>
+                <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+                    <arg line="branch -d ${artifact.git.remote_branch}"/>
+                </exec>
                 <echo>Remote branch '${artifact.git.remote_name}/${artifact.git.remote_branch}' created.</echo>
             </then>
         </if>
@@ -191,9 +222,16 @@
              branch available locally. Now create a fresh, temporary branch for our
              artifact work, to avoid naming conflicts and allow clean rebuilds. -->
         <!-- If the build failed previously, there might be an abandoned branch for this build. -->
-        <exec dir="${artifact.directory}" command="git branch | grep ${artifact.git.temporary_branch} &amp;&amp; git branch -D ${artifact.git.temporary_branch}" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}" checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.temporary_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" executable="bash" logoutput="true">
+            <arg value="-c"/>
+            <arg line="git branch | grep ${artifact.git.temporary_branch} &amp;&amp; git branch -D ${artifact.git.temporary_branch}"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="branch ${artifact.git.temporary_branch} ${artifact.git.remote_name}/${artifact.git.remote_branch}"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="checkout ${artifact.git.temporary_branch}"/>
+        </exec>
         <echo>Building on temporary branch '${artifact.git.temporary_branch}'.</echo>
     </target>
 
@@ -201,7 +239,9 @@
     <target name="artifact-updateCode" hidden="true">
         <!-- Sometimes files have read-only permissions that will cause issues when we
              attempt to remove them. -->
-        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" executable="chmod" checkreturn="true" logoutput="true">
+            <arg line="-R 750 ."/>
+        </exec>
         <!-- Remove all the existing files so that we can install cleanly. -->
         <delete includeemptydirs="true">
             <fileset dir="${artifact.directory}" defaultexcludes="false" excludes=".git,.git/**" includes="**/*,**/.git,**/.git/**" />
@@ -210,7 +250,9 @@
         <!-- List all files that are checked in to git, then use the list to copy them all
              into the artifact. -->
         <tempfile property="tmpfile" destdir="${build.dir}/artifacts" />
-        <exec command="git ls-files" dir="${build.dir}" output="${tmpfile}" />
+        <exec executable="git" dir="${build.dir}" output="${tmpfile}">
+            <arg line="ls-files"/>
+        </exec>
 
         <copy todir="${artifact.directory}" overwrite="true" haltonerror="true">
             <filelist dir="${build.dir}" listfile="${tmpfile}" />
@@ -266,7 +308,9 @@
 
     <target name="artifact-commit" hidden="true">
         <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
-        <exec command="git add --all" dir="${artifact.directory}" />
+        <exec executable="git" dir="${artifact.directory}">
+            <arg line="add --all"/>
+        </exec>
 
         <!-- Commit all changes to the artifact repository. -->
         <gitcommit repository="${artifact.directory}" message="Drupal artifact build of ${artifact.git.commit_message}" allFiles="true" />
@@ -316,13 +360,17 @@
 
     <target name="artifact-push" hidden="true">
         <echo>Pushing changes.</echo>
-        <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}" checkreturn="true" />
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="push ${artifact.git.remote_name} ${artifact.git.temporary_branch}:${artifact.git.remote_branch}"/>
+        </exec>
 
         <!-- If this is a build of a tag, push the new artifact tag. -->
         <if>
             <equals arg1="${artifact.git.no_tag}" arg2="0" />
             <then>
-                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true" />
+                <exec dir="${artifact.directory}" executable="git push ${artifact.git.remote_name} ${artifact.git.artifact_tag}" checkreturn="true">
+                    <arg line="push ${artifact.git.remote_name} ${artifact.git.artifact_tag}"/>
+                </exec>
             </then>
         </if>
     </target>
@@ -332,18 +380,30 @@
         <if>
             <equals arg1="${artifact.git.no_tag}" arg2="0" />
             <then>
-                <exec dir="${artifact.directory}" command="git tag -d ${artifact.git.artifact_tag}" checkreturn="true" logoutput="true" />
+                <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+                    <arg line="tag -d ${artifact.git.artifact_tag}"/>
+                </exec>
             </then>
         </if>
     </target>
 
 
     <target name="artifact-resetState" hidden="true">
-        <exec dir="${artifact.directory}" command="chmod -R 750 ." checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git reset --hard HEAD" checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git checkout ${artifact.git.remote_base_branch}" checkreturn="true" logoutput="true" />
-        <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
-        <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" executable="chmod" checkreturn="true" logoutput="true">
+            <arg line="-R 750 ."/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="reset --hard HEAD"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="checkout ${artifact.git.remote_base_branch}"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="clean -ffd"/>
+        </exec>
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="branch -D ${artifact.git.temporary_branch}"/>
+        </exec>
     </target>
 
 

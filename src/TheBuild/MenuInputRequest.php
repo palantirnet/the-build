@@ -2,10 +2,12 @@
 
 namespace TheBuild;
 
+use Phing\Input\InputRequest;
+
 /**
  * Input interface that prompts the user to select from a menu of options.
  */
-class MenuInputRequest extends \InputRequest {
+class MenuInputRequest extends InputRequest {
 
   /**
    * Prompt to display with the menu.

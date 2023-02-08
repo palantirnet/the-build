@@ -2,10 +2,14 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Io\File;
+
 /**
  * Copy or symlink a file or directory, depending on a flag.
  */
-class IncludeResourceTask extends \Task {
+class IncludeResourceTask extends Task {
 
   /**
    * Either 'symlink' or 'copy'.
@@ -17,14 +21,14 @@ class IncludeResourceTask extends \Task {
   /**
    * The source file or directory to include.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $source;
 
   /**
    * The location to link the file to.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $dest = NULL;
 
@@ -63,11 +67,11 @@ class IncludeResourceTask extends \Task {
       $this->log("Replacing existing resource '" . $this->dest->getPath() . "'");
 
       if ($this->dest->delete(TRUE) === FALSE) {
-        throw new \BuildException("Failed to delete existing destination '$this->dest'");
+        throw new BuildException("Failed to delete existing destination '$this->dest'");
       }
     }
 
-    // Link or copy the source artifact. @phpstan-ignore-next-line
+    // Link or copy the source artifact.
     $this->dest->getParentFile()->mkdirs();
     if ($this->mode == 'copy') {
       $this->log(sprintf("Copying '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
@@ -75,7 +79,7 @@ class IncludeResourceTask extends \Task {
     }
     else {
       $this->log(sprintf("Linking '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
-      /** @var \SymlinkTask $symlink_task */
+      /** @var \Phing\Task\System\SymlinkTask $symlink_task */
       $symlink_task = $this->project->createTask("symlink");
       $symlink_task->setTarget($this->source->getPath());
       $symlink_task->setLink($this->dest->getPath());
@@ -89,11 +93,11 @@ class IncludeResourceTask extends \Task {
    */
   public function validate() {
     if (!in_array($this->mode, ['symlink', 'copy'])) {
-      throw new \BuildException("mode attribute must be either 'symlink' or 'copy'", $this->location);
+      throw new BuildException("mode attribute must be either 'symlink' or 'copy'", $this->getLocation());
     }
 
     if (empty($this->source) || empty($this->dest)) {
-      throw new \BuildException("Both the 'source' and 'dest' attributes are required.");
+      throw new BuildException("Both the 'source' and 'dest' attributes are required.");
     }
   }
 
@@ -110,12 +114,12 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the source of the resource to include.
    *
-   * @param \PhingFile $source
+   * @param \Phing\Io\File $source
    *   Source file.
    */
-  public function setSource(\PhingFile $source) {
+  public function setSource(File $source) {
     if (!$source->exists()) {
-      throw new \BuildException("resource '$source' is not available'");
+      throw new BuildException("resource '$source' is not available'");
     }
 
     $this->source = $source;
@@ -124,10 +128,10 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the destination for the resource.
    *
-   * @param \PhingFile $dest
+   * @param \Phing\Io\File $dest
    *   File destination.
    */
-  public function setDest(\PhingFile $dest) {
+  public function setDest(File $dest) {
     $this->dest = $dest;
   }
 

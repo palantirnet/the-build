@@ -8,20 +8,46 @@
             "email": "info@palantir.net"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "bin": [
         "bin/the-build-installer"
     ],
     "require": {
         "composer-runtime-api": "^2.2.2",
-        "cweagans/composer-patches": "^1.7",
-        "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3.6",
         "drush/drush": ">=9",
         "mglaman/drupal-check": "^1.2",
-        "palantirnet/phing-drush-task": "^1.1",
+        "palantirnet/phing-drush-task": ">=1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "^2.14",
+        "phing/phing": "^3.0",
+        "phing/phing-composer-configurator": "dev-master",
+        "phing/task-analyzers": "dev-main",
+        "phing/task-apigen": "dev-main as dev-master",
+        "phing/task-archives": "dev-main",
+        "phing/task-aws": "dev-main",
+        "phing/task-coverage": "dev-main as dev-master",
+        "phing/task-dbdeploy": "dev-main",
+        "phing/task-ftpdeploy": "dev-main as dev-master",
+        "phing/task-git": "dev-main",
+        "phing/task-hg": "dev-main",
+        "phing/task-http": "dev-main",
+        "phing/task-inifile": "dev-main",
+        "phing/task-ioncube": "dev-main as dev-master",
+        "phing/task-jshint": "dev-main as dev-master",
+        "phing/task-jsmin": "dev-main as dev-master",
+        "phing/task-liquibase": "dev-main as dev-master",
+        "phing/task-phkpackage": "dev-main as dev-master",
+        "phing/task-phpdoc": "dev-main as dev-master",
+        "phing/task-phpunit": "dev-main as dev-master",
+        "phing/task-sass": "dev-main as dev-master",
+        "phing/task-smarty": "dev-main as dev-master",
+        "phing/task-ssh": "dev-main as dev-master",
+        "phing/task-svn": "dev-main as dev-master",
+        "phing/task-visualizer": "dev-main as dev-master",
+        "phing/task-zendcodeanalyser": "dev-main as dev-master",
+        "phing/task-zendserverdevelopmenttools": "dev-main as dev-master",
         "phpmd/phpmd": "^2.4",
         "phpspec/prophecy-phpunit": "^2"
     },
@@ -30,18 +56,13 @@
             "TheBuild\\": "src/"
         }
     },
+    "minimum-stability": "alpha",
     "config": {
         "sort-packages": true,
         "allow-plugins": {
             "cweagans/composer-patches": true,
+            "phing/phing-composer-configurator": true,
             "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "extra": {
-        "patches": {
-            "phing/phing": {
-                "Support relative symliks in Phing": "https://raw.githubusercontent.com/palantirnet/the-build/7cdc28b6019fb88a0604261366f9ea35f1e21d96/patches/phing-relative-symlinks.patch"
-            }
         }
     }
 }
