@@ -167,8 +167,10 @@ class GetLatestBackupTask extends AcquiaTask {
    *   Acquia backup info array.
    * @param Phing\Io\File $destination
    *   Destination file for the downloaded backup.
+   *
    * @throws Phing\Exception\BuildException
    * @throws \HTTP_Request2_Exception
+   * @throws \Phing\Io\IOException
    */
   protected function downloadBackup(array $backup, Phing\Io\File $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
@@ -269,6 +271,7 @@ class GetLatestBackupTask extends AcquiaTask {
      *   The file where the downloaded backup should be stored.
      *
      * @throws \HTTP_Request2_Exception
+     * @throws \Phing\Io\IOException
      */
   protected function downloadBackupRecords(Phing\Io\File $backups_file) {
     $json = $this->getApiResponseBody("/sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->database}/backups.json");

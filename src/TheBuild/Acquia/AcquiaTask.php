@@ -4,9 +4,6 @@ namespace TheBuild\Acquia;
 
 use Phing\Task;
 use Phing\Exception\BuildException;
-use Phing\Io\IOException;
-use HTTP_Request2;
-use HTTP_Request2_Exception;
 use Phing\Io\File;
 
 /**
@@ -20,7 +17,7 @@ abstract class AcquiaTask extends Task {
    * This file can be downloaded from your Acquia user account area and contains
    * a json array with 'mail' and 'key' values.
    *
-   * @var File
+   * @var Phing\Io\File
    */
   protected $credentialsFile;
 
@@ -52,7 +49,7 @@ abstract class AcquiaTask extends Task {
   /**
    * Load the Acquia Cloud credentials from the cloudapi.conf JSON file.
    *
-   * @throws IOException
+   * @throws \Phing\Io\IOException;
    *
    * @SuppressWarnings(PHPMD.Superglobals)
    */
@@ -84,32 +81,36 @@ abstract class AcquiaTask extends Task {
    * @param string $path
    *   Acquia Cloud API path.
    *
-   * @return HTTP_Request2
+   * @return \HTTP_Request2
    *   Request object.
+   *
+   * @throws \Phing\Io\IOException
+   * @throws \HTTP_Request2_LogicException
    */
-  protected function createRequest(string $path) : HTTP_Request2 {
+  protected function createRequest(string $path) : \HTTP_Request2 {
     $this->loadCredentials();
 
     $uri = $this->endpoint . '/' . ltrim($path, '/');
 
-    $request = new HTTP_Request2($uri);
+    $request = new \HTTP_Request2($uri);
     $request->setConfig('follow_redirects', TRUE);
     $request->setAuth($this->mail, $this->key);
 
     return $request;
   }
 
-    /**
-     * Example of how to query the Acquia Cloud API.
-     *
-     * @param string $path
-     *   Acquia Cloud API path.
-     *
-     * @return string
-     *   API response.
-     *
-     * @throws HTTP_Request2_Exception
-     */
+  /**
+   * Example of how to query the Acquia Cloud API.
+   *
+   * @param string $path
+   *   Acquia Cloud API path.
+   *
+   * @return string
+   *   API response.
+   *
+   * @throws \HTTP_Request2_Exception
+   * @throws \Phing\Io\IOException
+   */
   protected function getApiResponseBody(string $path) : string {
     $request = $this->createRequest($path);
 
@@ -121,12 +122,12 @@ abstract class AcquiaTask extends Task {
   /**
    * Set the Acquia credentials file.
    *
-   * @param File $file
+   * @param Phing\Io\File $file
    *   Acquia credentials file.
    *
-   * @throws IOException
+   * @throws \Phing\Io\IOException
    */
-  public function setCredentialsFile(File $file) {
+  public function setCredentialsFile(Phing\Io\File $file) {
     $this->credentialsFile = new File($file);
   }
 
