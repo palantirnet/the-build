@@ -22,14 +22,14 @@ class IncludeResourceTask extends Task {
   /**
    * The source file or directory to include.
    *
-   * @var File
+   * @var Phing\Io\File
    */
   protected $source;
 
   /**
    * The location to link the file to.
    *
-   * @var File
+   * @var Phing\Io\File
    */
   protected $dest = NULL;
 
@@ -115,7 +115,7 @@ class IncludeResourceTask extends Task {
   /**
    * Set the source of the resource to include.
    *
-   * @param File $source
+   * @param Phing\Io\File $source
    *   Source file.
    */
   public function setSource(File $source) {
@@ -129,7 +129,7 @@ class IncludeResourceTask extends Task {
   /**
    * Set the destination for the resource.
    *
-   * @param File $dest
+   * @param Phing\Io\File $dest
    *   File destination.
    */
   public function setDest(File $dest) {

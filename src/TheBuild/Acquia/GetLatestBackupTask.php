@@ -4,9 +4,7 @@ namespace TheBuild\Acquia;
 
 use Phing\Exception\BuildException;
 use Phing\Io\File;
-use Phing\Io\IOException;
 use Phing\Io\FileWriter;
-
 
 /**
  * Fetch a recent backup from Acquia.
@@ -16,7 +14,7 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Required. Directory for storing downloaded database backups.
    *
-   * @var File
+   * @var Phing\Io\File
    */
   protected $dir;
 
@@ -84,14 +82,16 @@ class GetLatestBackupTask extends AcquiaTask {
    * This info is downloaded from the Acquia Cloud API. The file is set to
    * 'backups.json' in the directory specified by $dir.
    *
-   * @var File
+   * @var Phing\Io\File
    */
   protected $backupsFile;
 
   /**
    * {@inheritdoc}
    *
-   * @throws IOException
+   * @throws \Phing\Io\IOException
+   * @throws Phing\Exception\BuildException
+   * @throws \HTTP_Request2_Exception
    */
   public function main() {
     $this->validate();
@@ -139,7 +139,7 @@ class GetLatestBackupTask extends AcquiaTask {
     // This means that we didn't have a current record in our backups json, and
     // the Acquia Cloud API returned empty or malformed JSON.
     if (empty($newest_backup)) {
-      throw new \BuildException('Failed to find a backup record.');
+      throw new BuildException('Failed to find a backup record.');
     }
 
     // Download the backup if it does not yet exist on the filesystem.
@@ -165,13 +165,15 @@ class GetLatestBackupTask extends AcquiaTask {
    *
    * @param array $backup
    *   Acquia backup info array.
-   * @param File $destination
+   * @param Phing\Io\File $destination
    *   Destination file for the downloaded backup.
+   * @throws Phing\Exception\BuildException
+   * @throws \HTTP_Request2_Exception
    */
-  protected function downloadBackup(array $backup, File $destination) {
+  protected function downloadBackup(array $backup, Phing\Io\File $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
     if (!$stream) {
-      throw new \BuildException('Can not write to ' . $destination->getAbsolutePath());
+      throw new BuildException('Can not write to ' . $destination->getAbsolutePath());
     }
 
     // Use an HTTP_Request2 with the Observer pattern in order to download large
@@ -200,7 +202,7 @@ class GetLatestBackupTask extends AcquiaTask {
     try {
       $backups = $this->getBackupRecords($this->backupsFile);
     }
-    catch (\BuildException $e) {
+    catch (BuildException $e) {
       $backups = [];
     }
 
@@ -224,17 +226,17 @@ class GetLatestBackupTask extends AcquiaTask {
    *
    * Sorts records from oldest to newest.
    *
-   * @param \PhingFile $file
+   * @param Phing\Io\File $file
    *   Temp file containing the Acquia Cloud API response.
    *
    * @return array
    *   Acquia backup info array.
    *
-   * @throws \BuildException
+   * @throws Phing\Exception\BuildException
    *
    * @SuppressWarnings(PHPMD.ShortVariable)
    */
-  protected function getBackupRecords(\PhingFile $file) {
+  protected function getBackupRecords(Phing\Io\File $file) {
     if ($file->exists()) {
       $backups = json_decode($file->contents(), TRUE);
 
@@ -254,19 +256,21 @@ class GetLatestBackupTask extends AcquiaTask {
       }
       elseif (count($backups) === 0) {
         // The site might not have been backed up yet.
-        throw new \BuildException('No Acquia Cloud backups found: ' . $file->getCanonicalPath());
+        throw new BuildException('No Acquia Cloud backups found: ' . $file->getCanonicalPath());
       }
     }
-    throw new \BuildException('Acquia Cloud backup records could not be loaded from JSON: ' . $file->getCanonicalPath());
+    throw new BuildException('Acquia Cloud backup records could not be loaded from JSON: ' . $file->getCanonicalPath());
   }
 
-  /**
-   * Download the latest list of backup records from the Acquia Cloud API.
-   *
-   * @param \PhingFile $backups_file
-   *   The file where the downloaded backup should be stored.
-   */
-  protected function downloadBackupRecords(File $backups_file) {
+    /**
+     * Download the latest list of backup records from the Acquia Cloud API.
+     *
+     * @param Phing\Io\File $backups_file
+     *   The file where the downloaded backup should be stored.
+     *
+     * @throws \HTTP_Request2_Exception
+     */
+  protected function downloadBackupRecords(Phing\Io\File $backups_file) {
     $json = $this->getApiResponseBody("/sites/{$this->realm}:{$this->site}/envs/{$this->env}/dbs/{$this->database}/backups.json");
 
     $writer = new FileWriter($backups_file);
