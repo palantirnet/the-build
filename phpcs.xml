@@ -8,7 +8,7 @@
    @see vendor/drupal/coder/coder_sniffer/
 -->
 
-<ruleset name="@projectname@">
+<ruleset name="palantirnet/the-build">
   <description>PHP_CodeSniffer configuration.</description>
 
   <!-- Warnings and errors should throw an exception. -->
@@ -29,11 +29,7 @@
   <rule ref="DrupalPractice"/>
 
   <!-- Directories to scan. -->
-  <file>@webroot@/modules/custom</file>
-  <file>@webroot@/themes/custom</file>
-
-  <exclude-pattern>*/behat</exclude-pattern>
-  <exclude-pattern>*/node_modules</exclude-pattern>
-  <exclude-pattern>*/vendor</exclude-pattern>
+  <file>src</file>
+  <file>defaults/standard/modules/the_build_utility</file>
 
 </ruleset>

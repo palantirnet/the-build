@@ -1,9 +1,4 @@
 <?php
-/**
- * @file IncludeResourceTask.php
- *
- * @copyright 2016 Palantir.net, Inc.
- */
 
 namespace TheBuild;
 
@@ -12,33 +7,38 @@ use Phing\Exception\BuildException;
 use Phing\Io\File;
 use Phing\Io\FileSystem;
 
-
+/**
+ * Copy or symlink a file or directory, depending on a flag.
+ */
 class IncludeResourceTask extends Task {
 
   /**
-   * @var string
    * Either 'symlink' or 'copy'.
+   *
+   * @var string
    */
   protected $mode = 'symlink';
 
   /**
-   * @var File
    * The source file or directory to include.
+   *
+   * @var File
    */
   protected $source;
-  
+
   /**
-   * @var File
    * The location to link the file to.
+   *
+   * @var File
    */
   protected $dest = NULL;
 
   /**
-   * Whether to create relative symlinks
+   * Whether to create relative symlinks.
    *
-   * @var boolean
+   * @var bool
    */
-  protected $relative = true;
+  protected $relative = TRUE;
 
   /**
    * Init tasks.
@@ -57,7 +57,6 @@ class IncludeResourceTask extends Task {
     }
   }
 
-
   /**
    * Copy or link the resource.
    */
@@ -69,11 +68,11 @@ class IncludeResourceTask extends Task {
       $this->log("Replacing existing resource '" . $this->dest->getPath() . "'");
 
       if ($this->dest->delete(TRUE) === FALSE) {
-        throw new BuildException("Failed to delete existing destination '$this->dest'");
+        throw new \BuildException("Failed to delete existing destination '$this->dest'");
       }
     }
 
-    // Link or copy the source artifact.
+    // Link or copy the source artifact. @phpstan-ignore-next-line
     $this->dest->getParentFile()->mkdirs();
     if ($this->mode == 'copy') {
       $this->log(sprintf("Copying '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
@@ -81,6 +80,7 @@ class IncludeResourceTask extends Task {
     }
     else {
       $this->log(sprintf("Linking '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
+      /** @var \SymlinkTask $symlink_task */
       $symlink_task = $this->project->createTask("symlink");
       $symlink_task->setTarget($this->source->getPath());
       $symlink_task->setLink($this->dest->getPath());
@@ -88,7 +88,6 @@ class IncludeResourceTask extends Task {
       $symlink_task->main();
     }
   }
-
 
   /**
    * Verify that the required attributes are set.
@@ -99,50 +98,52 @@ class IncludeResourceTask extends Task {
     }
 
     if (empty($this->source) || empty($this->dest)) {
-      throw new BuildException("Both the 'source' and 'dest' attributes are required.");
+      throw new \BuildException("Both the 'source' and 'dest' attributes are required.");
     }
   }
-
 
   /**
    * Set the artifact mode.
    *
-   * @param $mode
-   * Use 'symlink' to link resources, and 'copy' to copy them.
+   * @param string $mode
+   *   Use 'symlink' to link resources, and 'copy' to copy them.
    */
-  public function setMode($mode) {
+  public function setMode(string $mode) {
     $this->mode = $mode;
   }
-
 
   /**
    * Set the source of the resource to include.
    *
    * @param File $source
+   *   Source file.
    */
   public function setSource(File $source) {
     if (!$source->exists()) {
-      throw new BuildException("resource '$source' is not available'");
+      throw new \BuildException("resource '$source' is not available'");
     }
 
     $this->source = $source;
   }
 
-
   /**
    * Set the destination for the resource.
+   *
    * @param File $dest
+   *   File destination.
    */
   public function setDest(File $dest) {
     $this->dest = $dest;
   }
 
   /**
-   * @param boolean $relative
+   * See SymlinkTask.
+   *
+   * @param bool $relative
+   *   Whether to make relative symlinks.
    */
-  public function setRelative($relative)
-  {
-      $this->relative = $relative;
+  public function setRelative($relative) {
+    $this->relative = $relative;
   }
 
 }

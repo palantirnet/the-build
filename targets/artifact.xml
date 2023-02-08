@@ -35,6 +35,10 @@
         <exec executable="git" outputProperty="artifact.git.commit" checkreturn="true">
             <arg line="rev-parse HEAD"/>
         </exec>
+        <!-- @TODO Handle the case when this command outputs "HEAD". This happens when
+             building a repo from a detatched head state (e.g. you've checked out a tag),
+             and it causes pushing the artifact to fail because "HEAD" is not a branch you
+             can push to. -->
         <exec executable="git" outputProperty="artifact.git.branch" checkreturn="true">
             <arg line="rev-parse --abbrev-ref HEAD"/>
         </exec>
