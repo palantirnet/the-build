@@ -167,8 +167,8 @@ class GetLatestBackupTask extends AcquiaTask {
    * @param \Phing\Io\File $destination
    *   Destination file for the downloaded backup.
    *
-   * @throws \HTTP_Request2_Exception
    * @throws \Phing\Io\IOException
+   * @throws \HTTP_Request2_Exception
    */
   protected function downloadBackup(array $backup, File $destination) {
     $stream = fopen($destination->getAbsolutePath(), 'wb');
