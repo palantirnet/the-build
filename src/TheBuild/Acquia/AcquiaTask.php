@@ -108,8 +108,8 @@ abstract class AcquiaTask extends Task {
    * @return string
    *   API response.
    *
-   * @throws \HTTP_Request2_Exception
    * @throws \Phing\Io\IOException
+   * @throws \HTTP_Request2_Exception
    */
   protected function getApiResponseBody(string $path) : string {
     $request = $this->createRequest($path);
@@ -127,7 +127,7 @@ abstract class AcquiaTask extends Task {
    *
    * @throws \Phing\Io\IOException
    */
-  public function setCredentialsFile(Phing\Io\File $file) {
+  public function setCredentialsFile(File $file) {
     $this->credentialsFile = new File($file);
   }
 
