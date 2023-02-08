@@ -8,6 +8,8 @@
             "email": "info@palantir.net"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "bin": [
         "bin/the-build-installer"
     ],
