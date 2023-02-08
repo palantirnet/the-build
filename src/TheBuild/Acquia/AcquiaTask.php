@@ -17,7 +17,7 @@ abstract class AcquiaTask extends Task {
    * This file can be downloaded from your Acquia user account area and contains
    * a json array with 'mail' and 'key' values.
    *
-   * @var Phing\Io\File
+   * @var \Phing\Io\File
    */
   protected $credentialsFile;
 
@@ -122,7 +122,7 @@ abstract class AcquiaTask extends Task {
   /**
    * Set the Acquia credentials file.
    *
-   * @param Phing\Io\File $file
+   * @param \Phing\Io\File $file
    *   Acquia credentials file.
    *
    * @throws \Phing\Io\IOException

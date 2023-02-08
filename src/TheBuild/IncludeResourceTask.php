@@ -5,7 +5,6 @@ namespace TheBuild;
 use Phing\Task;
 use Phing\Exception\BuildException;
 use Phing\Io\File;
-use Phing\Io\FileSystem;
 
 /**
  * Copy or symlink a file or directory, depending on a flag.
@@ -22,14 +21,14 @@ class IncludeResourceTask extends Task {
   /**
    * The source file or directory to include.
    *
-   * @var Phing\Io\File
+   * @var \Phing\Io\File
    */
   protected $source;
 
   /**
    * The location to link the file to.
    *
-   * @var Phing\Io\File
+   * @var \Phing\Io\File
    */
   protected $dest = NULL;
 
@@ -68,7 +67,7 @@ class IncludeResourceTask extends Task {
       $this->log("Replacing existing resource '" . $this->dest->getPath() . "'");
 
       if ($this->dest->delete(TRUE) === FALSE) {
-        throw new \BuildException("Failed to delete existing destination '$this->dest'");
+        throw new BuildException("Failed to delete existing destination '$this->dest'");
       }
     }
 
@@ -80,7 +79,7 @@ class IncludeResourceTask extends Task {
     }
     else {
       $this->log(sprintf("Linking '%s' to '%s'", $this->source->getPath(), $this->dest->getPath()));
-      /** @var \SymlinkTask $symlink_task */
+      /** @var \Phing\Task\System\SymlinkTask $symlink_task */
       $symlink_task = $this->project->createTask("symlink");
       $symlink_task->setTarget($this->source->getPath());
       $symlink_task->setLink($this->dest->getPath());
@@ -98,7 +97,7 @@ class IncludeResourceTask extends Task {
     }
 
     if (empty($this->source) || empty($this->dest)) {
-      throw new \BuildException("Both the 'source' and 'dest' attributes are required.");
+      throw new BuildException("Both the 'source' and 'dest' attributes are required.");
     }
   }
 
@@ -115,12 +114,12 @@ class IncludeResourceTask extends Task {
   /**
    * Set the source of the resource to include.
    *
-   * @param Phing\Io\File $source
+   * @param \Phing\Io\File $source
    *   Source file.
    */
   public function setSource(File $source) {
     if (!$source->exists()) {
-      throw new \BuildException("resource '$source' is not available'");
+      throw new BuildException("resource '$source' is not available'");
     }
 
     $this->source = $source;
@@ -129,7 +128,7 @@ class IncludeResourceTask extends Task {
   /**
    * Set the destination for the resource.
    *
-   * @param Phing\Io\File $dest
+   * @param \Phing\Io\File $dest
    *   File destination.
    */
   public function setDest(File $dest) {

@@ -49,7 +49,7 @@ class ForeachKeyTask extends Task {
   /**
    * Instance of PhingCallTask to use/run.
    *
-   * @var PhingCallTask
+   * @var \Phing\Task\System\PhingCallTask
    */
   protected $callee;
 
@@ -125,7 +125,7 @@ class ForeachKeyTask extends Task {
    *   The key prefix.
    */
   public function setPrefix($value) {
-    if (!\StringHelper::endsWith(".", $value)) {
+    if (!StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 

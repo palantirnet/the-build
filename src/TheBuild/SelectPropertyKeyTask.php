@@ -48,7 +48,7 @@ class SelectPropertyKeyTask extends Task {
     $project = $this->getProject();
 
     if ($existing_value = $this->project->getProperty($this->propertyName)) {
-      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", Project::MSG_INFO);
       return;
     }
 
@@ -79,10 +79,10 @@ class SelectPropertyKeyTask extends Task {
     }
     elseif (count($keys) == 1) {
       $value = current($keys);
-      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", Project::MSG_INFO);
     }
     else {
-      $this->log("No properties found with prefix '{$this->prefix}'", \Project::MSG_WARN);
+      $this->log("No properties found with prefix '{$this->prefix}'", Project::MSG_WARN);
     }
 
     if ($value) {
@@ -108,7 +108,7 @@ class SelectPropertyKeyTask extends Task {
    *   Keys with this prefix will be provided as options.
    */
   public function setPrefix($value) {
-    if (!\StringHelper::endsWith(".", $value)) {
+    if (!StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 

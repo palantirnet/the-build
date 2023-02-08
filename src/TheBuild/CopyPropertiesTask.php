@@ -78,7 +78,7 @@ class CopyPropertiesTask extends Task {
    *   Prefix to copy properties from.
    */
   public function setFromPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 
@@ -92,7 +92,7 @@ class CopyPropertiesTask extends Task {
    *   Prefix to copy properties into.
    */
   public function setToPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 

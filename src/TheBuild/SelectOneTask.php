@@ -48,7 +48,7 @@ class SelectOneTask extends Task {
     $project = $this->getProject();
 
     if ($existing_value = $this->project->getProperty($this->propertyName)) {
-      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$existing_value}' (existing value)", Project::MSG_INFO);
       return;
     }
 
@@ -67,7 +67,7 @@ class SelectOneTask extends Task {
     }
     elseif (count($keys) == 1) {
       $value = current($keys);
-      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", \Project::MSG_INFO);
+      $this->log("Using {$this->propertyName} = '{$value}' (one value found)", Project::MSG_INFO);
     }
 
     if ($value) {

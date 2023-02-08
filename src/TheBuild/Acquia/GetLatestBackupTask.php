@@ -14,7 +14,7 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Required. Directory for storing downloaded database backups.
    *
-   * @var Phing\Io\File
+   * @var \Phing\Io\File
    */
   protected $dir;
 
@@ -82,7 +82,7 @@ class GetLatestBackupTask extends AcquiaTask {
    * This info is downloaded from the Acquia Cloud API. The file is set to
    * 'backups.json' in the directory specified by $dir.
    *
-   * @var Phing\Io\File
+   * @var \Phing\Io\File
    */
   protected $backupsFile;
 
@@ -90,7 +90,6 @@ class GetLatestBackupTask extends AcquiaTask {
    * {@inheritdoc}
    *
    * @throws \Phing\Io\IOException
-   * @throws Phing\Exception\BuildException
    * @throws \HTTP_Request2_Exception
    */
   public function main() {
@@ -165,10 +164,9 @@ class GetLatestBackupTask extends AcquiaTask {
    *
    * @param array $backup
    *   Acquia backup info array.
-   * @param Phing\Io\File $destination
+   * @param \Phing\Io\File $destination
    *   Destination file for the downloaded backup.
    *
-   * @throws Phing\Exception\BuildException
    * @throws \HTTP_Request2_Exception
    * @throws \Phing\Io\IOException
    */
@@ -228,13 +226,11 @@ class GetLatestBackupTask extends AcquiaTask {
    *
    * Sorts records from oldest to newest.
    *
-   * @param Phing\Io\File $file
+   * @param \Phing\Io\File $file
    *   Temp file containing the Acquia Cloud API response.
    *
    * @return array
    *   Acquia backup info array.
-   *
-   * @throws Phing\Exception\BuildException
    *
    * @SuppressWarnings(PHPMD.ShortVariable)
    */
@@ -267,7 +263,7 @@ class GetLatestBackupTask extends AcquiaTask {
   /**
    * Download the latest list of backup records from the Acquia Cloud API.
    *
-   * @param Phing\Io\File $backups_file
+   * @param \Phing\Io\File $backups_file
    *   The file where the downloaded backup should be stored.
    *
    * @throws \Phing\Io\IOException
