@@ -20,9 +20,10 @@
         <phingcall target="test-the-build">
             <property name="expected">Hello! I'm the-build.</property>
         </phingcall>
+        <!-- Deliberate test fail
         <phingcall target="test-the-build">
             <property name="expected">Hi! I'm the-build.</property>
-        </phingcall>
+        </phingcall>-->
     </target>
 
     <target name="test-the-build">
