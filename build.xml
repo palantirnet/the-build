@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<project name="the-build-tests" default="tests">
+    <!-- Default target: tests -->
+    <target name="tests" description="List available tests.">
+        <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
+    </target>
+
+    <!-- Add property loading and targets from palantirnet/the-build. -->
+    <import file="targets/the-build.xml" />
+
+    <!-- Make these additional targets available by default. -->
+    <import file="targets/drupal.xml" />
+    <!-- Additional optional targets. -->
+    <import file="targets/artifact.xml" />
+    <import file="targets/acquia.xml" />
+    <import file="targets/styleguide.xml" />
+
+    <target name="run-tests" description="Runs all phing tests">
+        <phingcall target="test-the-build">
+            <property name="expected">Hello! I'm the-build.</property>
+        </phingcall>
+        <phingcall target="test-the-build">
+            <property name="expected">Hi! I'm the-build.</property>
+        </phingcall>
+    </target>
+
+    <target name="test-the-build">
+        <phingcall target="the-build" />
+        <loadfile property="result" file="tests/the-build.txt"/>
+        <property name="expected" value="Hello! I'm the-build." />
+        <if>
+            <!-- See https://www.phing.info/guide/chunkhtml/conditions.html -->
+            <contains string="${result}" substring="${expected}" />
+            <then>
+                <echo>the-build test passed</echo>
+            </then>
+            <else>
+                <echo>--Expected--</echo>
+                <echo>[${expected}]</echo>
+                <fail message="the-build test failed -- output below" />
+            </else>
+        </if>
+    </target>
+
+</project>
