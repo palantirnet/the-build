@@ -23,7 +23,8 @@
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
         "phpmd/phpmd": "^2.4",
-        "phpspec/prophecy-phpunit": "^2"
+        "phpspec/prophecy-phpunit": "^2",
+        "typhonius/acquia-php-sdk-v2": "^2.0"
     },
     "autoload": {
         "psr-0": {
@@ -34,7 +35,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phing/phing-composer-configurator": true
         }
     },
     "extra": {

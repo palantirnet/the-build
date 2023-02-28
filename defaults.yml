@@ -187,14 +187,6 @@ acquia:
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
 
-  # Max age of the downloaded backup database, in hours.
-  backup_age_hours: 24
-
-  # The Acquia Cloud hosting "realm" where the site is running.
-  #   - Acquia Cloud Enterprise: 'prod'
-  #   - Acquia Cloud Professional: 'devcloud'
-  realm: ""
-
   # Acquia site/application name.
   site: ""
 
@@ -204,12 +196,6 @@ acquia:
 
   # Acquia environment to download backups from.
   env: "prod"
-
-  # Acquia Cloud API credentials file, downloaded from your Acquia account. Do not check
-  # this file into your codebase.
-  cloud:
-    conf: "${env.HOME}/.acquia/cloudapi.conf"
-
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors
 # and deprecated code. This property is used by the <phplint> task in the

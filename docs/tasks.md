@@ -103,13 +103,10 @@ Download a recent backup from Acquia Cloud.
 | Name | Type | Description | Default | Required |
 |---|---|---|---|---|
 | dir | directory path | Local backups directory. | | Yes |
-| realm | string | Acquia hosting realm, either "devcloud" or "prod". | | Yes |
 | site | string | Acquia site name. | | Yes |
 | env | string | Acquia environment, generally "dev", "test", or "prod". | | Yes |
 | database | string | Acquia database name. | The site name. | No |
-| maxAge | int | Maximum age of the backup, in hours. | 24 | No |
-| propertyName | string | Name of a property to set to the backup file. | | No |
-| credentialsFile | file path | Path to your Acquia Cloud API credentials. (Do not check this file in to your repository) | `~/.acquia/cloudapi.conf` | No |
+| credentialsFile | file path | Path to your Acquia Cloud API credentials. (Do not check this file in to your repository) | `~/.acquia/cloudapiv2.conf` | No |
 
 ### Example
 

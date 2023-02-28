@@ -25,8 +25,9 @@
 
 
     <target name="acquia-get-backup" description="Download the latest database backup from Acquia.">
+        <!-- Ceating backups directory -->
         <mkdir dir="${acquia.backups}" />
-        <getAcquiaBackup dir="${acquia.backups}" realm="${acquia.realm}" site="${acquia.site}" env="${acquia.env}" credentialsFile="${acquia.cloud.conf}" maxAge="${acquia.backup_age_hours}" database="${acquia.database}" propertyName="drupal.site.load_db.file" />
+        <getAcquiaBackup dir="${acquia.backups}" site="${acquia.site}" env="${acquia.env}" database="${acquia.database}" />
     </target>
 
 
