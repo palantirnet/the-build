@@ -106,7 +106,6 @@ Download a recent backup from Acquia Cloud.
 | site | string | Acquia site name. | | Yes |
 | env | string | Acquia environment, generally "dev", "test", or "prod". | | Yes |
 | database | string | Acquia database name. | The site name. | No |
-| credentialsFile | file path | Path to your Acquia Cloud API credentials. (Do not check this file in to your repository) | `~/.acquia/cloudapiv2.conf` | No |
 
 ### Example
 
@@ -115,8 +114,6 @@ Download a recent backup from Acquia Cloud.
 <taskdef name="getAcquiaBackup" classname="TheBuild\Acquia\GetLatestBackupTask" />
 
 <!-- Required parameters only -->
-<getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" />
+<getAcquiaBackup dir="artifacts/backups" site="acquia_site_name" env="prod" database="acquia_database" />
 
-<!-- More parameters -->
-<getAcquiaBackup dir="artifacts/backups" realm="devcloud" site="mysite" env="prod" credentialsFile="artifacts/.acquia/cloudapi.conf" propertyName="drupal.site.load_db.file" />
 ```

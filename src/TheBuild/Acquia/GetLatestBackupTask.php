@@ -76,6 +76,9 @@ class GetLatestBackupTask extends \Task {
     if (!$api_secret = getenv('ACQUIA_CLOUD_API_SECRET')) {
       $this->log("Couldn't find ACQUIA_CLOUD_API_SECRET env variable.");
     }
+    if (!$api_key || !$api_secret) {
+      throw new \BuildException("Credentials are required.");
+    }
 
     return [
       'key' => $api_key,
@@ -98,7 +101,7 @@ class GetLatestBackupTask extends \Task {
     $backup = new DatabaseBackups($client);
     $backups = $backup->getAll($environment_uuid, $this->database);
     $filepath = $this->dir . '/' . $this->env . '_' . $this->database . '_' . 'sql.gz';
-    if (!empty($backups)) {
+    if ($backups) {
       // file_put_contents loads the response into memory.
       // This is okay for small things like Drush aliases.
       // But not for database backups.
@@ -193,6 +196,11 @@ class GetLatestBackupTask extends \Task {
     if (empty($this->database)) {
       $this->database = $this->site;
     }
+    // Check .env file exists.
+    if (!file_exists(".env")) {
+      throw new \BuildException(".env file is needed in the root of project with credentials see .env.example.");
+    }
+
     // Check the build attributes.
     foreach (['dir', 'site', 'env'] as $attribute) {
       if (empty($this->$attribute)) {
