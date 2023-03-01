@@ -59,7 +59,7 @@ class GetLatestBackupTask extends \Task {
     $client = $this->connectAcquiaCloud($credentials);
     $application_uuid = $this->getApplicationUuid($client);
     $env_uuid = $this->getEnvironmentsUuid($client, $application_uuid);
-    dump($env_uuid);
+    $this->getLatestBackup($client, $env_uuid);
   }
 
   /**
@@ -89,6 +89,35 @@ class GetLatestBackupTask extends \Task {
   private function connectAcquiaCloud($credentials) {
     $connector = new Connector($credentials);
     return Client::factory($connector);
+  }
+
+  /**
+   * Get latest backup from specified environment.
+   */
+  protected function getLatestBackup($client, $environment_uuid) {
+    $backup = new DatabaseBackups($client);
+    $backups = $backup->getAll($environment_uuid, $this->database);
+    $filepath = $this->dir . '/' . $this->env . '_' . $this->database . '_' . 'sql.gz';
+    if (!empty($backups)) {
+      // file_put_contents loads the response into memory.
+      // This is okay for small things like Drush aliases.
+      // But not for database backups.
+      // Use curl.options to stream data to disk and minimize memory usage.
+      $client->addOption('sink', $filepath);
+      $client->addOption('curl.options', [
+        'CURLOPT_RETURNTRANSFER' => TRUE,
+        'CURLOPT_FILE' => $filepath,
+      ]);
+      // Get latest backup.
+      $backupId = $backups[0]->id;
+      $this->log("Downloading backup id $backupId of database $this->database from $this->env environment");
+      // Downloading the latest backup.
+      if ($backup->download($environment_uuid, $this->database, $backupId)) {
+        $this->log("Database was downloaded successfully in $filepath");
+        return TRUE;
+      }
+      return FALSE;
+    }
   }
 
   /**
