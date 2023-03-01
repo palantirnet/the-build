@@ -110,13 +110,12 @@ class GetLatestBackupTask extends \Task {
       ]);
       // Get latest backup.
       $backupId = $backups[0]->id;
-      $this->log("Downloading backup id $backupId of database $this->database from $this->env environment");
+      $this->log("Downloading backup id $backupId of database $this->database from $this->env environment $this->env");
       // Downloading the latest backup.
       if ($backup->download($environment_uuid, $this->database, $backupId)) {
         $this->log("Database was downloaded successfully in $filepath");
         return TRUE;
       }
-      return FALSE;
     }
   }
 
