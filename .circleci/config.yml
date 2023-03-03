@@ -114,10 +114,12 @@ jobs:
           paths:
             - ~/.cache/composer
 
-      # Add a multisite
+      # Add a multisite. The symlink prevents a file include error.
       - run:
           name: Add a multisite to the project
-          command: printf 'intranet\nintranet.example.ddev.site' | vendor/bin/phing drupal-add-multisite
+          command: |
+            ln -S vendor/palantirnet/the-build/targets/the-build.xml the-build.xml
+            printf 'intranet\nintranet.example.ddev.site' | vendor/bin/phing drupal-add-multisite
           working_directory: ~/example
 
       - run:
