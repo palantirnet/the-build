@@ -142,11 +142,15 @@
                 <!-- The one that's available is the location we're moving from. -->
                 <available file="${build.dir}/web/core" type="dir" property="drupal.root.old" value="web" />
                 <available file="${build.dir}/docroot/core" type="dir" property="drupal.root.old" value="docroot" />
-                <available file="${build.dir}/${drupal.root.old}/sites/default/settings.ddev.php" type="file" property="ddev_settings_exists" value="true" />
+                <available file="${build.dir}/${drupal.root}/sites/default/settings.ddev.php" type="file" property="ddev_settings_exists" value="true" />
+                <available file="${build.dir}/${drupal.root.old}/sites/default/settings.ddev.php" type="file" property="old_ddev_settings_exists" value="true" />
 
                 <!-- Copy settings.ddev.php if it doesn't exist in the old drupal root. -->
                 <if>
-                    <not><equals arg1="${ddev_settings_exists}" arg2="1" /></not>
+                    <and>
+                      <equals arg1="${ddev_settings_exists}" arg2="1" />
+                      <not><equals arg1="${old_ddev_settings_exists}" arg2="1" /></not>
+                    </and>
                     <then>
                         <echo msg="Copying settings.ddev.php to old drupal root." />
                         <exec command="cp ${drupal.root}/sites/default/settings.ddev.php ${drupal.root.old}/sites/default" dir="${build.dir}" checkreturn="true" logoutput="true" />
@@ -200,12 +204,22 @@
         </copy>
 
         <!-- Copy the phpcs.xml file template.
-             This doesn't do any property substitution except for the "projectname".
              -->
+        <echo>Updating pcpcs.xml file for project root.</echo>
+        <if>
+            <equals arg1="${build.host}" arg2="acquia"/>
+            <then>
+                <property name="phpcs_dir" value="docroot"/>
+            </then>
+            <else>
+                <property name="phpcs_dir" value="web"/>
+            </else>
+        </if>
         <copy file="${phing.dir.install}/../defaults/install/phpcs.xml" tofile="${application.startdir}/phpcs.xml" overwrite="true">
             <filterchain>
                 <replacetokens>
                     <token key="projectname" value="${projectname}" />
+                    <token key="webroot" value="${phpcs_dir}" />
                 </replacetokens>
             </filterchain>
         </copy>
