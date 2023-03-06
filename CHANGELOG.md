@@ -9,7 +9,6 @@ The goal of this release is to remove some of the templating functionality that 
 * Removed gitignore template
 * Removed settings.php templating
 * Changed how host-specific settings files are managed
-* TECH-33 Copy phpcs.xml to different path depending on host by @iajon in https://github.com/palantirnet/the-build/pull/211
 * use --extensions instead of --ignore in "code-fix" target by @byrond in https://github.com/palantirnet/the-build/pull/168
 * Pull out settings.php templating by @becw in https://github.com/palantirnet/the-build/pull/170
 * Fix tests for the 4.x / "lite" changes by @becw in https://github.com/palantirnet/the-build/pull/172
