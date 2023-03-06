@@ -2,6 +2,8 @@
 
 ## 4.0.0
 
+The goal of this release is to remove some of the templating functionality that makes `planaitrnet/the-build` and `palantirnet/drupal-skeleton` harder to use and maintain.
+
 ### Changed
 
 * Removed gitignore template
