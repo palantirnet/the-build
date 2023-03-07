@@ -25,9 +25,6 @@
         "phpmd/phpmd": "^2.4",
         "phpspec/prophecy-phpunit": "^2"
     },
-    "suggest": {
-        "typhonius/acquia-php-sdk-v2": "Adding Cloud Acquia SDK API V2. Mainly used to trait backups."
-    },
     "autoload": {
         "psr-0": {
             "TheBuild\\": "src/"
