@@ -281,8 +281,13 @@
                 <!-- Site-level setup -->
                 <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
                 <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php"/>
+                <!-- Installing Cloud API SDK v2. -->
+                <composer command="suggest" composer="${composer.composer}">
+                  <arg line="--working-dir ${build.thebuild.dir}" />
+                  <arg value="--list" />
+                  <arg line="| xargs printf -- '%s:^2.0' | xargs composer require --working-dir ${application.startdir}" />
+                </composer>
             </case>
-
             <case value="pantheon">
                 <!-- Project-level setup -->
                 <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>

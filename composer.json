@@ -23,8 +23,10 @@
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
         "phpmd/phpmd": "^2.4",
-        "phpspec/prophecy-phpunit": "^2",
-        "typhonius/acquia-php-sdk-v2": "^2.0"
+        "phpspec/prophecy-phpunit": "^2"
+    },
+    "suggest": {
+        "typhonius/acquia-php-sdk-v2": "Adding Cloud Acquia SDK API V2. Mainly used to trait backups."
     },
     "autoload": {
         "psr-0": {
