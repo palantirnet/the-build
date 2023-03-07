@@ -287,6 +287,8 @@
                   <arg value="--list" />
                   <arg line="| xargs printf -- '%s:^2.0' | xargs composer require --working-dir ${application.startdir}" />
                 </composer>
+                <!-- Copy .env.example file to store Acquia Cloud Credentials -->
+                <copy file="${build.thebuild.dir}/defaults/install/.env.example" todir="${application.startdir}" overwrite="true"/>
             </case>
             <case value="pantheon">
                 <!-- Project-level setup -->
