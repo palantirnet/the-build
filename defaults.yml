@@ -110,7 +110,7 @@ drupal:
       # Database connection for Drupal.
       database:
         # This value is required, but a default is set in the-build.xml.
-        # database: drupal
+        database: db
         username: db
         password: db
         host: db
@@ -134,9 +134,9 @@ drupal:
         #   $> gunzip -c FILENAME.sql.gz | drush sqlc
         #
         # Command to extract text contents of the backup file.
-        contents_command: gunzip -c
+        contents_command: gzip -dc
         # Command to load database contents into Drupal.
-        mysql_command: drush sqlc
+        mysql_command: mysql --host=${drupal.site.database.host} --user=${drupal.site.database.username} --password=${drupal.site.database.password} --database=${drupal.site.database.database}
 
         # Load a specific file rather than one matching the `export_pattern`. This can be used
         # if your build relies on a seed database that is checked in to the repository.
