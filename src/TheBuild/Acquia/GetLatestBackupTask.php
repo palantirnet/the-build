@@ -100,7 +100,7 @@ class GetLatestBackupTask extends \Task {
   protected function getLatestBackup($client, $environment_uuid) {
     $backup = new DatabaseBackups($client);
     $backups = $backup->getAll($environment_uuid, $this->database);
-    $filepath = $this->dir . '/' . $this->env . '_' . $this->database . '_' . 'sql.gz';
+    $filepath = $this->dir . '/' . $this->env . '_' . $this->database . '.sql.gz';
     if ($backups) {
       // file_put_contents loads the response into memory.
       // This is okay for small things like Drush aliases.
