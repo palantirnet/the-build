@@ -15,6 +15,9 @@ build:
   # The destination host, either 'acquia', 'pantheon', 'platformsh', or 'other'. This is
   # currently only used when setting up the settings.php file for a Drupal site.
   host: acquia
+    # Adding specific packages for specific host. One per line.
+    host_packages:
+      - "typhonius/acquia-php-sdk-v2:^2.0"
 
 # Drupal configuration used by targets/drupal.xml
 drupal:

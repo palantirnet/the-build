@@ -281,16 +281,10 @@
                 <!-- Site-level setup -->
                 <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
                 <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php"/>
-                <!-- Installing Cloud API SDK v2. -->
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}"/>
-                    <arg value="typhonius/acquia-php-sdk-v2:^2.0"/>
-                </composer>
             </case>
             <case value="pantheon">
                 <!-- Project-level setup -->
                 <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>
-
                 <!-- Site-level setup -->
                 <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
@@ -304,15 +298,37 @@
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/"/>
 
                 <!-- Site-level setup -->
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}"/>
-                    <arg value="platformsh/config-reader:^2.1"/>
-                </composer>
+                <!-- Removing this due new packages for specific host will be added via ${host.host.host_packages}. See host-install-packages target. -->
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
-
+            <!-- Installing Specific Host Packages. -->
+            <phing dir="${build.host.host_packages}" target="host-install-packages" />
             <default/>
         </switch>
+    </target>
+
+    <!-- Target: host-install-packages -->
+    <target name="host-install-packages" depends="setup-host" description="Install composer specific packages for host.">
+        <if>
+        <available property="${build.host.host_packages}"/>
+        <then>
+            <foreach list="${build.host.host_packages}" param="package"/>
+                <composer command="require" composer="${composer.composer}">
+                    <!--Checking if testing the build or adding the package to the project repo.-->
+                    <if>
+                      <equals arg1="env.CIRCLE_PROJECT_REPONAME" arg2="the-build" />
+                        <then>
+                          <arg line="--working-dir ${build.thebuild.dir}"/>
+                        </then>
+                        <else>
+                          <arg line="--working-dir ${application.startdir}"/>
+                        </else>
+                    </if>
+                    <arg value="${package}" />
+                </composer>
+            </foreach>
+        </then>
+        </if>
     </target>
 
 </project>
