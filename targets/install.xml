@@ -314,16 +314,7 @@
         <then>
             <foreach list="${build.host.host_packages}" param="package"/>
                 <composer command="require" composer="${composer.composer}">
-                    <!--Checking if testing the build or adding the package to the project repo.-->
-                    <if>
-                      <equals arg1="env.CIRCLE_PROJECT_REPONAME" arg2="the-build" />
-                        <then>
-                          <arg line="--working-dir ${build.thebuild.dir}"/>
-                        </then>
-                        <else>
-                          <arg line="--working-dir ${application.startdir}"/>
-                        </else>
-                    </if>
+                    <arg line="--working-dir ${application.startdir}"/>
                     <arg value="${package}" />
                 </composer>
             </foreach>
