@@ -282,6 +282,7 @@
                 <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
                 <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php"/>
             </case>
+            
             <case value="pantheon">
                 <!-- Project-level setup -->
                 <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>
@@ -301,9 +302,11 @@
                 <!-- Removing this due new packages for specific host will be added via ${host.host.host_packages}. See host-install-packages target. -->
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
+
+            <default>
             <!-- Installing Specific Host Packages. -->
             <phing dir="${build.host.host_packages}" target="host-install-packages" />
-            <default/>
+            </default>
         </switch>
     </target>
 
