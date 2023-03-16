@@ -312,7 +312,7 @@
         <if>
         <available property="${build.host.host_packages}"/>
         <then>
-            <foreach list="${build.host.host_packages}" param="package"/>
+            <foreach list="${build.host.host_packages}" param="package">
                 <composer command="require" composer="${composer.composer}">
                     <arg line="--working-dir ${application.startdir}"/>
                     <arg value="${package}" />
