@@ -20,7 +20,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: ${drupal.root}
-      - NODE_VERSION: 8
+      - NODE_VERSION: 18
 
     steps:
       - run:
