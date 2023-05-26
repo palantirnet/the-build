@@ -65,6 +65,10 @@ View a list of other available targets with:
 $> vendor/bin/phing -l
 ```
 
+## Known Issues
+
+When using `phpcs` with PHP 8.1.19, there is a memory leak that will cause the process to hang. It will be killed on CircleCI, and jobs will fail. Pin the container to version 8.1.18 to work around this issue.
+
 ## Additional documentation
 
 * [Configuring the-build](docs/configuration.md)
