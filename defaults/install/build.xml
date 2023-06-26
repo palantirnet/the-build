@@ -150,32 +150,41 @@
         <!-- Run PHP Code Beautifier and Fixer. -->
         <echo msg="$> vendor/bin/phpcbf" />
         <exec command="vendor/bin/phpcbf" logoutput="true" checkreturn="false" />
-        <!-- Run JS code linter and fixer. -->
-        <echo msg="$> node ${drupal.root}/core/node_modules/eslint/bin/eslint.js --fix --ext .js ${drupal.root}/modules/custom" />
-        <exec dir="${drupal.root}/core" command="node ./node_modules/eslint/bin/eslint.js --fix --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="false"/>
     </target>
 
     <!-- Target: install-node-dependencies -->
     <target name="install-node-dependencies" depends="" description="Install project, core, and custom module node dependencies">
-        <!-- Install core front end dependencies for js development and linting. -->
+        <if>
+            <available property="check_dependencies_available" file="${drupal.root}/../node_modules/.bin/check-dependencies" />
+            <then>
+                <echo msg="Seeing if project npm packages are installed and at the expected version." />
+                <exec command="npx check-dependencies --verbose" returnProperty="project_dependencies"  logoutput="true" />
+                <if>
+                    <not>
+                        <equals arg1="${project_dependencies}" arg2="0" />
+                    </not>
+                    <then>
+                        <echo msg="Install project node dependencies to get eslint libraries." />
+                        <exec dir="${drupal.root}/.." command="npm install" logoutput="true" />
+                    </then>
+                </if>
+            </then>
+            <else>
+                <echo msg="Install project node dependencies to get eslint libraries." />
+                <exec dir="${drupal.root}/.." command="npm install" logoutput="true" />
+            </else>
+        </if>
         <echo msg="Seeing if Drupal core npm packages are installed and at the expected version." />
-        <exec dir="${drupal.root}/core" command="yarn check --verbose --packageDir ${drupal.root}/core" returnProperty="core_dependencies" logoutput="true" />
+        <exec command="npx check-dependencies --verbose --packageDir ${drupal.root}/core" returnProperty="core_dependencies"  logoutput="true" />
         <if>
             <not>
                 <equals arg1="${core_dependencies}" arg2="0" />
             </not>
             <then>
                 <echo msg="Install Core node dependencies to get eslint libraries." />
-                <exec dir="${drupal.root}/core" command="yarn install" logoutput="true" checkreturn="true" />
+                <exec dir="${drupal.root}/core" command="npm install" logoutput="true" checkreturn="true" />
             </then>
         </if>
-    </target>
-
-    <!-- Target: eslint -->
-    <target name="eslint" description="Run eslint on custom module JS" depends="timestamp, install-node-dependencies">
-        <!-- Run eslint on custom javascript using core tooling. -->
-        <echo msg="$> node ${drupal.root}/core/node_modules/eslint/bin/eslint.js --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" />
-        <exec dir="${drupal.root}/core" command="node ./node_modules/eslint/bin/eslint.js --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true"/>
     </target>
 
 
