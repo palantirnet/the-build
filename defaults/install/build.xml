@@ -110,7 +110,7 @@
 
 
     <!-- Target: code-review -->
-    <target name="code-review" description="Run the automated code reviews." depends="install-node-dependencies">
+    <target name="code-review" description="Run the automated code reviews.">
         <!-- Run PHP's built in linter ('php -l') -->
         <phplint deprecatedAsError="true" haltonfailure="true">
             <fileset dir="${drupal.root}" includesfile="${phplint.includesfile}" />
