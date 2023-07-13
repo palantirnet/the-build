@@ -312,7 +312,7 @@ eslint:
   # Run eslint on custom modules AND themes, this must be a single value.
   # @see: https://eslint.org/docs/latest/use/command-line-interface#run-the-cli
   #
-  # If you need mulstiple directories that don't match a single pattern, you
+  # If you need multiple directories that don't match a single pattern, you
   # may need to add multiple build targets for eslint using each directory.
   directory: "${drupal.root}/**/custom/"
   # Run eslint on files with .es6.js extension.

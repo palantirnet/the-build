@@ -130,7 +130,7 @@
 
         <!-- Run eslint on custom javascript -->
         <echo msg="$> npx eslint --ext .js ${drupal.root}/modules/custom" />
-        <exec command="npx eslint --ext .js --no-error-on-unmatched-pattern ${drupal.root}/modules/custom" logoutput="true" checkreturn="true" />
+        <exec command="node ${drupal.root}../node_modules/eslint/bin/eslint.js --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
     </target>
 
 
@@ -154,35 +154,26 @@
 
     <!-- Target: install-node-dependencies -->
     <target name="install-node-dependencies" depends="" description="Install project, core, and custom module node dependencies">
+        <echo msg="Seeing if project npm packages are installed and at the expected version." />
+        <exec command="yarn check --verbose" returnProperty="project_dependencies"  logoutput="true" />
         <if>
-            <available property="check_dependencies_available" file="${drupal.root}/../node_modules/.bin/check-dependencies" />
+            <not>
+                <equals arg1="${project_dependencies}" arg2="0" />
+            </not>
             <then>
-                <echo msg="Seeing if project npm packages are installed and at the expected version." />
-                <exec command="npx check-dependencies --verbose" returnProperty="project_dependencies"  logoutput="true" />
-                <if>
-                    <not>
-                        <equals arg1="${project_dependencies}" arg2="0" />
-                    </not>
-                    <then>
-                        <echo msg="Install project node dependencies to get eslint libraries." />
-                        <exec dir="${drupal.root}/.." command="npm install" logoutput="true" />
-                    </then>
-                </if>
-            </then>
-            <else>
                 <echo msg="Install project node dependencies to get eslint libraries." />
-                <exec dir="${drupal.root}/.." command="npm install" logoutput="true" />
-            </else>
+                <exec dir="${drupal.root}/.." command="yarn install" logoutput="true" />
+            </then>
         </if>
         <echo msg="Seeing if Drupal core npm packages are installed and at the expected version." />
-        <exec command="npx check-dependencies --verbose --packageDir ${drupal.root}/core" returnProperty="core_dependencies"  logoutput="true" />
+        <exec command="yarn check --verbose --packageDir ${drupal.root}/core" returnProperty="core_dependencies"  logoutput="true" />
         <if>
             <not>
                 <equals arg1="${core_dependencies}" arg2="0" />
             </not>
             <then>
                 <echo msg="Install Core node dependencies to get eslint libraries." />
-                <exec dir="${drupal.root}/core" command="npm install" logoutput="true" checkreturn="true" />
+                <exec dir="${drupal.root}/core" command="yarn install" logoutput="true" checkreturn="true" />
             </then>
         </if>
     </target>
