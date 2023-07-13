@@ -127,10 +127,8 @@
 
         <!-- Run Drupal Check. -->
         <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
-
-        <!-- Run eslint on custom javascript -->
-        <echo msg="$> yarn run eslint --ext ${eslint.extensions} ${eslint.directory}" />
-        <exec command="yarn run eslint --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
+        <!-- Run eslint -->
+        <phingcall target="eslint" />
     </target>
 
 
@@ -142,6 +140,13 @@
 
         <echo msg="$> ${drupal-check.command}" />
         <exec command="${drupal-check.command}" logoutput="true" checkreturn="true" />
+    </target>
+
+
+    <!-- Lint custom module and theme (by default) javascript. -->
+    <target name="eslint" depends="install-node-dependencies">
+        <echo msg="$> yarn run eslint --ext ${eslint.extensions} ${eslint.directory}" />
+        <exec command="yarn run eslint --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
     </target>
 
 
