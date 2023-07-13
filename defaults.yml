@@ -317,5 +317,6 @@ eslint:
   # target for eslint.
   directory: "${drupal.root}/**/custom/"
   # Run eslint on files with .es6.js extension.
+  # This can be a comma separated list.
   # @see: https://eslint.org/docs/latest/use/command-line-interface#--ext
   extensions: ".es6.js"
