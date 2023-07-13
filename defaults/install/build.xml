@@ -129,8 +129,8 @@
         <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
 
         <!-- Run eslint on custom javascript -->
-        <echo msg="$> npx eslint --ext .js ${drupal.root}/modules/custom" />
-        <exec command="node ${drupal.root}../node_modules/eslint/bin/eslint.js --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
+        <echo msg="$> yarn run eslint --ext ${eslint.extensions} ${eslint.directory}" />
+        <exec command="yarn run eslint --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
     </target>
 
 
