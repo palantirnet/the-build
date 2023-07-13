@@ -146,7 +146,7 @@
     <target name="eslint" depends="install-node-dependencies">
         <!-- Lint custom module and theme (by default) javascript. -->
         <echo msg="$> yarn run eslint --ext ${eslint.extensions} ${eslint.directory}" />
-        <exec command="yarn run eslint --fix-dry-run --no-ignore --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
+        <exec command="yarn run eslint --fix-dry-run --ext ${eslint.extensions} --resolve-plugins-relative-to ${drupal.root}/core --no-error-on-unmatched-pattern ${eslint.directory}" logoutput="true" checkreturn="true" />
     </target>
 
 
