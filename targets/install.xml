@@ -284,10 +284,6 @@
                     <arg line="--working-dir ${application.startdir}"/>
                     <arg value="drupal/memcache"/>
                 </composer>
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}"/>
-                    <arg value="acquia/memcache-settings"/>
-                </composer>
             </case>
 
             <case value="pantheon">
