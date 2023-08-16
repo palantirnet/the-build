@@ -127,8 +127,12 @@
 
         <!-- Run Drupal Check. -->
         <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
+
         <!-- Run eslint -->
         <phingcall target="eslint" />
+
+        <!-- Ensure the composer.lock file is up to date -->
+        <exec command="composer validate --no-check-all --no-check-publish" logoutput="true" checkreturn="true" />
     </target>
 
 
