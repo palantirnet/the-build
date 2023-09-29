@@ -144,6 +144,10 @@ drupal:
         #   $> phing load-db -Ddb.load.file=artifacts/foo.sql.gz
         #file:
 
+      drop_db:
+        # Command to drop the database tables.
+        mysql_command: drush sql-drop
+
 
 # Configuration for targets/artifact.xml
 artifact:
