@@ -146,7 +146,7 @@ drupal:
 
       drop_db:
         # Command to drop the database tables.
-        mysql_command: drush sql-drop
+        mysql_command: drush sql-drop -y
 
 
 # Configuration for targets/artifact.xml
