@@ -121,7 +121,7 @@
         <exec command="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
-        <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes ${phpmd.suffixes}" />
+        <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} -- ${phpmd.format} ${phpmd.rulesets} --suffixes ${phpmd.suffixes}" />
         <echo msg="$> ${phpmd.command}" />
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
 
