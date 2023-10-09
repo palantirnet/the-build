@@ -47,7 +47,7 @@ jobs:
             echo "phpcs for tasks"
             vendor/bin/phpcs src --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
             echo "phpmd for tasks"
-            vendor/bin/phpmd src text defaults/standard/phpmd.xml --suffixes "php,inc,module,theme,profile,install,test"
+            vendor/bin/phpmd src text ./defaults/standard/phpmd.xml --suffixes "php,inc,module,theme,profile,install,test"
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
 
