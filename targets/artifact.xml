@@ -350,7 +350,7 @@
   <exec command="git status --porcelain" outputProperty="modified_files" />
   <fail message="  *  Repository status: dirty.                  *  Modified files: ${modified_files}">
     <condition>
-      <not><equals arg1="${modified_files}" arg2="" /></not>
+      <not><equals arg1="${ready_to_build}" arg2="n" /></not>
     </condition>
   </fail>
 
