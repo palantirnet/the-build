@@ -346,11 +346,5 @@
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
     </target>
-
-  <fail message="  *  Repository status: dirty" >
-    <condition>
-      <equals arg1="${ready_to_build}" arg2="n" />
-    </condition>
-  </fail>
-
+  
 </project>
