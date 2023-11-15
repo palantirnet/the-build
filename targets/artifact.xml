@@ -95,7 +95,7 @@
             <then>
                 <echo>Repository status:    dirty</echo>
                 <echo level="error">  * You have changes which must be committed before you may build an artifact.</echo>
-              <echo level="error">  * Modified files:  ${modified_files}</echo>
+                <echo level="error">  * Modified files:  ${modified_files}</echo>
                 <property name="ready_to_build" value="n" />
             </then>
             <else>
@@ -347,5 +347,11 @@
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
     </target>
 
+  <exec command="git status --porcelain" outputProperty="modified_files" />
+  <fail message="  *  Repository status: dirty.                  *  Modified files: ${modified_files}">
+    <condition>
+      <not><equals arg1="${modified_files}" arg2="" /></not>
+    </condition>
+  </fail>
 
 </project>
