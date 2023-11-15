@@ -347,10 +347,9 @@
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
     </target>
 
-  <exec command="git status --porcelain" outputProperty="modified_files" />
-  <fail message="  *  Repository status: dirty.                  *  Modified files: ${modified_files}">
+  <fail message="  *  Repository status: dirty" >
     <condition>
-      <not><equals arg1="${ready_to_build}" arg2="n" /></not>
+      <equals arg1="${ready_to_build}" arg2="n" />
     </condition>
   </fail>
 
