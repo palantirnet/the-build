@@ -170,6 +170,11 @@ Or, you can specify the export file directly:
           </then>
         </if>
 
+        <!-- Drop the database tables. -->
+        <property name="drupal.site.drop_db.command" value="${drupal.site.drop_db.mysql_command}" />
+        <echo>$> ${drupal.site.drop_db.command}</echo>
+        <exec dir="${build.dir}" command="${drupal.site.drop_db.command}" checkreturn="true" logoutput="true" />
+
         <!-- Load the contents of the file into Drupal -->
         <property name="drupal.site.load_db.command" value="${drupal.site.load_db.contents_command} ${drupal.site.load_db.file} | ${drupal.site.load_db.mysql_command}" />
         <echo>$> ${drupal.site.load_db.command}</echo>
