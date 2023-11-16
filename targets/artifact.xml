@@ -346,5 +346,6 @@
         <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
         <exec dir="${artifact.directory}" command="git branch -D ${artifact.git.temporary_branch}" checkreturn="true" logoutput="true" />
     </target>
+
   
 </project>
