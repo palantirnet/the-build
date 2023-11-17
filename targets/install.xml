@@ -280,7 +280,10 @@
             <case value="acquia">
                 <!-- Site-level setup -->
                 <!-- @see https://docs.acquia.com/cloud-platform/performance/memcached/enable/ -->
-                <httpget url="https://docs.acquia.com/_downloads/cloud-memcache-d8+.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}" filename="settings.acquia-memcache.php"/>
+                <composer command="require" composer="${composer.composer}">
+                    <arg line="--working-dir ${application.startdir}"/>
+                    <arg value="drupal/memcache"/>
+                </composer>
             </case>
             
             <case value="pantheon">

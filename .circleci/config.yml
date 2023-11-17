@@ -6,7 +6,7 @@ jobs:
   build:
     working_directory: ~/project
     docker:
-      - image: cimg/php:8.1-browsers
+      - image: cimg/php:8.1.18-browsers
       - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
@@ -123,8 +123,10 @@ jobs:
       - run:
           name: Run Behat tests
           command: |
-            nohup php -S example.ddev.site:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
+            cd ${DRUPAL_ROOT}
+            nohup php -S example.ddev.site:8000 .ht.router.php > /tmp/artifacts/phpd.log 2>&1 &
             google-chrome --headless --remote-debugging-port=9222 &>/dev/null &
+            cd ..
             vendor/bin/phing test -Dbuild.env=circleci
           working_directory: ~/example
 
