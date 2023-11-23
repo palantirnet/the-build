@@ -224,9 +224,15 @@
             </filterchain>
         </copy>
 
-         <!-- Copy other templates into place.
-             These copy commands use <expandproperties /> for property substitution.
-             -->
+        <!-- Copy the phpmd.xml file. -->
+        <copy file="${phing.dir.install}/../defaults/install/phpmd.xml" tofile="${application.startdir}/phpmd.xml" overwrite="true" />
+
+        <!-- Copy the phplint.txt file. -->
+        <copy file="${phing.dir.install}/../defaults/install/phplint.txt" tofile="${application.startdir}/phplint.txt" overwrite="true" />
+
+        <!-- Copy other templates into place.
+            These copy commands use <expandproperties /> for property substitution.
+            -->
         <!-- Copy the behat template. -->
         <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
             <filterchain>
