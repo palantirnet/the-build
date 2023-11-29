@@ -252,7 +252,7 @@ phpcs:
 # @see https://phpmd.org/
 #
 # These values are used in the defaults/build.xml template:
-#   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}
+#   $> phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes ${phpmd.suffixes}
 phpmd:
   # Comma-separated list of directories to review.
   directories: "${drupal.root}/modules/custom/,${drupal.root}/themes/custom/"
