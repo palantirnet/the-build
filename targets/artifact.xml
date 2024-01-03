@@ -95,6 +95,7 @@
             <then>
                 <echo>Repository status:    dirty</echo>
                 <echo level="error">  * You have changes which must be committed before you may build an artifact.</echo>
+                <echo level="error">  * Modified files:  ${modified_files}</echo>
                 <property name="ready_to_build" value="n" />
             </then>
             <else>
