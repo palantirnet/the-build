@@ -31,6 +31,7 @@
   <!-- Directories to scan. -->
   <file>@webroot@/modules/custom</file>
   <file>@webroot@/themes/custom</file>
+  <file>@webroot@/features/bootstrap</file>
 
   <exclude-pattern>*/behat</exclude-pattern>
   <exclude-pattern>*/node_modules</exclude-pattern>
