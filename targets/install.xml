@@ -306,26 +306,31 @@
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
 
-            <default>
-            <!-- Installing Specific Host Packages. -->
-            <phing dir="${build.host.host_packages}" target="host-install-packages" />
-            </default>
+            <default/>
         </switch>
+
+        <!-- Installing Specific Host Packages. -->
+        <phingcall target="host-install-packages" />
     </target>
 
     <!-- Target: host-install-packages -->
-    <target name="host-install-packages" depends="setup-host" description="Install composer specific packages for host.">
+    <target name="host-install-packages" description="Install composer specific packages for host.">
         <if>
-        <available property="${build.host.host_packages}"/>
+          <isset property="build.host_packages.${build.host}"/>
         <then>
-            <foreach list="${build.host.host_packages}" param="package">
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}"/>
-                    <arg value="${package}" />
-                </composer>
-            </foreach>
+            <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" inheritall="true" />
         </then>
         </if>
+    </target>
+
+    <!-- Target: install-package -->
+    <target name="install-package" description="Install a package using Composer in the application start directory">
+      <fail unless="package" />
+
+      <composer command="require" composer="${composer.composer}">
+        <arg line="--working-dir ${application.startdir}"/>
+        <arg value="${package}" />
+      </composer>
     </target>
 
 </project>
