@@ -196,10 +196,6 @@ class GetLatestBackupTask extends \Task {
     if (empty($this->database)) {
       $this->database = $this->site;
     }
-    // Check .env file exists.
-    if (!file_exists(".env")) {
-      throw new \BuildException(".env file is needed in the root of project with credentials see .env.example.");
-    }
 
     // Check the build attributes.
     foreach (['dir', 'site', 'env'] as $attribute) {
