@@ -318,7 +318,7 @@
         <if>
           <isset property="build.host_packages.${build.host}"/>
         <then>
-            <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" inheritall="true" />
+            <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" />
         </then>
         </if>
     </target>
