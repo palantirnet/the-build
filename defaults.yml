@@ -24,7 +24,7 @@ drupal:
   #root: web
 
   # Comma-separated list of directories that should be present for Drupal development.
-  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,config/config_split/development,config/config_split/staging,config/config_split/production"
+  create_dirs: "${drupal.root}/modules/custom,${drupal.root}/themes/custom,config/config_split/development,config/config_split/staging,config/config_split/production,features/screenshots"
 
   twig:
     # Whether to enable twig debugging.
