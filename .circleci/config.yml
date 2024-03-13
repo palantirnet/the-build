@@ -49,7 +49,7 @@ jobs:
             echo "phpmd for tasks"
             vendor/bin/phpmd src text defaults/standard/phpmd.xml --suffixes php,inc,module,theme,profile,install,test
             echo "phpstan for tasks"
-            vendor/bin/phpstan analyse src --level=2
+            vendor/bin/phpstan analyse -c phpstan.neon
 
       # Install a drupal test project.
       - run:
