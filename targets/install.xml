@@ -224,6 +224,27 @@
             </filterchain>
         </copy>
 
+        <!-- Copy the phpmd.xml file template.
+             -->
+        <echo>Updating phpmd.xml file for project root.</echo>
+        <if>
+            <equals arg1="${build.host}" arg2="acquia"/>
+            <then>
+                <property name="phpmd_dir" value="docroot"/>
+            </then>
+            <else>
+                <property name="phpmd_dir" value="web"/>
+            </else>
+        </if>
+        <copy file="${phing.dir.install}/../defaults/install/phpmd.xml" tofile="${application.startdir}/phpmd.xml" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="projectname" value="${projectname}" />
+                    <token key="webroot" value="${phpmd_dir}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+
          <!-- Copy other templates into place.
              These copy commands use <expandproperties /> for property substitution.
              -->
