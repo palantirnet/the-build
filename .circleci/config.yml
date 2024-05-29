@@ -41,13 +41,13 @@ jobs:
             echo "phpcs for modules"
             vendor/bin/phpcs defaults/standard/modules --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
             echo "phpmd for modules"
-            vendor/bin/phpmd defaults/standard/modules text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            vendor/bin/phpmd defaults/standard/modules text defaults/standard/phpmd.xml --suffixes php,inc,module,theme,profile,install,test
             echo "phpstan for modules"
             vendor/bin/phpstan analyse defaults/standard/modules --level=2
             echo "phpcs for tasks"
             vendor/bin/phpcs src --standard="Drupal,DrupalPractice" -n --extensions="php,module,inc,install,test,profile,theme"
             echo "phpmd for tasks"
-            vendor/bin/phpmd src text defaults/standard/phpmd.xml "php,inc,module,theme,profile,install,test"
+            vendor/bin/phpmd src text defaults/standard/phpmd.xml --suffixes php,inc,module,theme,profile,install,test
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
 
@@ -123,8 +123,10 @@ jobs:
       - run:
           name: Run Behat tests
           command: |
-            nohup php -S example.ddev.site:8000 -t $(pwd)/${DRUPAL_ROOT}/ > /tmp/artifacts/phpd.log 2>&1 &
+            cd ${DRUPAL_ROOT}
+            nohup php -S example.ddev.site:8000 .ht.router.php > /tmp/artifacts/phpd.log 2>&1 &
             google-chrome --headless --remote-debugging-port=9222 &>/dev/null &
+            cd ..
             vendor/bin/phing test -Dbuild.env=circleci
           working_directory: ~/example
 

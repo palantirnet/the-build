@@ -16,7 +16,7 @@
   <config name="ignore_errors_on_exit" value="0" />
 
   <!-- Set extensions to scan. -->
-  <arg name="extensions" value="php,module,inc,install,test,profile,theme,info,yml,css,js"/>
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme,info,yml,css"/>
 
   <!-- Use colors in output. -->
   <arg name="colors"/>
@@ -31,6 +31,7 @@
   <!-- Directories to scan. -->
   <file>@webroot@/modules/custom</file>
   <file>@webroot@/themes/custom</file>
+  <file>features/bootstrap</file>
 
   <exclude-pattern>*/behat</exclude-pattern>
   <exclude-pattern>*/node_modules</exclude-pattern>
