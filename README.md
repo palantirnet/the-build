@@ -2,7 +2,7 @@
 
 This repository contains project setup templates and reusable phing build targets for Drupal projects.
 
-_Note: If you are starting a new a project, you may be looking for the [drupal-skeleton](https://github.com/palantirnet/drupal-skeleton)._
+_Note: If you are starting a new project, you may be looking for the [drupal-skeleton](https://github.com/palantirnet/drupal-skeleton)._
 
 ## Adding the-build with composer
 
