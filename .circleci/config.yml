@@ -51,6 +51,11 @@ jobs:
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
 
+      # Run internal tests
+      - run:
+          name: Test custom phing commands
+          command: ./run-tests.sh
+
       # Install a drupal test project.
       - run:
           name: Create artifacts directory
