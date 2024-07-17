@@ -259,7 +259,7 @@ phpmd:
   # Output format for phpmd.
   format: text
   # Comma-separated list of ruleset paths or names.
-  rulesets: "${build.thebuild.dir}/defaults/standard/phpmd.xml"
+  rulesets: "${build.dir}/phpmd.xml"
   # File extensions to review.
   suffixes: php,inc,module,theme,profile,install,test
 
