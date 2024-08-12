@@ -12,12 +12,12 @@
         "bin/the-build-installer"
     ],
     "require": {
-        "byrond/drupal-check": "dev-patch-2",
         "composer-runtime-api": "^2.2",
         "cweagans/composer-patches": "^1.7",
         "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3",
         "drush/drush": "^13",
+        "mglaman/drupal-check": "dev-patch-2",
         "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
@@ -44,10 +44,11 @@
             }
         }
     },
-    "repositories": {
-        "drupal-check": {
+    "minimum-stability": "dev",
+    "repositories": [
+        {
             "type": "vcs",
             "url": "https://github.com/byrond/drupal-check"
         }
-    }
+    ]
 }
