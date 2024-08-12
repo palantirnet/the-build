@@ -12,6 +12,7 @@
         "bin/the-build-installer"
     ],
     "require": {
+        "byrond/drupal-check": "dev-patch-2",
         "composer-runtime-api": "^2.2",
         "cweagans/composer-patches": "^1.7",
         "dmore/behat-chrome-extension": "^1.4",
