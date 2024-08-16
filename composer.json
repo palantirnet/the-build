@@ -17,7 +17,7 @@
         "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3",
         "drush/drush": "^13",
-        "mglaman/drupal-check": "dev-patch-2",
+        "mglaman/drupal-check": "^1.5",
         "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
