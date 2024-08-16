@@ -12,10 +12,10 @@
         "bin/the-build-installer"
     ],
     "require": {
-        "composer-runtime-api": "^2.2",
+        "composer-runtime-api": "^2.2.2",
         "cweagans/composer-patches": "^1.7",
         "dmore/behat-chrome-extension": "^1.4",
-        "drupal/coder": "^8.3",
+        "drupal/coder": "^8.3.6",
         "drush/drush": "^13",
         "mglaman/drupal-check": "^1.5",
         "palantirnet/phing-drush-task": "^1.1",
@@ -43,6 +43,5 @@
                 "Support relative symliks in Phing": "https://raw.githubusercontent.com/palantirnet/the-build/7cdc28b6019fb88a0604261366f9ea35f1e21d96/patches/phing-relative-symlinks.patch"
             }
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
