@@ -44,11 +44,5 @@
             }
         }
     },
-    "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/byrond/drupal-check"
-        }
-    ]
+    "minimum-stability": "dev"
 }
