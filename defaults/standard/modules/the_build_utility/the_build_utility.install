@@ -59,7 +59,6 @@ function the_build_utility_install() {
     'config_ignore',
     'devel',
     'workbench',
-    'workbench_tabs',
   ];
   \Drupal::service('module_installer')->install($install);
 
