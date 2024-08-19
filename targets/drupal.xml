@@ -282,6 +282,7 @@ Or, you can specify the export file directly:
             <arg value="drupal/config_split" />
             <arg value="drupal/devel" />
             <arg value="drupal/workbench" />
+            <arg value="drupal/workbench_tabs" />
         </composer>
 
         <drush command="site-install" assume="yes">
