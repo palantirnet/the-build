@@ -17,6 +17,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: docroot
+      - NODE_VERSION: 18
 
     steps:
       - run:
