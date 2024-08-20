@@ -3,7 +3,7 @@
 # - https://github.com/platformsh/platformsh-example-drupal8/blob/master/.platform.app.yaml
 
 name: 'app'
-type: 'php:7.2'
+type: 'php:8.3'
 
 relationships:
     database: 'mysqldb:mysql'
