@@ -77,6 +77,7 @@ jobs:
 
       - run:
           name: Update Yarn
+          working_directory: ~/example
           command: |
             yarn set version stable
             yarn install
