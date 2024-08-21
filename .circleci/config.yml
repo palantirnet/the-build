@@ -2,8 +2,6 @@
 # installed in projects, see defaults/install/.circleci/config.yml
 
 version: 2.1
-orbs:
-  node: circleci/node@5.0.2
 jobs:
   build:
     working_directory: ~/project
@@ -21,9 +19,6 @@ jobs:
       - DRUPAL_ROOT: docroot
 
     steps:
-      - node/install:
-          install-yarn: true
-          yarn-version: 4.4.0
       - run:
           name: Install packages
           command: |
@@ -55,6 +50,12 @@ jobs:
             vendor/bin/phpmd src text defaults/standard/phpmd.xml --suffixes php,inc,module,theme,profile,install,test
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
+
+      - run:
+          name: Update Yarn
+          command: |
+            yarn set version stable
+            yarn install
 
       # Install a drupal test project.
       - run:
