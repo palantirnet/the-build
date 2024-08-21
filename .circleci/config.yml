@@ -2,6 +2,8 @@
 # installed in projects, see defaults/install/.circleci/config.yml
 
 version: 2.1
+orbs:
+  node: circleci/node@5.0.2
 jobs:
   build:
     working_directory: ~/project
@@ -17,9 +19,10 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: docroot
-      - NODE_VERSION: 18
 
     steps:
+      - node/install:
+          install-yarn: true
       - run:
           name: Install packages
           command: |
