@@ -51,12 +51,6 @@ jobs:
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
 
-      - run:
-          name: Update Yarn
-          command: |
-            yarn set version stable
-            yarn install
-
       # Install a drupal test project.
       - run:
           name: Create artifacts directory
@@ -80,6 +74,12 @@ jobs:
           name: Create a new Drupal project
           command: composer create-project palantirnet/drupal-skeleton example dev-drupal11 --no-interaction
           working_directory: ~/
+
+      - run:
+          name: Update Yarn
+          command: |
+            yarn set version stable
+            yarn install
 
       # Use this copy of the-build
       - run:
