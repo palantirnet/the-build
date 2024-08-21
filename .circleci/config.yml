@@ -13,7 +13,6 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: ''
           MYSQL_DATABASE: circle_test
-          YARN_ENABLE_IMMUTABLE_INSTALLS: FALSE
 
     environment:
       - PALANTIR_ENVIRONMENT: circleci
@@ -81,7 +80,7 @@ jobs:
           working_directory: ~/example
           command: |
             yarn set version stable
-            yarn install
+            yarn --version
 
       # Use this copy of the-build
       - run:
