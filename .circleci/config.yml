@@ -23,6 +23,7 @@ jobs:
     steps:
       - node/install:
           install-yarn: true
+          yarn-version: 4.4.0
       - run:
           name: Install packages
           command: |
