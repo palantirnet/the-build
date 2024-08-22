@@ -173,17 +173,6 @@
                 <exec dir="${drupal.root}/.." command="yarn install" logoutput="true" />
             </then>
         </if>
-        <echo msg="Seeing if Drupal core npm packages are installed and at the expected version." />
-        <exec dir="${drupal.root}/core" command="yarn install --check-files --verbose" returnProperty="core_dependencies"  logoutput="true" />
-        <if>
-            <not>
-                <equals arg1="${core_dependencies}" arg2="0" />
-            </not>
-            <then>
-                <echo msg="Install Core node dependencies to get eslint libraries." />
-                <exec dir="${drupal.root}/core" command="yarn install" logoutput="true" checkreturn="true" />
-            </then>
-        </if>
     </target>
 
 
