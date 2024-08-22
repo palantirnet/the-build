@@ -162,17 +162,8 @@
 
     <!-- Target: install-node-dependencies -->
     <target name="install-node-dependencies" depends="" description="Install project, core, and custom module node dependencies">
-        <echo msg="Seeing if project npm packages are installed and at the expected version." />
-        <exec command="yarn install --check-files --verbose" returnProperty="project_dependencies"  logoutput="true" />
-        <if>
-            <not>
-                <equals arg1="${project_dependencies}" arg2="0" />
-            </not>
-            <then>
-                <echo msg="Install project node dependencies to get eslint libraries." />
-                <exec dir="${drupal.root}/.." command="yarn install" logoutput="true" />
-            </then>
-        </if>
+        <echo msg="Install project node dependencies to get eslint libraries." />
+        <exec dir="${drupal.root}/.." command="yarn install" logoutput="true" />
     </target>
 
 
