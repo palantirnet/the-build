@@ -17,6 +17,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: docroot
+      - NODE_VERSION: 18
 
     steps:
       - run:
@@ -74,13 +75,6 @@ jobs:
           name: Create a new Drupal project
           command: composer create-project palantirnet/drupal-skeleton example dev-drupal11 --no-interaction
           working_directory: ~/
-
-      - run:
-          name: Update Yarn
-          working_directory: ~/example
-          command: |
-            yarn set version stable
-            yarn --version
 
       # Use this copy of the-build
       - run:
