@@ -296,12 +296,9 @@ Or, you can specify the export file directly:
             <param>the_build_utility</param>
         </drush>
 
-        <phingcall target="drupal-change-profile">
-            <property name="new_profile" value="minimal" />
-        </phingcall>
-
         <drush command="pm-uninstall" assume="yes">
             <param>the_build_utility</param>
+            <param>standard</param>
         </drush>
 
         <drush command="config-export" assume="yes" />
