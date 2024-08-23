@@ -7,7 +7,7 @@ jobs:
     working_directory: ~/project
     docker:
       - image: cimg/php:8.3-browsers
-      - image: cimg/mysql:5.7
+      - image: cimg/mysql:8.0
         command: --max_allowed_packet=16M
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -17,6 +17,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: docroot
+      - NODE_VERSION: 18
 
     steps:
       - run:
@@ -72,7 +73,7 @@ jobs:
       # Create a new project using the drupal-skeleton project
       - run:
           name: Create a new Drupal project
-          command: composer create-project palantirnet/drupal-skeleton example dev-develop --no-interaction
+          command: composer create-project palantirnet/drupal-skeleton example dev-drupal11 --no-interaction
           working_directory: ~/
 
       # Use this copy of the-build
