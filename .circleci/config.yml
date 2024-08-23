@@ -72,7 +72,7 @@ jobs:
       # Create a new project using the drupal-skeleton project
       - run:
           name: Create a new Drupal project
-          command: composer create-project palantirnet/drupal-skeleton example dev-DEV-70-update-install-node-dependencies-task-in-the-build --no-interaction
+          command: composer create-project palantirnet/drupal-skeleton example dev-develop --no-interaction
           working_directory: ~/
 
       # Use this copy of the-build
