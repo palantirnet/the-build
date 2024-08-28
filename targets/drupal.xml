@@ -315,49 +315,6 @@ Or, you can specify the export file directly:
     </target>
 
 
-    <target name="drupal-change-profile" description="Change the install profile on an existing Drupal site.">
-        <fail unless="new_profile" />
-
-        <!-- Get the name of the current profile. -->
-        <drush command="config-get" returnProperty="current_profile">
-            <param>core.extension</param>
-            <param>profile</param>
-            <option name="format">csv</option>
-        </drush>
-
-        <!-- If the current profile is enabled in the core extensions list, disable it. -->
-        <drush command="config-get" returnProperty="current_profile_weight">
-            <param>core.extension</param>
-            <param>module.${current_profile}</param>
-            <option name="format">csv</option>
-        </drush>
-
-        <if>
-            <not><equals arg1="${current_profile_weight}" arg2="" /></not>
-            <then>
-                <drush command="config-delete" assume="yes">
-                    <param>core.extension</param>
-                    <param>module.${current_profile}</param>
-                </drush>
-            </then>
-        </if>
-
-        <!-- Enable the new profile. -->
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>module.${new_profile}</param>
-            <param>1000</param>
-        </drush>
-
-        <!-- Update the profile setting itself. -->
-        <drush command="config-set" assume="yes">
-            <param>core.extension</param>
-            <param>profile</param>
-            <param>${new_profile}</param>
-        </drush>
-    </target>
-
-
     <target name="drupal-add-multisite" description="Set up a new Drupal multisite.">
         <if>
             <equals arg1="${build.host}" arg2="pantheon" />
