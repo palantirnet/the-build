@@ -134,6 +134,10 @@ jobs:
           path: /tmp/artifacts
       - store_test_results:
           path: /tmp/artifacts
+      - persist_to_workspace:
+          root: ..
+          paths:
+            - project
 
 workflows:
   version: 2
