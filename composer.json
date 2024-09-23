@@ -17,12 +17,14 @@
         "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3.6",
         "drush/drush": ">=9",
+        "mglaman/phpstan-drupal": "^1.2",
         "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^2.14",
         "phpmd/phpmd": "^2.13",
-        "phpspec/prophecy-phpunit": "^2"
+        "phpspec/prophecy-phpunit": "^2",
+        "phpstan/extension-installer": "^1.4"
     },
     "autoload": {
         "psr-0": {
@@ -33,7 +35,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {
