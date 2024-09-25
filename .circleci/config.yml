@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Run code reviews
           command: |
-            composer install --no-scripts
+            composer install --no-plugins
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse src --level=2
             composer run-scripts
