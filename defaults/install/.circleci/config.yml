@@ -9,7 +9,7 @@ jobs:
   build:
     working_directory: ~/${projectname}
     docker:
-      - image: cimg/php:8.1-browsers
+      - image: cimg/php:8.3-browsers
       - image: cimg/mysql:5.7
         command: --max_allowed_packet=16M
         environment:
@@ -20,7 +20,7 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: ${drupal.root}
-      - NODE_VERSION: 8
+      - NODE_VERSION: 18
 
     steps:
       - run:
@@ -50,10 +50,11 @@ jobs:
           name: Configure URL in /etc/hosts
           command: echo 127.0.0.1 ${CIRCLE_PROJECT_REPONAME}.local | sudo tee -a /etc/hosts
 
-      # Composer package cache
+      # Package cache
       - restore_cache:
           keys:
-            - composer-v1-
+            - package-cache-v1-
+
       # Source cache
       - restore_cache:
           keys:
@@ -64,15 +65,19 @@ jobs:
       - run:
           name: Composer install
           command: composer install --no-interaction --prefer-dist
+      - run:
+          name: Yarn install
+          command: yarn install
 
-      # Composer package cache - update when the contents of the Composer cache directory
-      # change
-      - run: ls -1R ~/.cache/composer/ > /tmp/composer-cache.txt
+      # Package cache. This is updated when the contents of the ~/.cache directory change.
+      # Both Composer and Yarn use this directory.
+      - run: ls -1R ~/.cache/ > /tmp/package-cache.txt
       - save_cache:
-          key: composer-v1-{{ checksum "/tmp/composer-cache.txt" }}
+          key: package-cache-v1-{{ checksum "/tmp/package-cache.txt" }}
           paths:
-              - ~/.cache/composer
-      # Source cache - update when branch changes
+              - ~/.cache
+
+      # Source cache. This is updated for each different branch.
       - save_cache:
           key: source-v1-{{ .Branch }}
           paths:
