@@ -114,7 +114,7 @@ drupal:
       # Database connection for Drupal.
       database:
         # This value is required, but a default is set in the-build.xml.
-        database: db
+        # database: drupal
         username: db
         password: db
         host: db
