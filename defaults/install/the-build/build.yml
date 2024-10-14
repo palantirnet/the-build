@@ -35,7 +35,7 @@ drupal:
 
       # OPTIONAL: The Drupal database name defaults to the site's "dir" value.
       database:
-        database: "drupal"
+        database: "db"
 
     # Multisites created by `phing drupal-add-multisite` will be automatically added here.
     # @multisite_placeholder@
