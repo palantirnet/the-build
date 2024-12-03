@@ -123,14 +123,21 @@
         <exec executable="vendor/bin/phpcs" logoutput="true" checkreturn="true" />
 
         <!-- Run PHP Mess Detector. -->
-        <property name="phpmd.command" value="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}" />
-        <echo msg="$> ${phpmd.command}" />
+        <echo msg="$> vendor/bin/phpmd" />
         <exec executable="vendor/bin/phpmd" logoutput="true" checkreturn="true">
             <arg line="${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes=${phpmd.suffixes}"/>
         </exec>
 
         <!-- Run Drupal Check. -->
         <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
+
+        <!-- Run eslint -->
+        <phingcall target="eslint" />
+
+        <!-- Ensure the composer.lock file is up to date -->
+        <exec executable="composer validate" logoutput="true" checkreturn="true">
+            <arg line="--no-check-all --no-check-publish"/>
+        </exec>
     </target>
 
 
@@ -141,8 +148,15 @@
         <property name="drupal-check.command" value="${drupal-check.bin} ${drupal-check.dir}" />
 
         <echo msg="$> ${drupal-check.command}" />
-        <exec executable="${drupal-check.bin}" logoutput="true" checkreturn="true">
-            <arg line="${drupal-check.dir}"/>
+        <exec executable="${drupal-check.command}" logoutput="true" checkreturn="true" />
+    </target>
+
+    <!-- Target: eslint -->
+    <target name="eslint" depends="install-node-dependencies">
+        <!-- Lint custom module and theme (by default) javascript. -->
+        <echo msg="$> yarn run eslint --ext ${eslint.extensions} ${eslint.directory}" />
+        <exec executable="yarn run eslint" logoutput="true" checkreturn="true" >
+            <arg line="--fix-dry-run --ext ${eslint.extensions} --no-error-on-unmatched-pattern ${eslint.directory}"/>
         </exec>
     </target>
 
@@ -150,11 +164,14 @@
     <!-- Target: code-fix -->
     <target name="code-fix" description="Run the automated code fixer.">
         <!-- Run PHP Code Beautifier and Fixer. -->
-        <property name="phpcbf.command" value="vendor/bin/phpcbf --standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}" />
-        <echo msg="$> ${phpcbf.command}" />
-        <exec executable="vendor/bin/phpcbf" logoutput="true" checkreturn="false">
-            <arg line="--standard=${phpcs.standard} --extensions=${phpcs.extensions} ${phpcs.directories}"/>
-        </exec>
+        <echo msg="$> vendor/bin/phpcbf" />
+        <exec executable="vendor/bin/phpcbf" logoutput="true" checkreturn="false" />
+    </target>
+
+    <!-- Target: install-node-dependencies -->
+    <target name="install-node-dependencies" depends="" description="Install project, core, and custom module node dependencies">
+        <echo msg="Install project node dependencies to get eslint libraries." />
+        <exec dir="${drupal.root}/.." executable="yarn install" logoutput="true" />
     </target>
 
 

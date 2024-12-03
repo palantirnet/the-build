@@ -21,9 +21,9 @@
   deploy:
     working_directory: ~/project
     docker:
-      - image: cimg/php:8.1-browsers
+      - image: cimg/php:8.3-browsers
     environment:
-      - NODE_VERSION: 8
+      - NODE_VERSION: 18
       - GITHUB_PUBKEY: "github.com,192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="
       - ACQUIA_PUBKEY: "svn-23450.prod.hosting.acquia.com,54.245.120.237 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDit0Rj8j59i9Gj2vOg2TXjIbPswIc27PwncapyBLi9R3FtECXq+md1BfykBJjME83m78CtqkTlWwNZu+LyhF+IYlshKo82JXQzV4kWwi5L9H7KpdyFDMDLVCNVYmU4EQY9ngRq1cwbMBYsfWxv4sSlbsvZv2C8U7luNoc4SiBY4sGpgiMJLFOHWRw6YvhOamLTKfxSoJUT8uRbfkamxas1EK21XjvrdUSN0Bf5LmTdvs/9iIaUH4AlYr0SW0tc2IbIuoFVxuvSzZj2GJjmtCcW1poDMQLTGq+EuO4Mk1WyoUSJC9L8CFonKH7++EPHopvIbPMinO4r2zLEot3lL5TH"
 

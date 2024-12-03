@@ -1,24 +1,6 @@
 # Change Log
 
-## 4.0-alpha4
-
-### Changed
-
-* Reverted update to Phing 3, since it has a dependency conflict with `drupal/core:9.2.7`
-
-## 4.0-alpha3
-
-### Changed
-
-* Updated to Phing 3
-
-## 4.0-alpha2
-
-### Changed
-
-* Fixed a bug where some properties weren't available to install tasks
-
-## 4.0-alpha1
+## 4.0.0
 
 The goal of this release is to remove some of the templating functionality that makes `planaitrnet/the-build` and `palantirnet/drupal-skeleton` harder to use and maintain.
 
@@ -27,10 +9,33 @@ The goal of this release is to remove some of the templating functionality that 
 * Removed gitignore template
 * Removed settings.php templating
 * Changed how host-specific settings files are managed
-
-`palantirnet/drupal-skeleton` now contains the `settings.php` scaffolding for Drupal.
-
-The plan is to remove more templating/wrapping before releasing 4.0.
+* use --extensions instead of --ignore in "code-fix" target by @byrond in https://github.com/palantirnet/the-build/pull/168
+* Pull out settings.php templating by @becw in https://github.com/palantirnet/the-build/pull/170
+* Fix tests for the 4.x / "lite" changes by @becw in https://github.com/palantirnet/the-build/pull/172
+* Try updating to Phing 3. by @becw in https://github.com/palantirnet/the-build/pull/171
+* Update devel module to 4.1.x for D9 support. by @eric-schmidt in https://github.com/palantirnet/the-build/pull/176
+* Remove profiles/custom/ directory from code checks by @becw in https://github.com/palantirnet/the-build/pull/178
+* Patch Phing to fix relative symlinks by @byrond in https://github.com/palantirnet/the-build/pull/179
+* Automatically run drush inside of ddev by @becw in https://github.com/palantirnet/the-build/pull/174
+* Change the behat command to use depending on whether ddev is available. by @becw in https://github.com/palantirnet/the-build/pull/180
+* Use new CircleCI convenience image for PHP by @byrond in https://github.com/palantirnet/the-build/pull/177
+* Add drupal check dependency by @becw in https://github.com/palantirnet/the-build/pull/181
+* Fix shell script installer by @becw in https://github.com/palantirnet/the-build/pull/184
+* Fix php docker image name in installed circleci config by @byrond in https://github.com/palantirnet/the-build/pull/188
+* Support drush 11 by @agentrickard in https://github.com/palantirnet/the-build/pull/192
+* Fix the installer when using "other" by @byrond in https://github.com/palantirnet/the-build/pull/190
+* Move phpcs configuration from the-build into a phpcs.xml file by @becw in https://github.com/palantirnet/the-build/pull/185
+* Remove check for Composer files in styleguide by @byrond in https://github.com/palantirnet/the-build/pull/187
+* Fail build when there are errors by @byrond in https://github.com/palantirnet/the-build/pull/182
+* Update to PHP 8 by @becw in https://github.com/palantirnet/the-build/pull/194
+* explicitly disable Pantheon build step by @byrond in https://github.com/palantirnet/the-build/pull/199
+* Update coding standards in the-build. by @becw in https://github.com/palantirnet/the-build/pull/197
+* Update code standards and run checks on Circle by @agentrickard in https://github.com/palantirnet/the-build/pull/205
+* Make the_build_utility module compatible with Drupal 10 by @byrond in https://github.com/palantirnet/the-build/pull/201
+* Add config ignore module. by @emmacorn in https://github.com/palantirnet/the-build/pull/208
+* Tech 35 pantheon install by @agentrickard in https://github.com/palantirnet/the-build/pull/210
+* Update the-build to use headless chrome by @byrond in https://github.com/palantirnet/the-build/pull/212
+* TECH-33 Copy phpcs.xml to different path depending on host by @iajon in https://github.com/palantirnet/the-build/pull/211
 
 ## 3.0.3 - November 25, 2020
 
