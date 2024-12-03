@@ -80,8 +80,10 @@
         Install and build the style guide.
         -->
     <target name="styleguide-build" depends="styleguide-exists-or-else,styleguide-install" hidden="true">
-        <echo>Running build command in ${styleguide.root}: ${styleguide.command}</echo>
-        <exec dir="${styleguide.root.resolved}" command="${styleguide.command}" passthru="true" checkreturn="true" />
+        <echo>Running build command in ${styleguide.root}: ${styleguide.command} ${styleguide.command_args}</echo>
+        <exec dir="${styleguide.root.resolved}" executable="${styleguide.command}" passthru="true" checkreturn="true">
+            <arg line="${styleguide.command_args}"/>
+        </exec>
     </target>
 
 
@@ -98,7 +100,9 @@
                 <not><available file="${styleguide.root.resolved}/vendor/autoload.php" type="file" /></not>
             </and>
             <then>
-                <exec dir="${styleguide.root.resolved}" command="composer install --no-interaction" passthru="true" checkreturn="true" />
+                <exec dir="${styleguide.root.resolved}" executable="composer" passthru="true" checkreturn="true">
+                    <arg line="install --no-interaction"/>
+                </exec>
             </then>
         </if>
 
@@ -112,7 +116,9 @@
                 </or>
             </and>
             <then>
-                <exec dir="${styleguide.root.resolved}" command="yarn install --non-interactive --no-progress --prefer-offline" passthru="true" checkreturn="true" />
+                <exec dir="${styleguide.root.resolved}" executable="yarn install --non-interactive --no-progress --prefer-offline" passthru="true" checkreturn="true">
+                    <arg line="install --non-interactive --no-progress --prefer-offline"/>
+                </exec>
             </then>
         </if>
     </target>

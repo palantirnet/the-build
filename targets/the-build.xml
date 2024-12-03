@@ -92,7 +92,9 @@
     <property name="behat.bin" value="${build.dir}/vendor/bin/behat" />
 
     <!-- If this is a ddev project, and we're outside of ddev, run these commands within ddev.  -->
-    <exec command="which ddev" returnProperty="which_ddev" />
+    <exec executable="which" returnProperty="which_ddev">
+        <arg line="ddev"/>
+    </exec>
     <if>
         <and>
             <available file="${build.dir}/.ddev/config.yaml" />
@@ -106,8 +108,12 @@
     </if>
 
     <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
-    <exec command="command -v composer" outputProperty="composer.path.composer" />
-    <exec command="command -v composer.phar" outputProperty="composer.path.composer_phar" />
+    <exec executable="command" outputProperty="composer.path.composer">
+        <arg line="-v composer"/>
+    </exec>
+    <exec executable="command -v composer.phar" outputProperty="composer.path.composer_phar">
+        <arg line="-v composer.phar"/>
+    </exec>
     <if>
         <not><equals arg1="${composer.path.composer}" arg2="" /></not>
         <then><property name="composer.composer" value="${composer.path.composer}" /></then>
