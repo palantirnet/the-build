@@ -15,6 +15,10 @@ build:
   # The destination host, either 'acquia', 'pantheon', 'platformsh', or 'other'. This is
   # currently only used when setting up the settings.php file for a Drupal site.
   host: acquia
+    # Adding specific packages for specific host. One per line.
+  host_packages:
+    acquia:
+      - "typhonius/acquia-php-sdk-v2:^2.0"
 
 # Drupal configuration used by targets/drupal.xml
 drupal:
@@ -134,9 +138,9 @@ drupal:
         #   $> gunzip -c FILENAME.sql.gz | drush sqlc
         #
         # Command to extract text contents of the backup file.
-        contents_command: gunzip -c
+        contents_command: gzip -dc
         # Command to load database contents into Drupal.
-        mysql_command: drush sqlc
+        mysql_command: mysql --host=${drupal.site.database.host} --user=${drupal.site.database.username} --password=${drupal.site.database.password} --database=${drupal.site.database.database}
 
         # Load a specific file rather than one matching the `export_pattern`. This can be used
         # if your build relies on a seed database that is checked in to the repository.
@@ -191,14 +195,6 @@ acquia:
   # Directory for storing downloaded database backups.
   backups: artifacts/backups
 
-  # Max age of the downloaded backup database, in hours.
-  backup_age_hours: 24
-
-  # The Acquia Cloud hosting "realm" where the site is running.
-  #   - Acquia Cloud Enterprise: 'prod'
-  #   - Acquia Cloud Professional: 'devcloud'
-  realm: ""
-
   # Acquia site/application name.
   site: ""
 
@@ -208,12 +204,6 @@ acquia:
 
   # Acquia environment to download backups from.
   env: "prod"
-
-  # Acquia Cloud API credentials file, downloaded from your Acquia account. Do not check
-  # this file into your codebase.
-  cloud:
-    conf: "${env.HOME}/.acquia/cloudapi.conf"
-
 
 # Configuration to use the PHP interpreter's built in linter to check for syntax errors
 # and deprecated code. This property is used by the <phplint> task in the

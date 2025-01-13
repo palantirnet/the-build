@@ -306,11 +306,10 @@
                     <arg value="drupal/memcache"/>
                 </composer>
             </case>
-
+            
             <case value="pantheon">
                 <!-- Project-level setup -->
                 <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>
-
                 <!-- Site-level setup -->
                 <httpget url="https://raw.githubusercontent.com/pantheon-systems/drops-8/default/sites/default/settings.pantheon.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
@@ -324,15 +323,35 @@
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/.environment" dir="${build.dir}/"/>
 
                 <!-- Site-level setup -->
-                <composer command="require" composer="${composer.composer}">
-                    <arg line="--working-dir ${application.startdir}"/>
-                    <arg value="platformsh/config-reader:^2.1"/>
-                </composer>
+                <!-- Removing this due new packages for specific host will be added via ${host.host.host_packages}. See host-install-packages target. -->
                 <httpget url="https://raw.githubusercontent.com/platformsh/template-drupal8/master/web/sites/default/settings.platformsh.php" dir="${build.dir}/${drupal.root}/sites/${drupal.site.dir}"/>
             </case>
 
             <default/>
         </switch>
+
+        <!-- Installing Specific Host Packages. -->
+        <phingcall target="host-install-packages" />
+    </target>
+
+    <!-- Target: host-install-packages -->
+    <target name="host-install-packages" description="Install composer specific packages for host.">
+        <if>
+          <isset property="build.host_packages.${build.host}"/>
+        <then>
+            <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" />
+        </then>
+        </if>
+    </target>
+
+    <!-- Target: install-package -->
+    <target name="install-package" description="Install a package using Composer in the application start directory">
+      <fail unless="package" />
+
+      <composer command="require" composer="${composer.composer}">
+        <arg line="--working-dir ${application.startdir}"/>
+        <arg value="${package}" />
+      </composer>
     </target>
 
 </project>
