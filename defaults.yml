@@ -18,7 +18,7 @@ build:
     # Adding specific packages for specific host. One per line.
   host_packages:
     acquia:
-      - "typhonius/acquia-php-sdk-v2:^2.0"
+      - "typhonius/acquia-php-sdk-v2:^3.4"
 
 # Drupal configuration used by targets/drupal.xml
 drupal:
