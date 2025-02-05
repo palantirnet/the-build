@@ -1,7 +1,7 @@
 name: the-build utility module
 description: 'Base settings from palantirnet/the-build.'
 type: module
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^9 || ^10 || ^11
 hide: true
 
 dependencies:

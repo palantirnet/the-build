@@ -14,7 +14,7 @@ default:
   extensions:
     DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       chrome:
         api_url: "http://chrome:9222"
       browser_name: chrome
