@@ -2,10 +2,12 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+
 /**
  * Phing task to run a target for each property in an array.
  */
-class ForeachKeyTask extends \Task {
+class ForeachKeyTask extends Task {
 
   /**
    * Prefix of properties to iterate over.

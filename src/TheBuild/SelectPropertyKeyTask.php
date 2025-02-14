@@ -2,10 +2,12 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+
 /**
  * Interactively select an option from an array of property keys.
  */
-class SelectPropertyKeyTask extends \Task {
+class SelectPropertyKeyTask extends Task {
 
   /**
    * Required. Prefix for properties to copy.

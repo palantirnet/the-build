@@ -2,10 +2,13 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+use Phing\Io\File;
+
 /**
  * Copy or symlink a file or directory, depending on a flag.
  */
-class IncludeResourceTask extends \Task {
+class IncludeResourceTask extends Task {
 
   /**
    * Either 'symlink' or 'copy'.
@@ -17,14 +20,14 @@ class IncludeResourceTask extends \Task {
   /**
    * The source file or directory to include.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $source;
 
   /**
    * The location to link the file to.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $dest = NULL;
 
@@ -110,10 +113,10 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the source of the resource to include.
    *
-   * @param \PhingFile $source
+   * @param \Phing\Io\File $source
    *   Source file.
    */
-  public function setSource(\PhingFile $source) {
+  public function setSource(File $source) {
     if (!$source->exists()) {
       throw new \BuildException("resource '$source' is not available'");
     }
@@ -124,10 +127,10 @@ class IncludeResourceTask extends \Task {
   /**
    * Set the destination for the resource.
    *
-   * @param \PhingFile $dest
+   * @param \Phing\Io\File $dest
    *   File destination.
    */
-  public function setDest(\PhingFile $dest) {
+  public function setDest(File $dest) {
     $this->dest = $dest;
   }
 

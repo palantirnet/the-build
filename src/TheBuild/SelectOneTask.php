@@ -2,10 +2,12 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+
 /**
  * Allow the user to select one option from a list.
  */
-class SelectOneTask extends \Task {
+class SelectOneTask extends Task {
 
   /**
    * Required. List of values to select among.

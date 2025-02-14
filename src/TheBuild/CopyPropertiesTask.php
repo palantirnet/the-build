@@ -2,10 +2,12 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+
 /**
  * Copy properties matching a prefix to properties with a different prefix.
  */
-class CopyPropertiesTask extends \Task {
+class CopyPropertiesTask extends Task {
 
   /**
    * Prefix for properties to copy.
