@@ -7,16 +7,19 @@ use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Endpoints\Environments;
+use Phing\Task;
+use Phing\Io\File;
+use Phing\Exception\BuildException;
 
 /**
  * Fetch a recent backup from Acquia.
  */
-class GetLatestBackupTask extends \Task {
+class GetLatestBackupTask extends Task {
 
   /**
    * Required. Directory for storing downloaded database backups.
    *
-   * @var \PhingFile
+   * @var \Phing\Io\File
    */
   protected $dir;
 
@@ -50,8 +53,7 @@ class GetLatestBackupTask extends \Task {
   /**
    * {@inheritdoc}
    *
-   * @throws \IOException
-   * @throws \NullPointerException
+   * @throws \Phing\Exception\BuildException
    */
   public function main() {
     $this->validate();
@@ -77,7 +79,7 @@ class GetLatestBackupTask extends \Task {
       $this->log("Couldn't find ACQUIA_CLOUD_API_SECRET env variable.");
     }
     if (!$api_key || !$api_secret) {
-      throw new \BuildException("Credentials are required.");
+      throw new BuildException("Credentials are required.");
     }
 
     return [
@@ -185,7 +187,7 @@ class GetLatestBackupTask extends \Task {
    *   Directory path.
    */
   public function setDir(string $value) {
-    $this->dir = new \PhingFile($value);
+    $this->dir = new File($value);
   }
 
   /**
@@ -200,7 +202,7 @@ class GetLatestBackupTask extends \Task {
     // Check the build attributes.
     foreach (['dir', 'site', 'env'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.");
+        throw new BuildException("$attribute attribute is required.");
       }
     }
   }

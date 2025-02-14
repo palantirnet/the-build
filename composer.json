@@ -23,7 +23,8 @@
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^3.0",
         "phpmd/phpmd": "^2.13",
-        "phpspec/prophecy-phpunit": "^2"
+        "phpspec/prophecy-phpunit": "^2",
+        "typhonius/acquia-php-sdk-v2": "^2"
     },
     "autoload": {
         "psr-0": {
