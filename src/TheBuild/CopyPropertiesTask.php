@@ -3,6 +3,8 @@
 namespace TheBuild;
 
 use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Util\StringHelper;
 
 /**
  * Copy properties matching a prefix to properties with a different prefix.
@@ -61,11 +63,11 @@ class CopyPropertiesTask extends Task {
    */
   public function validate() {
     if (empty($this->fromPrefix)) {
-      throw new \BuildException("fromPrefix attribute is required.", $this->location);
+      throw new BuildException("fromPrefix attribute is required.", $this->getLocation());
     }
 
     if (empty($this->toPrefix)) {
-      throw new \BuildException("toPrefix attribute is required.", $this->location);
+      throw new BuildException("toPrefix attribute is required.", $this->getLocation());
     }
   }
 
@@ -76,7 +78,7 @@ class CopyPropertiesTask extends Task {
    *   Prefix to copy properties from.
    */
   public function setFromPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 
@@ -90,7 +92,7 @@ class CopyPropertiesTask extends Task {
    *   Prefix to copy properties into.
    */
   public function setToPrefix($prefix) {
-    if (!\StringHelper::endsWith(".", $prefix)) {
+    if (!StringHelper::endsWith(".", $prefix)) {
       $prefix .= ".";
     }
 
