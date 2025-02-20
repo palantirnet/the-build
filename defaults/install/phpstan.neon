@@ -13,8 +13,8 @@ parameters:
     - lib/Drupal/Core/Serialization/Yaml.php
 
   paths:
-    - @webroot@/modules/custom
-    - @webroot@/themes/custom
+    - ${drupal.root}/modules/custom
+    - ${drupal.root}/themes/custom
 
   excludePaths:
     - */node_modules
