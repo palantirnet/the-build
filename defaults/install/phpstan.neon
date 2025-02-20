@@ -10,7 +10,7 @@ parameters:
 
   bootstrapFiles:
     # Load aliases.
-    - lib/Drupal/Core/Serialization/Yaml.php
+    - ${drupal.root}/core/lib/Drupal/Core/Serialization/Yaml.php
 
   paths:
     - ${drupal.root}/modules/custom
