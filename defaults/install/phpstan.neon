@@ -1,0 +1,20 @@
+includes:
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
+parameters:
+  level: 2
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    # new static() is a best practice in Drupal, so we cannot fix that.
+    - "#^Unsafe usage of new static#"
+    # PHP unit statics: https://github.com/phpstan/phpstan-strict-rules/pull/5
+    - "#^Dynamic call to static method PHPUnit\\\\Framework\\\\Assert#"
+    -
+      identifier: missingType.generics
+    -
+      identifier: missingType.iterableValue
+  paths:
+    - @webroot@/modules/custom
+    - @webroot@/themes/custom
+  excludePaths:
+    - */node_modules
