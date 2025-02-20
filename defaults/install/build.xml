@@ -126,7 +126,7 @@
         <exec command="${phpmd.command}" logoutput="true" checkreturn="true" />
 
         <!-- Run phpstan. -->
-        <property name="phpstan.command" value="vendor/bin/phpstan vendor/bin/phpstan analyse" />
+        <property name="phpstan.command" value="vendor/bin/phpstan analyse" />
         <echo msg="$> ${phpstan.command}" />
         <exec command="${phpstan.command}" logoutput="true" checkreturn="true" />
 
