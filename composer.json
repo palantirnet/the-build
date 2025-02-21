@@ -58,5 +58,8 @@
         "post-drupal-scaffold-cmd": [
             "TheBuild\\Rewrite::replacePlaceholder"
         ]
+    },
+    "require-dev": {
+        "composer/composer": "^2.8"
     }
 }

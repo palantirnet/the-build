@@ -54,7 +54,8 @@ class Rewrite {
   }
 
   protected static function getFiles($event) {
-    $fileMapping = $event->getComposer()->getPackage()->getExtra()['drupal-scaffold']['file-mapping'];
+    $package = $event->getComposer()->getRepositoryManager()->getLocalRepository()->findPackage('palantirnet/the-build', '*');
+    $fileMapping = $package->getExtra()['drupal-scaffold']['file-mapping'];
 
     $substitutions = self::getSubstitutions($event);
     $file_substitutions = [
