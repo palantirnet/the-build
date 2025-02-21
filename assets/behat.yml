@@ -19,7 +19,7 @@ default:
         api_url: "http://chrome:9222"
       browser_name: chrome
       javascript_session: chrome
-      base_url: PLACEHOLDER_URI
+      base_url: PLACEHOLDER_URL
     Drupal\DrupalExtension:
       blackbox: ~
       api_driver: 'drupal'
@@ -37,4 +37,4 @@ circleci:
     Drupal\MinkExtension:
       chrome:
         api_url: "http://localhost:9222"
-      base_url: PLACEHOLDER_URI:8000
+      base_url: PLACEHOLDER_URL:8000
