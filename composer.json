@@ -42,10 +42,10 @@
         "drupal-scaffold": {
             "file-mapping": {
                 "[project-root]/behat.yml": "defaults/install/behat.yml",
-                "[project-root]/.circleci/config.yml": "defaults/.circleci/config.yml",
-                "[project-root]/build.xml": "defaults/build.xml",
-                "[project-root]/phpcs.xml": "defaults/phpcs.xml",
-                "[project-root]/phpmd.xml": "defaults/phpmd.xml"
+                "[project-root]/.circleci/config.yml": "defaults/install/.circleci/config.yml",
+                "[project-root]/build.xml": "defaults/install/build.xml",
+                "[project-root]/phpcs.xml": "defaults/install/phpcs.xml",
+                "[project-root]/phpmd.xml": "defaults/install/phpmd.xml"
             }
         },
         "patches": {
