@@ -16,7 +16,7 @@ class Rewrite {
     $io = $event->getIO();
 
     $substitutions = self::getSubstitutions($event);
-    $io->write("<info>JSON data: " . print_r($substitutions, TRUE) . "</info>");
+    $io->write("<info>Using replacements: " . print_r($substitutions, TRUE) . "</info>");
 
     $files = self::getFiles($event);
     foreach ($files as $file) {
