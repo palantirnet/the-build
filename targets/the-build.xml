@@ -13,7 +13,7 @@
 <project name="the-build" default="the-build">
 
     <!-- Provide the <drush /> task. -->
-    <taskdef name="drush" classname="Drush\Task" />
+    <taskdef name="drush" classname="Drush\DrushTask" />
 
     <!-- Provide the <includeresource /> task. -->
     <taskdef name="includeresource" classname="TheBuild\IncludeResourceTask" />
