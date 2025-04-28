@@ -109,10 +109,10 @@
 
     <!-- Configure the composer command, depending on whether `composer` or `composer.phar` is available. -->
     <exec executable="command" outputProperty="composer.path.composer" >
-        <arg value="-v composer"/>
+        <arg value="composer"/>
     </exec>
     <exec executable="command" outputProperty="composer.path.composer_phar">
-        <arg value="-v composer.phar"/>
+        <arg value="composer.phar"/>
     </exec>
     <if>
         <not><equals arg1="${composer.path.composer}" arg2="" /></not>
