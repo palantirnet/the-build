@@ -157,13 +157,19 @@
                     </and>
                     <then>
                         <echo msg="Copying settings.ddev.php to old drupal root." />
-                        <exec command="cp ${drupal.root}/sites/default/settings.ddev.php ${drupal.root.old}/sites/default" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                        <exec executable="cp" dir="${build.dir}" checkreturn="true" logoutput="true">
+                            <arg line="${drupal.root}/sites/default/settings.ddev.php ${drupal.root.old}/sites/default" />
+                        </exec>
                     </then>
                 </if>
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" />
-                <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                <exec command="rm" dir="${build.dir}">
+                    <arg line="-rf ${drupal.root}" />
+                </exec>
+                <exec command="mv" dir="${build.dir}" checkreturn="true" logoutput="true">
+                    <arg line="${drupal.root.old} ${drupal.root}" />
+                </exec>
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
                 <reflexive>
@@ -177,7 +183,9 @@
                 </reflexive>
 
                 <echo msg="Updating your composer.lock hash" />
-                <exec command="composer update --lock" dir="${application.startdir}" />
+                <exec command="composer" dir="${application.startdir}">
+                    <arg line="update --lock" />
+                </exec>
 
             </then>
         </if>
