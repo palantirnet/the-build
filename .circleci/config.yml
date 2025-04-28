@@ -79,7 +79,7 @@ jobs:
       # Use this copy of the-build
       - run:
           name: Replace the default version of the-build with this one
-          command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH} palantirnet/phing-drush-task:dev-${CIRCLE_BRANCH}
+          command: composer require --dev --with-all-dependencies palantirnet/the-build:dev-${CIRCLE_BRANCH} palantirnet/phing-drush-task:dev-${CIRCLE_BRANCH} phing/phing:dev-main
           working_directory: ~/example
 
       # Source cache - update when branch changes
