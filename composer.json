@@ -18,7 +18,7 @@
         "drupal/coder": "^8.3.6",
         "drush/drush": "^13",
         "mglaman/drupal-check": "^1.5",
-        "palantirnet/phing-drush-task": "^2.0",
+        "palantirnet/phing-drush-task": "dev-phing-3.0.1-update",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
         "phing/phing": "^3.0",

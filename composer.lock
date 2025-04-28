@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b46af4c2fe866332b355cd3843479e1",
+    "content-hash": "9edbe4548570f25570b97234fb60a777",
     "packages": [
         {
             "name": "behat/behat",
@@ -3028,16 +3028,16 @@
         },
         {
             "name": "palantirnet/phing-drush-task",
-            "version": "2.0.0",
+            "version": "dev-phing-3.0.1-update",
             "source": {
                 "type": "git",
                 "url": "https://github.com/palantirnet/phing-drush-task.git",
-                "reference": "e54ad3101d29ce4d65e3e37677fab3636588d7f9"
+                "reference": "afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/palantirnet/phing-drush-task/zipball/e54ad3101d29ce4d65e3e37677fab3636588d7f9",
-                "reference": "e54ad3101d29ce4d65e3e37677fab3636588d7f9",
+                "url": "https://api.github.com/repos/palantirnet/phing-drush-task/zipball/afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7",
+                "reference": "afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7",
                 "shasum": ""
             },
             "require": {
@@ -3074,9 +3074,9 @@
             "description": "Drush task for Phing",
             "homepage": "https://github.com/palantirnet/phing-drush-task",
             "support": {
-                "source": "https://github.com/palantirnet/phing-drush-task/tree/2.0.0"
+                "source": "https://github.com/palantirnet/phing-drush-task/tree/phing-3.0.1-update"
             },
-            "time": "2022-10-06T15:58:12+00:00"
+            "time": "2025-02-14T20:26:48+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -9111,6 +9111,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "palantirnet/phing-drush-task": 20,
         "pear/versioncontrol_git": 20
     },
     "prefer-stable": false,
