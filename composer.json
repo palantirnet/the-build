@@ -42,5 +42,6 @@
     "extra": {
         "patches": {
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
