@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9edbe4548570f25570b97234fb60a777",
+    "content-hash": "cee2a29d3a10fcfdc47ef1a1f8204592",
     "packages": [
         {
             "name": "behat/behat",
@@ -2848,17 +2848,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/palantirnet/phing-drush-task.git",
-                "reference": "afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7"
+                "reference": "0ee48a8df1b386ab9b34068dedd7623b380b79f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/palantirnet/phing-drush-task/zipball/afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7",
-                "reference": "afc70868ecf9bd1868b62a1b6c1dc5f73fb1d0f7",
+                "url": "https://api.github.com/repos/palantirnet/phing-drush-task/zipball/0ee48a8df1b386ab9b34068dedd7623b380b79f8",
+                "reference": "0ee48a8df1b386ab9b34068dedd7623b380b79f8",
                 "shasum": ""
             },
             "require": {
                 "drush/drush": ">=9",
-                "phing/phing": "^3"
+                "phing/phing": "dev-main"
             },
             "replace": {
                 "continuousphp/phing-drush-task": "*"
@@ -2892,7 +2892,7 @@
             "support": {
                 "source": "https://github.com/palantirnet/phing-drush-task/tree/phing-3.0.1-update"
             },
-            "time": "2025-02-14T20:26:48+00:00"
+            "time": "2025-04-28T19:11:57+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -3414,16 +3414,16 @@
         },
         {
             "name": "phing/phing",
-            "version": "3.0.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phingofficial/phing.git",
-                "reference": "96d3b6f37b6b63a710ae7daf1c50b5c28151e695"
+                "reference": "451d1cdbcc44bd7114ef570ea812bcf82fd63354"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phingofficial/phing/zipball/96d3b6f37b6b63a710ae7daf1c50b5c28151e695",
-                "reference": "96d3b6f37b6b63a710ae7daf1c50b5c28151e695",
+                "url": "https://api.github.com/repos/phingofficial/phing/zipball/451d1cdbcc44bd7114ef570ea812bcf82fd63354",
+                "reference": "451d1cdbcc44bd7114ef570ea812bcf82fd63354",
                 "shasum": ""
             },
             "require": {
@@ -3432,8 +3432,8 @@
                 "ext-libxml": "*",
                 "ext-simplexml": "*",
                 "ext-xml": "*",
-                "php": ">= 7.4",
-                "sebastian/version": "^3.0|^4.0|^5.0",
+                "php": ">= 8.1",
+                "sebastian/version": "^3.0|^4.0|^5.0|^6.0",
                 "symfony/console": "^5.3.10|^6.0|^7.0",
                 "symfony/yaml": "^5.0|^6.0|^7.0"
             },
@@ -3495,11 +3495,11 @@
                 "pear/versioncontrol_svn": "^0.7.0",
                 "phing/phing-composer-configurator": "dev-master",
                 "phpmd/phpmd": "^2.14",
-                "phpstan/phpstan": "^0.12.87 || ^1.0",
-                "phpunit/phpunit": "^9.5.10",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.6.21",
                 "psr/http-message": "^2.0",
                 "roave/security-advisories": "dev-master",
-                "scssphp/scssphp": "^1.13",
+                "scssphp/scssphp": "^2.0",
                 "siad007/versioncontrol_hg": "^1.0",
                 "smarty/smarty": "^5.0",
                 "squizlabs/php_codesniffer": "^3.5",
@@ -3541,6 +3541,7 @@
                 "symfony/stopwatch": "Needed by the StopwatchTask",
                 "tedivm/jshrink": "Javascript Minifier built in PHP"
             },
+            "default-branch": true,
             "bin": [
                 "bin/phing"
             ],
@@ -3692,7 +3693,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-12-04T19:56:50+00:00"
+            "time": "2025-04-10T19:53:31+00:00"
         },
         {
             "name": "phootwork/collection",
@@ -8886,7 +8887,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "palantirnet/phing-drush-task": 20,
-        "pear/versioncontrol_git": 20
+        "pear/versioncontrol_git": 20,
+        "phing/phing": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -21,7 +21,7 @@
         "palantirnet/phing-drush-task": "dev-phing-3.0.1-update",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "^3.0",
+        "phing/phing": "dev-main",
         "phpmd/phpmd": "^2.13",
         "phpspec/prophecy-phpunit": "^2",
         "typhonius/acquia-php-sdk-v2": "^3"
