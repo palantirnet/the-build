@@ -172,7 +172,7 @@
         </if>
 
         <!-- Wipe out any local customizations. -->
-        <chmod file="${artifact.directory}" mode="0750">
+        <chmod file="${artifact.directory}" mode="0750" />
         <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
             <arg line="reset --hard" />
         </exec>
