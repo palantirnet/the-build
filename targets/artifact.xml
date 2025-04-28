@@ -33,20 +33,20 @@
         <!-- Get the current commit, branch, message, and tag so that they can be used to label the
              resulting artifact and reset the repository after the artifact is built. -->
         <exec executable="git" outputProperty="artifact.git.commit" checkreturn="true" >
-        {{ <arg line="rev-parse HEAD"/> }}
+            <arg line="rev-parse HEAD"/>
         </exec>
         <!-- @TODO Handle the case when this command outputs "HEAD". This happens when
              building a repo from a detatched head state (e.g. you've checked out a tag),
              and it causes pushing the artifact to fail because "HEAD" is not a branch you
              can push to. -->
         <exec executable="git" outputProperty="artifact.git.branch" checkreturn="true">
-        {{ <arg line="rev-parse --abbrev-ref HEAD"/> }}
+            <arg line="rev-parse --abbrev-ref HEAD"/>
         </exec>
         <exec executable="git" outputProperty="artifact.git.commit_message">
-        {{ <arg line="log -1 --oneline"/> }}
+            <arg line="log -1 --oneline"/>
         </exec>
         <exec executable="git" outputProperty="artifact.git.tag" returnProperty="artifact.git.no_tag">
-        {{ <arg line="describe --tags --exact-match"/> }}
+            <arg line="describe --tags --exact-match"/>
         </exec>
         <!-- Create a temporary branch name based on the commit for building the artifact,
              to avoid branch conflicts. -->
@@ -97,7 +97,7 @@
              committed to git, since those changes wouldn't be replicable in later builds.
              -->
         <exec executable="git" outputProperty="modified_files">
-        {{ <arg line="status --porcelain"/> }}
+            <arg line="status --porcelain"/>
         </exec>
         <if>
             <not><equals arg1="${modified_files}" arg2="" /></not>
@@ -114,7 +114,7 @@
 
         <!-- Check that our artifact directory either doesn't exist or is the right repo -->
         <exec executable="git" returnProperty="artifact_repo_has_remote.name">
-        {{ <arg line="-C '${artifact.directory}' remote show ${artifact.git.remote_name} -n"/> }}
+            <arg line="-C '${artifact.directory}' remote show ${artifact.git.remote_name} -n"/>
         </exec>
         <if>
             <not><available file="${artifact.directory}" type="dir" /></not>
@@ -173,28 +173,38 @@
 
         <!-- Wipe out any local customizations. -->
         <chmod file="${artifact.directory}" mode="0750">
-        <exec dir="${artifact.directory}" command="git reset --hard" checkreturn="true" logoutput="true" />
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true" logoutput="true">
+            <arg line="reset --hard" />
+        </exec>
         <gitcheckout repository="${artifact.directory}" branchname="${artifact.git.remote_base_branch}" />
-        <exec dir="${artifact.directory}" command="git clean -ffd" checkreturn="true" />
+        <exec dir="${artifact.directory}" executable="git" checkreturn="true">
+            <arg line="clean -ffd" />
+        </exec>
     </target>
 
 
     <target name="artifact-setupBranch" hidden="true">
-        <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
+        <gitfetch repository="${artifact.directory}" source="${artifact.git.remote_name}" refspec="${artifact.git.remote_branch}" returnProperty="remote_fetch.error" />
         <if>
             <not><equals arg1="${remote_fetch.error}" arg2="0" /></not>
             <then>
                 <echo>Remote branch does not exist. Creating '${artifact.git.remote_branch}' on remote repository...</echo>
-                <exec dir="${artifact.directory}" command="git fetch ${artifact.git.remote_name} ${artifact.git.remote_base_branch}" returnProperty="remote_fetch_base.error" />
+                <gitfetch repository="${artifact.directory}" source="${artifact.git.remote_name}" refspec="${artifact.git.remote_base_branch}" returnProperty="remote_fetch_base.error" />
                 <if>
                     <not><equals arg1="${remote_fetch_base.error}" arg2="0" /></not>
                     <then><fail msg="Failed to create remote branch: base branch '${artifact.git.remote_base_branch}' could not be fetched." /></then>
                 </if>
 
                 <!-- The 'remote branch' should only exist on the remote, so we create, push, then delete the local copy. -->
-                <exec dir="${artifact.directory}" command="git branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}" checkreturn="true" />
-                <exec dir="${artifact.directory}" command="git push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}" checkreturn="true" />
-                <exec dir="${artifact.directory}" command="git branch -d ${artifact.git.remote_branch}" checkreturn="true" />
+                <exec dir="${artifact.directory}" command="git" checkreturn="true">
+                {{ <arg line="branch ${artifact.git.remote_branch} ${artifact.git.remote_name}/${artifact.git.remote_base_branch}" /> }}
+                </exec>
+                <exec dir="${artifact.directory}" command="git" checkreturn="true">
+                {{ <arg line="push ${artifact.git.remote_name} ${artifact.git.remote_branch}:${artifact.git.remote_branch}" /> }}
+                </exec>
+                <exec dir="${artifact.directory}" command="git" checkreturn="true">
+                {{ <arg line="branch -d ${artifact.git.remote_branch}" /> }}
+                </exec>
                 <echo>Remote branch '${artifact.git.remote_name}/${artifact.git.remote_branch}' created.</echo>
             </then>
         </if>
