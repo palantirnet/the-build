@@ -34,7 +34,7 @@ default:
         anywhere: "*"
     FailAid\Extension:
       screenshot:
-        directory: /var/www/html/features/FailAid_screenshots/
+        directory: /var/www/html/artifacts/FailAid_screenshots/
         mode: default
         autoClean: false
         size: 1440x1280
