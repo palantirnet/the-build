@@ -286,9 +286,9 @@ Or, you can specify the export file directly:
         <!-- if the docroot/recipes/skeleton directory doesn't exist, use the standard profile -->
         <property name="drupal.site.recipe" value="recipes/skeleton" />
         <if>
-            <not><available file="${drupal.root}/${drupal.site.recipe}" type="dir" /></not>
+            <not><available file="${drupal.root}/${drupal.site.recipe}/recipe.yml" /></not>
             <then>
-                <property name="drupal.site.recipe" value="core/recipes/standard" />
+                <property name="drupal.site.recipe" value="core/recipes/standard" override="true" />
             </then>
         </if>
 
