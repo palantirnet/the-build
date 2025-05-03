@@ -8,7 +8,7 @@
    @see vendor/drupal/coder/coder_sniffer/
 -->
 
-<ruleset name="@projectname@">
+<ruleset name="PLACEHOLDER_PROJECT_NAME">
   <description>PHP_CodeSniffer configuration.</description>
 
   <!-- Warnings and errors should throw an exception. -->
@@ -29,8 +29,8 @@
   <rule ref="DrupalPractice"/>
 
   <!-- Directories to scan. -->
-  <file>@webroot@/modules/custom</file>
-  <file>@webroot@/themes/custom</file>
+  <file>PLACEHOLDER_DRUPAL_ROOT/modules/custom</file>
+  <file>PLACEHOLDER_DRUPAL_ROOT/themes/custom</file>
   <file>features/bootstrap</file>
 
   <exclude-pattern>*/behat</exclude-pattern>

@@ -26,8 +26,8 @@
         "phpspec/prophecy-phpunit": "^2"
     },
     "autoload": {
-        "psr-0": {
-            "TheBuild\\": "src/"
+        "psr-4": {
+            "TheBuild\\": "src/TheBuild/"
         }
     },
     "config": {
@@ -39,10 +39,27 @@
         }
     },
     "extra": {
+        "drupal-scaffold": {
+            "file-mapping": {
+                "[project-root]/behat.yml": "defaults/install/behat.yml",
+                "[project-root]/.circleci/config.yml": "defaults/install/.circleci/config.yml",
+                "[project-root]/build.xml": "defaults/install/build.xml",
+                "[project-root]/phpcs.xml": "defaults/install/phpcs.xml",
+                "[project-root]/phpmd.xml": "defaults/install/phpmd.xml"
+            }
+        },
         "patches": {
             "phing/phing": {
                 "Support relative symliks in Phing": "https://raw.githubusercontent.com/palantirnet/the-build/7cdc28b6019fb88a0604261366f9ea35f1e21d96/patches/phing-relative-symlinks.patch"
             }
         }
+    },
+    "scripts": {
+        "post-drupal-scaffold-cmd": [
+            "TheBuild\\Rewrite::replacePlaceholder"
+        ]
+    },
+    "require-dev": {
+        "composer/composer": "^2.8"
     }
 }

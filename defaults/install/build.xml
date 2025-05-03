@@ -10,7 +10,7 @@
   @see https://github.com/palantirnet/the-build
   -->
 
-<project name="@projectname@" default="list">
+<project name="PLACEHOLDER_PROJECT_NAME" default="list">
 
     <!-- Add property loading and targets from palantirnet/the-build. -->
     <import file="vendor/palantirnet/the-build/targets/the-build.xml" />
@@ -170,7 +170,7 @@
     <!-- Target: artifact -->
     <target name="artifact" description="Build and deploy the application.">
         <phing phingfile="build.xml" target="artifact-main" inheritAll="false" haltonfailure="true">
-            <property name="build.env" value="@host@" />
+            <property name="build.env" value="PLACEHOLDER_HOST" />
         </phing>
     </target>
 
