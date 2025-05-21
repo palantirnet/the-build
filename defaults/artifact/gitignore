@@ -1,3 +1,4 @@
 # This .gitignore file is specific to the artifact.
 settings.local.php
 node_modules
+.env
