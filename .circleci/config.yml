@@ -46,6 +46,11 @@ jobs:
             echo "phpstan for tasks"
             vendor/bin/phpstan analyse -c phpstan.neon
 
+      # Run internal tests
+      - run:
+          name: Test custom phing commands
+          command: ./run-tests.sh
+
       # Install a drupal test project.
       - run:
           name: Create artifacts directory
