@@ -19,12 +19,13 @@
         "drush/drush": "^13",
         "genesis/behat-fail-aid": "^3.7",
         "mglaman/drupal-check": "^1.5",
-        "palantirnet/phing-drush-task": "^1.1",
+        "palantirnet/phing-drush-task": "dev-phing-3.0.1-update",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
-        "phing/phing": "^2.14",
+        "phing/phing": "dev-main",
         "phpmd/phpmd": "^2.13",
-        "phpspec/prophecy-phpunit": "^2"
+        "phpspec/prophecy-phpunit": "^2",
+        "typhonius/acquia-php-sdk-v2": "^3"
     },
     "autoload": {
         "psr-0": {
@@ -41,9 +42,6 @@
     },
     "extra": {
         "patches": {
-            "phing/phing": {
-                "Support relative symliks in Phing": "https://raw.githubusercontent.com/palantirnet/the-build/7cdc28b6019fb88a0604261366f9ea35f1e21d96/patches/phing-relative-symlinks.patch"
-            }
         }
     }
 }

@@ -138,10 +138,11 @@ drupal:
         #   $> gunzip -c FILENAME.sql.gz | drush sqlc
         #
         # Command to extract text contents of the backup file.
-        contents_command: gzip -dc
+        contents_args: -dc
+        contents_executable: gzip
         # Command to load database contents into Drupal.
-        mysql_command: mysql --host=${drupal.site.database.host} --user=${drupal.site.database.username} --password=${drupal.site.database.password} --database=${drupal.site.database.database}
-
+        mysql_args: --host=${drupal.site.database.host} --user=${drupal.site.database.username} --password=${drupal.site.database.password} --database=${drupal.site.database.database}
+        mysql_executable: mysql
         # Load a specific file rather than one matching the `export_pattern`. This can be used
         # if your build relies on a seed database that is checked in to the repository.
         # Otherwise, you may occasionally want to set this value at run time:
@@ -150,7 +151,8 @@ drupal:
 
       drop_db:
         # Command to drop the database tables.
-        mysql_command: drush sql-drop -y
+        mysql_args: sql-drop -y
+        mysql_executable: drush
 
 
 # Configuration for targets/artifact.xml
@@ -272,7 +274,8 @@ styleguide:
   # Location of the style guide, relative to the project root.
   root: 'styleguide'
   # Command to compile the style guide assets, for use during the build and artifact steps.
-  command: 'yarn default'
+  executable: 'yarn'
+  args: 'default'
 
 # Configuration for linting custom javascript.
 #

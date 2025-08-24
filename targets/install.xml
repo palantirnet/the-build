@@ -63,13 +63,13 @@
                 <property name="drupal.root" value="docroot" override="true" />
             </case>
             <case value="pantheon">
-              <property name="drupal.root" value="web" override="true" />
+                <property name="drupal.root" value="web" override="true" />
             </case>
             <case value="platformsh">
-              <property name="drupal.root" value="web" override="true" />
+                <property name="drupal.root" value="web" override="true" />
             </case>
             <default>
-              <property name="drupal.root" value="web" override="true" />
+                <property name="drupal.root" value="web" override="true" />
             </default>
         </switch>
 
@@ -137,7 +137,9 @@
         <available file="${build.dir}/${drupal.root}/core" type="dir" property="drupal.root.exists" value="true" />
 
         <if>
-            <not><equals arg1="${drupal.root.exists}" arg2="1" /></not>
+            <not>
+                <equals arg1="${drupal.root.exists}" arg2="1" />
+            </not>
             <then>
                 <!-- The one that's available is the location we're moving from. -->
                 <available file="${build.dir}/web/core" type="dir" property="drupal.root.old" value="web" />
@@ -148,18 +150,26 @@
                 <!-- Copy settings.ddev.php if it doesn't exist in the old drupal root. -->
                 <if>
                     <and>
-                      <equals arg1="${ddev_settings_exists}" arg2="1" />
-                      <not><equals arg1="${old_ddev_settings_exists}" arg2="1" /></not>
+                        <equals arg1="${ddev_settings_exists}" arg2="1" />
+                        <not>
+                            <equals arg1="${old_ddev_settings_exists}" arg2="1" />
+                        </not>
                     </and>
                     <then>
                         <echo msg="Copying settings.ddev.php to old drupal root." />
-                        <exec command="cp ${drupal.root}/sites/default/settings.ddev.php ${drupal.root.old}/sites/default" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                        <exec executable="cp" dir="${build.dir}" checkreturn="true" logoutput="true">
+                            <arg line="${drupal.root}/sites/default/settings.ddev.php ${drupal.root.old}/sites/default" />
+                        </exec>
                     </then>
                 </if>
 
                 <echo msg="Moving the ${drupal.root.old}/ directory to ${drupal.root}/" />
-                <exec command="rm -rf ${drupal.root}" dir="${build.dir}" />
-                <exec command="mv ${drupal.root.old} ${drupal.root}" dir="${build.dir}" checkreturn="true" logoutput="true" />
+                <exec executable="rm" dir="${build.dir}">
+                    <arg line="-rf ${drupal.root}" />
+                </exec>
+                <exec executable="mv" dir="${build.dir}" checkreturn="true" logoutput="true">
+                    <arg line="${drupal.root.old} ${drupal.root}" />
+                </exec>
 
                 <echo msg="Editing your composer.json to install Drupal in ${drupal.root}/" />
                 <reflexive>
@@ -173,7 +183,9 @@
                 </reflexive>
 
                 <echo msg="Updating your composer.lock hash" />
-                <exec command="composer update --lock" dir="${application.startdir}" />
+                <exec executable="composer" dir="${application.startdir}">
+                    <arg line="update --lock" />
+                </exec>
 
             </then>
         </if>
@@ -245,7 +257,7 @@
             </filterchain>
         </copy>
 
-         <!-- Copy other templates into place.
+        <!-- Copy other templates into place.
              These copy commands use <expandproperties /> for property substitution.
              -->
         <!-- Copy the behat template. -->
@@ -306,7 +318,7 @@
                     <arg value="drupal/memcache"/>
                 </composer>
             </case>
-            
+
             <case value="pantheon">
                 <!-- Project-level setup -->
                 <copy file="${build.thebuild.dir}/defaults/install/pantheon.yml" todir="${application.startdir}" overwrite="true"/>
@@ -337,21 +349,21 @@
     <!-- Target: host-install-packages -->
     <target name="host-install-packages" description="Install composer specific packages for host.">
         <if>
-          <isset property="build.host_packages.${build.host}"/>
-        <then>
-            <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" />
-        </then>
+            <isset property="build.host_packages.${build.host}"/>
+            <then>
+                <foreach list="${build.host_packages.${build.host}}" param="package" target="install-package" />
+            </then>
         </if>
     </target>
 
     <!-- Target: install-package -->
     <target name="install-package" description="Install a package using Composer in the application start directory">
-      <fail unless="package" />
+        <fail unless="package" />
 
-      <composer command="require" composer="${composer.composer}">
-        <arg line="--working-dir ${application.startdir}"/>
-        <arg value="${package}" />
-      </composer>
+        <composer command="require" composer="${composer.composer}">
+            <arg line="--working-dir ${application.startdir}"/>
+            <arg value="${package}" />
+        </composer>
     </target>
 
 </project>

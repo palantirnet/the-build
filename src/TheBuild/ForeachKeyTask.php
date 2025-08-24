@@ -2,10 +2,15 @@
 
 namespace TheBuild;
 
+use Phing\Task;
+use Phing\Exception\BuildException;
+use Phing\Util\StringHelper;
+use Phing\Task\System\PhingCallTask;
+
 /**
  * Phing task to run a target for each property in an array.
  */
-class ForeachKeyTask extends \Task {
+class ForeachKeyTask extends Task {
 
   /**
    * Prefix of properties to iterate over.
@@ -45,7 +50,7 @@ class ForeachKeyTask extends \Task {
   /**
    * Instance of PhingCallTask to use/run.
    *
-   * @var \PhingCallTask
+   * @var \Phing\Task\System\PhingCallTask
    */
   protected $callee;
 
@@ -109,7 +114,7 @@ class ForeachKeyTask extends \Task {
   public function validate() {
     foreach (['prefix', 'target', 'keyParam', 'prefixParam'] as $attribute) {
       if (empty($this->$attribute)) {
-        throw new \BuildException("$attribute attribute is required.", $this->location);
+        throw new BuildException("$attribute attribute is required.", $this->getLocation());
       }
     }
   }
@@ -121,7 +126,7 @@ class ForeachKeyTask extends \Task {
    *   The key prefix.
    */
   public function setPrefix($value) {
-    if (!\StringHelper::endsWith(".", $value)) {
+    if (!StringHelper::endsWith(".", $value)) {
       $value .= ".";
     }
 
