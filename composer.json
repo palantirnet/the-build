@@ -19,7 +19,7 @@
         "drush/drush": "^13",
         "genesis/behat-fail-aid": "^3.7",
         "jangregor/phpstan-prophecy": "^1.0",
-        "mglaman/phpstan-drupal": "^1.2",
+        "mglaman/phpstan-drupal": "^1.2 || ^2.1.1",
         "palantirnet/phing-drush-task": "^1.1",
         "pear/http_request2": "^2.3",
         "pear/versioncontrol_git": "@dev",
