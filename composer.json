@@ -17,6 +17,7 @@
         "dmore/behat-chrome-extension": "^1.4",
         "drupal/coder": "^8.3.6",
         "drush/drush": "^13",
+        "genesis/behat-fail-aid": "^3.7",
         "jangregor/phpstan-prophecy": "^1.0",
         "mglaman/phpstan-drupal": "^1.2",
         "palantirnet/phing-drush-task": "^1.1",

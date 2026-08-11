@@ -9,7 +9,7 @@
 
   @see defaults.yml
 
-  Copyright 2016, 2018 Palantir.net, Inc.
+  Copyright 2016-2025 Palantir.net, Inc.
   -->
 
 <project name="Drupal" default="drupal-build">
@@ -275,8 +275,6 @@ Or, you can specify the export file directly:
     <target name="drupal-first-install" depends="set-site" hidden="true">
         <fail unless="drupal.site.admin_user" />
 
-        <symlink link="${build.dir}/${drupal.root}/modules/contrib/the_build_utility" target="${build.thebuild.dir}/defaults/standard/modules/the_build_utility" relative="true" />
-
         <composer command="require" composer="${composer.composer}">
             <arg value="drupal/admin_toolbar" />
             <arg value="drupal/config_split" />
@@ -285,20 +283,20 @@ Or, you can specify the export file directly:
             <arg value="drupal/workbench_tabs" />
         </composer>
 
+        <!-- if the docroot/recipes/skeleton directory doesn't exist, use the standard profile -->
+        <property name="drupal.site.recipe" value="recipes/skeleton" />
+        <if>
+            <not><available file="${drupal.root}/${drupal.site.recipe}/recipe.yml" /></not>
+            <then>
+                <property name="drupal.site.recipe" value="core/recipes/standard" override="true" />
+            </then>
+        </if>
+
         <drush command="site-install" assume="yes">
             <option name="site-name">${projectname}</option>
             <option name="account-name">${drupal.site.admin_user}</option>
             <option name="account-pass">admin</option>
-            <param>standard</param>
-        </drush>
-
-        <drush command="pm-enable" assume="yes">
-            <param>the_build_utility</param>
-        </drush>
-
-        <drush command="pm-uninstall" assume="yes">
-            <param>the_build_utility</param>
-            <param>standard</param>
+            <param>${drupal.site.recipe}</param>
         </drush>
 
         <drush command="config-export" assume="yes" />
@@ -306,8 +304,11 @@ Or, you can specify the export file directly:
         <!-- Whitespace is intentional. -->
         <echo>
 
-             Drupal has been installed with the install profile "standard". If you'd prefer a different profile, run the installer yourself:
+             Drupal has been installed with the recipe "${drupal.site.recipe}". If you'd prefer a different profile, run the installer yourself:
                drush site-install minimal
+
+             Or add recipes with:
+               drush recipe core/recipes/article_content_type
 
              Future installs via 'phing install' will be run using 'drush site:install --existing-config'.
 

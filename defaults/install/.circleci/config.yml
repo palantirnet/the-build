@@ -47,6 +47,9 @@ jobs:
           name: Create artifacts directory
           command: mkdir /tmp/artifacts
       - run:
+          name: Create directory for Behat test failure screenshots
+          command: mkdir /tmp/artifacts/FailAid_screenshots
+      - run:
           name: Configure URL in /etc/hosts
           command: echo 127.0.0.1 ${CIRCLE_PROJECT_REPONAME}.local | sudo tee -a /etc/hosts
 
