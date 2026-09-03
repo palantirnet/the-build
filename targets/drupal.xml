@@ -104,7 +104,7 @@ ${modified_files}
         </drush>
 
         <!-- get a commit label to use in the db dump name -->
-        <gitdescribe repository="${build.dir}" tags="true" always="true" outputProperty="git_describe_output" />
+        <exec dir="${build.dir}" command="git describe --tags --always" outputProperty="git_describe_output" checkreturn="true" />
         <property name="build_commit_ref" value="${git_describe_output}">
             <filterchain>
                 <striplinebreaks />

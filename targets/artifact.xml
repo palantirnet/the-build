@@ -156,7 +156,7 @@
             <not><available file="${artifact.directory}/.git" type="dir" /></not>
             <then>
                 <echo>Cloning the repository from ${artifact.git.remote}</echo>
-                <gitclone repository="${artifact.git.remote}" targetPath="${artifact.directory}" />
+                <exec command="git clone ${artifact.git.remote} ${artifact.directory}" checkreturn="true" logoutput="true" />
             </then>
         </if>
 
@@ -266,17 +266,26 @@
 
 
     <target name="artifact-commit" hidden="true">
-        <!-- The 'allFiles' flag on the GitCommitTask does not add files that aren't already tracked by git. -->
+        <!-- Stage everything, since 'git commit' alone would miss files that aren't already tracked. -->
         <exec command="git add --all" dir="${artifact.directory}" />
 
-        <!-- Commit all changes to the artifact repository. -->
-        <gitcommit repository="${artifact.directory}" message="Drupal artifact build of ${artifact.git.commit_message}" allFiles="true" />
+        <!-- Commit all changes to the artifact repository. The message is written to a
+             tempfile and passed to git via a "file" argument, so that special characters
+             in the original commit message (quotes, backticks, etc.) can't break the
+             shell command. -->
+        <tempfile property="artifact.commit_message_file" destdir="${build.dir}/artifacts" />
+        <echo file="${artifact.commit_message_file}">Drupal artifact build of ${artifact.git.commit_message}</echo>
+        <exec dir="${artifact.directory}" command="git commit --file=${artifact.commit_message_file}" checkreturn="true" />
+        <delete file="${artifact.commit_message_file}" />
 
         <!-- If this is a build of a tag, tag the artifact. -->
         <if>
             <equals arg1="${artifact.git.no_tag}" arg2="0" />
             <then>
-                <gittag repository="${artifact.directory}" name="${artifact.git.artifact_tag}" annotate="true" message="Drupal artifact build of tag ${artifact.git.tag}." />
+                <tempfile property="artifact.tag_message_file" destdir="${build.dir}/artifacts" />
+                <echo file="${artifact.tag_message_file}">Drupal artifact build of tag ${artifact.git.tag}.</echo>
+                <exec dir="${artifact.directory}" command="git tag --annotate ${artifact.git.artifact_tag} --file=${artifact.tag_message_file}" checkreturn="true" />
+                <delete file="${artifact.tag_message_file}" />
             </then>
         </if>
     </target>
