@@ -29,6 +29,13 @@ jobs:
           command: |
             echo "sendmail_path=/bin/true" | sudo tee -a "/etc/php.d/circleci.ini"
       - run:
+          name: Configure Yarn
+          # The test project pins "packageManager": "yarn@4.1.1" and requires
+          # yarn >= 4.1.1, but the CircleCI image ships yarn 1.22.19. Corepack
+          # (bundled with the image's Node) makes `yarn` honor that pin.
+          command: |
+            sudo corepack enable
+      - run:
           name: Update Composer
           command: |
             sudo composer self-update
