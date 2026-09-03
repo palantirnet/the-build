@@ -17,13 +17,16 @@ jobs:
     environment:
       - PALANTIR_ENVIRONMENT: circleci
       - DRUPAL_ROOT: docroot
-      - NODE_VERSION: 20
+      - NODE_VERSION: 22
 
     steps:
       - run:
           name: Install packages
           command: |
             sudo apt-get update && sudo apt-get install -y libpng-dev default-mysql-client
+      - run:
+          name: Use corepack to ensure the correct yarn version
+          command: corepack enable
       - run:
           name: Configure PHP
           command: |
@@ -122,7 +125,7 @@ jobs:
             nohup php -S example.ddev.site:8000 .ht.router.php > /tmp/artifacts/phpd.log 2>&1 &
             google-chrome --headless --remote-debugging-port=9222 &>/dev/null &
             cd ..
-            vendor/bin/phing test -Dbuild.env=circleci
+            vendor/bin/phing behat -Dbuild.env=circleci
           working_directory: ~/example
 
       - store_artifacts:
