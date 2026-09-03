@@ -36,8 +36,7 @@
         "allow-plugins": {
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phing/phing-composer-configurator": true,
-            "symfony/runtime": true
+            "phing/phing-composer-configurator": true
         }
     },
     "extra": {
