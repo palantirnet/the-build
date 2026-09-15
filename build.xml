@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<project name="the-build-tests" default="tests">
+    <!-- Default target: tests -->
+    <target name="tests" description="List available tests.">
+        <exec command="${phing.home}/bin/phing -q -f ${phing.file} -l" passthru="true"/>
+    </target>
+
+    <!-- Add property loading and targets from palantirnet/the-build. -->
+    <import file="targets/the-build.xml" />
+
+    <!-- Make these additional targets available by default. -->
+    <import file="targets/drupal.xml" />
+    <!-- Additional optional targets. -->
+    <import file="targets/artifact.xml" />
+    <import file="targets/acquia.xml" />
+    <import file="targets/styleguide.xml" />
+
+    <target name="run-tests" description="Runs all phing tests">
+        <!-- TODO: these should perhaps return true instead of print success.-->
+        <phingcall target="test-the-build" />
+        <phingcall target="test-set-site" />
+    </target>
+
+    <target name="test-the-build">
+        <loadfile property="result" file="tests/the-build.txt"/>
+        <property name="expected" value="Hello! I'm the-build." />
+        <if>
+            <!-- See https://www.phing.info/guide/chunkhtml/conditions.html -->
+            <contains string="${result}" substring="${expected}" />
+            <then>
+                <echo>the-build test passed</echo>
+            </then>
+            <else>
+                <echo>--Expected--</echo>
+                <echo>[${expected}]</echo>
+                <fail message="the-build test failed -- output below" />
+            </else>
+        </if>
+    </target>
+
+    <target name="test-set-site" depends="set-site">
+        <phingcall target="check-equals">
+            <property name="expected" value="../config/sites/default" />
+            <property name="actual" value="${drupal.site.config_sync_directory}" />
+            <property name="prop_name" value="drupal.site.config_sync_directory" />
+        </phingcall>
+        <phingcall target="check-equals">
+            <property name="expected" value="drupal" />
+            <property name="actual" value="${drupal.site.database.database}" />
+            <property name="prop_name" value="drupal.site.database.database" />
+        </phingcall>        
+        <phingcall target="check-equals">
+            <property name="expected" value="sites/default/files" />
+            <property name="actual" value="${drupal.site.settings.file_public_path}" />
+            <property name="prop_name" value="drupal.site.settings.file_public_path" />
+        </phingcall>
+        <phingcall target="check-equals">
+            <property name="expected" value="../artifacts/private/default" />
+            <property name="actual" value="${drupal.site.settings.file_private_path}" />
+            <property name="prop_name" value="drupal.site.settings.file_private_path" />
+        </phingcall>
+        <phingcall target="check-equals">
+            <property name="expected" value="docroot/sites/default/settings.build.php" />
+            <property name="actual" value="${drupal.site.build.settings_dest}" />
+            <property name="prop_name" value="drupal.site.build.settings_dest" />
+        </phingcall>
+        <phingcall target="check-equals">
+            <property name="expected" value="docroot/sites/default/services.build.yml" />
+            <property name="actual" value="${drupal.site.build.services_dest}" />
+            <property name="prop_name" value="drupal.site.build.services_dest" />
+        </phingcall>
+        <phingcall target="check-equals">
+            <property name="expected" value="localhost" />
+            <property name="actual" value="${drush.uri}" />
+            <property name="prop_name" value="drush.uri" />
+        </phingcall>
+
+        <echo>set-site test passed</echo>
+    </target>
+
+    <target name="check-equals">
+        <echo>Checking ${prop_name}</echo>
+        <if>
+            <not><equals arg1="${expected}" arg2="${actual}" /></not>
+            <then>
+                <echo>${prop_name} test failed</echo>
+                <echo>--Expected--</echo>
+                <echo>${expected}</echo>
+                <echo>--Actual--</echo>
+                <echo>${actual}</echo>
+                <fail message="${prop_name} not set properly" />
+            </then>
+        </if>
+    </target>
+
+</project>
