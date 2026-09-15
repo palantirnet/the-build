@@ -248,6 +248,14 @@
          <!-- Copy other templates into place.
              These copy commands use <expandproperties /> for property substitution.
              -->
+
+        <!-- Copy the phpstan.neon file template. -->
+        <copy file="${phing.dir.install}/../defaults/install/phpstan.neon" tofile="${application.startdir}/phpstan.neon" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
         <!-- Copy the behat template. -->
         <copy file="${phing.dir.install}/../defaults/install/behat.yml" tofile="${application.startdir}/behat.yml" overwrite="true">
             <filterchain>

@@ -124,10 +124,12 @@
         <echo msg="$> vendor/bin/phpmd" />
         <exec command="vendor/bin/phpmd ${phpmd.directories} ${phpmd.format} ${phpmd.rulesets} --suffixes ${phpmd.suffixes}" logoutput="true" checkreturn="true" />
 
-        <!-- Run Drupal Check. -->
-        <foreach list="${drupal-check.directories}" param="drupal-check.dir" target="drupal-check" />
+        <!-- Run phpstan. -->
+        <property name="phpstan.command" value="vendor/bin/phpstan analyse" />
+        <echo msg="$> ${phpstan.command}" />
+        <exec command="${phpstan.command}" logoutput="true" checkreturn="true" />
 
-        <!-- Run eslint -->
+        <!-- Run eslint. -->
         <phingcall target="eslint" />
 
         <!-- Ensure the composer.lock file is up to date -->
